@@ -15,14 +15,12 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         string NodeTemplate();
 
         DateTime? MinimumDate(object obj);
-                        
+        object BrushResource(object? model, NodeType type, string part);
     }  
     
     public interface IConnectorConverter
-    {
-
+    {        
         DateTime? MinimumDate(object obj1, object obj2);
-        //global::Abstractions.IRelationship? Relationship(object obj1, object obj2);
         string Text(object obj1, object obj2);
     }
 }

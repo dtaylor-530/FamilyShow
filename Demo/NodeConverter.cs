@@ -9,6 +9,10 @@ namespace Diagram.Logic
 {
     public class NodeConverter : INodeConverter
     {
+        public NodeConverter()
+        {
+        }
+
         public bool IsFiltered(object obj, double displayYear)
         {
             if (obj is INode { } person)
@@ -129,6 +133,22 @@ namespace Diagram.Logic
             DateTime? date = person.BirthDate;
    
            return date;
+        }
+
+        public object BrushResource(object? model, NodeType type, string part)
+        {
+            if (model is not INode { } person)
+            {
+                throw new Exception("Tfbgdgfdgf");
+            }
+
+            string resourceName = string.Format(
+        CultureInfo.InvariantCulture, "{0}{1}{2}{3}",
+        (person.Gender == Gender.Female) ? "Female" : "Male",
+        type.ToString(),
+        person.IsLiving ? "Living" : "Deceased",
+        part);
+            return resourceName;
         }
     }
 }

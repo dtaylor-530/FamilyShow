@@ -35,6 +35,8 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 
     #endregion
 
+    public bool IsParent { get; set; }
+
     /// <summary>
     /// Space between each group.
     /// </summary>

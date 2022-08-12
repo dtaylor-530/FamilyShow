@@ -5,17 +5,7 @@ using Microsoft.FamilyShowLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Demo
 {
@@ -24,7 +14,7 @@ namespace Demo
     /// </summary>
     public partial class MainWindow : Window
     {
-        private PeopleCollection<INode> family = new PeopleCollection<INode>();
+        private Microsoft.FamilyShowLib.People family = new Microsoft.FamilyShowLib.People();
         private DiagramLogic model;
 
         public MainWindow()
@@ -33,9 +23,9 @@ namespace Demo
             model = new DiagramLogic(family, new DiagramFactory(personLookup, new NodeConverter(), new ConnectorConverter()), personLookup);
             family.CollectionChanged += Family_CollectionChanged;
             family.Current = new Person();
-            family.Add(family as INode);
-            family.AddChild(family.Current as Person,  new Person());
-            family.AddChild(family.Current as Person, new Person() { });
+            family.Add(family.Current as Person);
+            family.AddRange(family.AddChild(family.Current as Person,  new Person()));
+            family.AddRange(family.AddChild(family.Current as Person, new Person() { }));
             InitializeComponent();
             DiagramView1.Logic = model;
         }
@@ -47,18 +37,28 @@ namespace Demo
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            family.AddChild(family.Current as Person, new Person());
+            family.AddRange(
+                family
+                .AddChild(family.Current as Person, new Person())
+                .Where(a => a != default));
+
             //DiagramView1.TheDiagram.OnFamilyCurrentChanged(default, default);
         }
 
         private void Button_Click1(object sender, RoutedEventArgs e)
         {
-            family.AddSpouse(family.Current as Person, new Person(), SpouseModifier.Current);
+            family.AddRange(
+                family
+                .AddSpouse(family.Current as Person, new Person(), SpouseModifier.Current, new DateTime(2020, 2, 2))
+                .Where(a => a != default));            
         }
 
         private void Button_Click2(object sender, RoutedEventArgs e)
         {
-            family.AddParent(family.Current as Person, new Person());
+            family.AddRange(
+                family
+                .AddParent(family.Current as Person, new Person(), new DateTime(2020, 2, 2))
+                .Where(a=>a!=default));
         }
     }
 }

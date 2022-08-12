@@ -139,7 +139,7 @@ namespace Diagram.Logic
         public DiagramRow CreateChildrenRow(IList<object> children, double scale, double scaleRelated)
         {
             // Setup the row.
-            DiagramRow row = new DiagramRow();
+            DiagramRow row = new DiagramRow() { IsParent =false};
 
             foreach (INode child in children)
             {
@@ -185,7 +185,7 @@ namespace Diagram.Logic
         public DiagramRow CreateParentRow(IList<object> parents, double scale, double scaleRelated)
         {
             // Set up the row.
-            DiagramRow row = new DiagramRow();
+            DiagramRow row = new DiagramRow() { IsParent = true };
 
             int groupCount = 0;
 

@@ -2,10 +2,14 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:diagram="clr-namespace:Microsoft.FamilyShow;assembly=Diagram"
+    xmlns:family="clr-namespace:Microsoft.FamilyShowLib;assembly=Family"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:demo="clr-namespace:Demo"
-    xmlns:local="clr-namespace:Microsoft.FamilyShow">
-
+    xmlns:local="clr-namespace:Microsoft.FamilyShow"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+        
+    
   <!--  NormalBrush is used as the Background for SimpleButton, SimpleRepeatButton  -->
   <LinearGradientBrush x:Key="NormalBrush" StartPoint="0,0" EndPoint="0,1">
     <GradientStop Offset="0.0" Color="#EEE" />
@@ -1316,31 +1320,33 @@
                   </Rectangle>
                 </Border>-->
               </StackPanel>
-              <StackPanel MaxWidth="170" Margin="0,0,5,10">
+              <StackPanel MaxWidth="170" Margin="0,0,5,10" 
+                          DataContext="{Binding Person}"
+                          d:DataContext="{d:DesignInstance family:Person}">
                 <ContentPresenter Margin="0,10,10,5" />
                 <TextBlock
                                     x:Name="ParentsDatePanel"
                                     Margin="0,0,0,5"
                                     TextWrapping="Wrap">
-                                    <Run local:BindableExtender.BindableText="{Binding Path=Person.ParentRelationshipText}" /><Run Text=" of " /><Run local:BindableExtender.BindableText="{Binding Path=Person.ParentsText}" />
+                                    <Run local:BindableExtender.BindableText="{Binding Path=ParentRelationshipText}" /><Run Text=" of " /><Run local:BindableExtender.BindableText="{Binding Path=Person.ParentsText}" />
                 </TextBlock>
                 <TextBlock
                                     x:Name="SiblingsDatePanel"
                                     Margin="0,0,0,5"
                                     TextWrapping="Wrap">
-                                    <Run local:BindableExtender.BindableText="{Binding Path=Person.SiblingRelationshipText}" /><Run Text=" to " /><Run local:BindableExtender.BindableText="{Binding Path=Person.SiblingsText}" />
+                                    <Run local:BindableExtender.BindableText="{Binding Path=SiblingRelationshipText}" /><Run Text=" to " /><Run local:BindableExtender.BindableText="{Binding Path=Person.SiblingsText}" />
                 </TextBlock>
                 <TextBlock
                                     x:Name="SpousesDatePanel"
                                     Margin="0,0,0,5"
                                     TextWrapping="Wrap">
-                                    <Run local:BindableExtender.BindableText="{Binding Path=Person.SpouseRelationshipText}" /><Run Text=" to " /><Run local:BindableExtender.BindableText="{Binding Path=Person.SpousesText}" />
+                                    <Run local:BindableExtender.BindableText="{Binding Path=SpouseRelationshipText}" /><Run Text=" to " /><Run local:BindableExtender.BindableText="{Binding Path=Person.SpousesText}" />
                 </TextBlock>
                 <TextBlock
                                     x:Name="ChildrenDatePanel"
                                     Margin="0,0,0,5"
                                     TextWrapping="Wrap">
-                                    <Run local:BindableExtender.BindableText="{Binding Path=Person.ChildRelationshipText}" /><Run Text=" to " /><Run local:BindableExtender.BindableText="{Binding Path=Person.ChildrenText}" />
+                                    <Run local:BindableExtender.BindableText="{Binding Path=ChildRelationshipText}" /><Run Text=" to " /><Run local:BindableExtender.BindableText="{Binding Path=Person.ChildrenText}" />
                 </TextBlock>
               </StackPanel>
             </DockPanel>

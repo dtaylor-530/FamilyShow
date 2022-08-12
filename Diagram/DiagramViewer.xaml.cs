@@ -28,7 +28,7 @@ namespace Microsoft.FamilyShow
 
         private static void ModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(e.NewValue is IDiagramLogic model) || !(d is DiagramViewer diagramView))
+            if (e.NewValue is not IDiagramLogic model || d is not DiagramViewer diagramView)
                 return;
             diagramView.Diagram.Logic = model;
             // Initialize the time filter.

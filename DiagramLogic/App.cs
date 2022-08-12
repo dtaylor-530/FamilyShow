@@ -6,9 +6,9 @@ using System.Windows.Input;
 
 namespace Microsoft.FamilyShow.Controls.Diagram
 {
-    public class App
-    {
-        public static People FamilyCollection = new People();
-        public static PeopleCollection<INode> Family = FamilyCollection.PeopleCollection;
-    }
+    //public class App
+    //{
+    //    public static People FamilyCollection = new People();
+    //    public static CurrentCollection<INode> Family = FamilyCollection.PeopleCollection;
+    //}
 }

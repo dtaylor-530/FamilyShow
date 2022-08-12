@@ -171,18 +171,6 @@ namespace Microsoft.FamilyShow
     }
 
     /// <summary>
-    /// Born, died and age information. 
-    /// </summary>
-    private string DateInformation
-    {
-      get
-      {
-                return Converter.DateInformation(model, displayYear);
-    
-      }
-    }
-
-    /// <summary>
     /// Person object associated with the node.
     /// </summary>
     public object Model
@@ -355,14 +343,9 @@ namespace Microsoft.FamilyShow
     private Brush GetBrushResource(string part)
     {
       // Format string, the resource is in the XAML file.
-      string resourceName = string.Format(
-          CultureInfo.InvariantCulture, "{0}{1}{2}{3}",
-         /* (person.Gender == Gender.Female) ? "Female" :*/ "Male",
-          type.ToString(),
-        /*  person.IsLiving ?*/ "Living" /*: "Deceased"*/,
-          part);
+ 
 
-      return (Brush)TryFindResource(resourceName);
+      return (Brush)TryFindResource(Converter.BrushResource(model,type, part));
     }
 
     private Brush GetGroupBrushResource(string part)
@@ -404,16 +387,12 @@ namespace Microsoft.FamilyShow
     }
 
     /// <summary>
-    /// Return true if the group indicator should be displayed.
-    /// </summary>
-  
-
-    /// <summary>
     /// Update the bottom label which contains the name, year range and age.
     /// </summary>
     private void UpdateBottomLabel()
     {
-      string label = string.Format(CultureInfo.CurrentCulture, "{0}\r{1}", string.Empty/*person.FullName*/, DateInformation);
+      string label = string.Format(CultureInfo.CurrentCulture, "{0}\r{1}", string.Empty/*person.FullName*/, 
+          Converter.DateInformation(model, displayYear));
       BottomLabel = label;
     }
   }

@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace Microsoft.FamilyShowLib
@@ -38,10 +39,10 @@ namespace Microsoft.FamilyShowLib
     /// </summary>
 
 
-    public class PeopleCollection: INotifyPropertyChanged
+    public class CurrentCollection : INotifyPropertyChanged
     {
         public event EventHandler<ContentChangedEventArgs> ContentChanged;
-       
+
         public bool IsDirty
         {
             get { return dirty; }
@@ -103,18 +104,16 @@ namespace Microsoft.FamilyShowLib
     /// List of people.
     /// </summary>
     [Serializable]
-    public class PeopleCollection<T> : PeopleCollection, ICollection<T>,  INotifyCollectionChanged
+    public class CurrentCollection<T> : CurrentCollection, ICollection<T>, INotifyCollectionChanged
     //where T: INotifyPropertyChanged
     {
-        private ObservableCollection<T> collection = new();
-        public PeopleCollection() {
-            collection.CollectionChanged += Collection_CollectionChanged;
+        private ICollection<T> collection = new List<T>();
+        public CurrentCollection()
+        {
+
         }
 
-        private void Collection_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            CollectionChanged?.Invoke(this, e);
-        }
+
 
         public event NotifyCollectionChangedEventHandler? CollectionChanged;
         //private T current;
@@ -192,17 +191,19 @@ namespace Microsoft.FamilyShowLib
         public void Add(T item)
         {
             collection.Add(item);
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new[] { item }));
         }
 
         public void Clear()
         {
             collection.Clear();
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 
         }
 
         public bool Contains(T item)
         {
-           return collection.Contains(item);
+            return collection.Contains(item);
 
         }
 
@@ -214,22 +215,31 @@ namespace Microsoft.FamilyShowLib
 
         public bool Remove(T item)
         {
-           return collection.Remove(item);
-
+            var b = collection.Remove(item);
+            if (b)
+                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove));
+            return b;
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-           return collection.GetEnumerator();
+            return collection.GetEnumerator();
 
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-           return collection.GetEnumerator();
+            return collection.GetEnumerator();
 
         }
 
+        public void AddRange(IEnumerable<T> enumerable)
+        {
+            var arr = enumerable.ToArray();
+            foreach(var item in arr)
+                collection.Add(item);
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, arr));
 
+        }
     }
 }

@@ -27,7 +27,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         private Dictionary<object, DiagramConnectorNode> personLookup;
 
         // List of people, global list that is shared by all objects in the application.
-        private PeopleCollection family;
+        private CurrentCollection family;
         private readonly IDiagramFactory factory;
 
         // Callback when a node is clicked.
@@ -39,7 +39,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 
         #endregion
 
-        public DiagramLogic(PeopleCollection family, IDiagramFactory factory, Dictionary<object, DiagramConnectorNode> personLookup)
+        public DiagramLogic(CurrentCollection family, IDiagramFactory factory, Dictionary<object, DiagramConnectorNode> personLookup)
         {
             // The list of people, this is a global list shared by the application.
             this.family = family;
@@ -68,7 +68,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         /// <summary>
         /// Gets the list of people in the family.
         /// </summary>
-        public PeopleCollection Family => family;
+        public CurrentCollection Family => family;
 
 
 
@@ -202,6 +202,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
                     {
                         // Add another row.
                         DiagramRow grandParentRow = factory.CreateParentRow(grandParents, nodeScale, nodeScale * Diagram.Const.RelatedMultiplier);
+                         
 
                         grandParentRow.Margin = new Thickness(0, 0, 0, Diagram.Const.RowSpace);
                         grandParentRow.GroupSpace = Diagram.Const.ParentRowGroupSpace;
