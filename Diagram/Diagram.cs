@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -93,13 +94,14 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 #if DEBUG
     // Flag if the row and group borders should be drawn.
     bool displayBorder;
+        private double displayYear;
 #endif
 
-    #endregion
+        #endregion
 
-    #region events
+        #region events
 
-    public event EventHandler DiagramUpdated;
+        public event EventHandler DiagramUpdated;
     public void OnDiagramUpdated()
     {
       if (DiagramUpdated != null)
@@ -144,26 +146,66 @@ namespace Microsoft.FamilyShow.Controls.Diagram
     {
       set
       {
-        // Filter nodes and connections based on the year.
-        logic.DisplayYear = value;
-        InvalidateVisual();
+                // Filter nodes and connections based on the year.
+                if (displayYear != value)
+                {
+                    displayYear = value;
+                    foreach (DiagramConnectorNode connectorNode in Nodes)
+                        connectorNode.Node.DisplayYear = displayYear;
+                }
+                InvalidateVisual();
       }
     }
 
-    /// <summary>
-    /// Gets the minimum year specified in the nodes and connections.
-    /// </summary>
-    public double MinimumYear
-    {
-      get { return logic?.MinimumYear??0; }
-    }
+        /// <summary>
+        /// Gets the minimum year specified in the nodes and connections.
+        /// </summary>
+        //public double MinimumYear
+        //{
+        //  get { return logic?.MinimumYear??0; }
+        //}
+        public double MinimumYear
+        {
+            get
+            {
+                // Init to current year.
+                double minimumYear = DateTime.Now.Year;
 
-    /// <summary>
-    /// Gets the bounding area (relative to the diagram) of the primary node.
-    /// </summary>
-    public Rect PrimaryNodeBounds
+                // Check birth years.
+                foreach (DiagramConnectorNode connectorNode in Nodes)
+                {
+                    DateTime? date = connectorNode.Node.Converter.MinimumDate(connectorNode.Node.Model);
+                    if (date.HasValue)
+                        minimumYear = Math.Min(minimumYear, date.Value.Year);
+                }
+
+                // Check marriage years.
+                //foreach (DiagramConnector connector in Connections)
+                //{
+                //    DateTime? date = connector.Converter.MinimumDate(connectorNode.Node.Model);
+                //    if (date.HasValue)
+                //        minimumYear = Math.Min(minimumYear, date.Value.Year);
+                //}
+
+                //// Marriage date.
+                //DateTime? date = connector.MarriedDate;
+                //if (date != null)
+                //    minimumYear = Math.Min(minimumYear, date.Value.Year);
+
+                //// Previous marriage date.
+                //date = connector.PreviousMarriedDate;
+                //if (date != null)
+                //    minimumYear = Math.Min(minimumYear, date.Value.Year);
+                return minimumYear;
+            }
+        }
+
+        /// <summary>
+        /// Gets the bounding area (relative to the diagram) of the primary node.
+        /// </summary>
+        public Rect PrimaryNodeBounds
     {
-      get { return logic.GetNodeBounds(logic.Current); }
+      get { return GetNodeBounds(logic.Current); }
     }
 
     /// <summary>
@@ -179,10 +221,10 @@ namespace Microsoft.FamilyShow.Controls.Diagram
     /// <summary>
     /// Gets the number of nodes in the diagram.
     /// </summary>
-    public int NodeCount
-    {
-      get { return logic.PersonLookup.Count; }
-    }
+    //public int NodeCount
+    //{
+    //  get { return logic.DiagramConnectorNodes.Count; }
+    //}
 
         #endregion
         public static readonly DependencyProperty LogicProperty = DependencyProperty.Register("Logic", typeof(IDiagramLogic), typeof(Diagram), new PropertyMetadata(null, ModelChanged));
@@ -200,17 +242,30 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             {
                 // Init the diagram logic, which handles all of the layout logic.
                 diagram.logic = logic;
-                logic.NodeClickHandler = new EventHandler(diagram.OnNodeClick);
+                //logic.NodeClickHandler = new EventHandler(diagram.OnNodeClick);
                 // Can have an empty People collection when in design tools such as Blend.
 
                 logic.ContentChanged += new EventHandler<ContentChangedEventArgs>(diagram.OnFamilyContentChanged);
                 logic.CurrentChanged += new EventHandler(diagram.OnFamilyCurrentChanged);
 
-                logic.UpdateDiagram(diagram);
-
+                //logic.UpdateDiagram(diagram);
+                diagram.Update();
             }
         }
 
+        private void Update()
+        {         
+            // First reset everything.
+            Clear();
+
+            rows = logic.GenerateRows().ToList();
+
+            // Raise event so others know the diagram was updated.
+            OnDiagramUpdated();
+
+            // Animate the new person (optional, might not be any new people).
+            AnimateNewPerson();
+        }
 
         public Diagram()
     {
@@ -343,18 +398,20 @@ namespace Microsoft.FamilyShow.Controls.Diagram
       }
 #endif
 
-      // Draw child connectors first, so marriage information appears on top.
-      foreach (DiagramConnector connector in logic.Connections)
-      {
+            // Draw child connectors first, so marriage information appears on top.
+
+                foreach (var connector in Connections)
+                {
         if (connector.IsChildConnector)
         {
           connector.Draw(drawingContext);
         }
       }
 
-      // Draw all other non-child connectors.
-      foreach (DiagramConnector connector in logic.Connections)
-      {
+            // Draw all other non-child connectors.
+          
+                foreach (var connector in Connections)
+                {
         if (!connector.IsChildConnector)
         {
           connector.Draw(drawingContext);
@@ -394,29 +451,51 @@ namespace Microsoft.FamilyShow.Controls.Diagram
       logic.Clear();
     }
 
+    public IEnumerable<DiagramConnectorNode> Nodes
+        {
+            get
+            {
+                    foreach (var connector in Connections)
+                        foreach (DiagramConnectorNode connectorNode in connector.Nodes)
+                            yield return connectorNode;
+            }
+        }
+
+    public IEnumerable<DiagramConnector> Connections
+        {
+            get
+            {
+                foreach (var row in rows)
+                    foreach (var connector in row.Connections)
+         
+                            yield return connector;
+            }
+        }
+
     /// <summary>
     /// Populate the diagram. Update the diagram and hide all non-primary nodes.
     /// Then pause, and finish the populate by fading in the new nodes.
     /// </summary>
-    private void Populate()
+    public void Populate()
     {
       // Set flag to ignore future updates until complete.
       populating = true;
 
       // Update the nodes in the diagram.
-      logic.UpdateDiagram(this);
+      Update();
 
-      // First hide all of the nodes except the primary node.
-      //foreach (DiagramConnectorNode connector in logic.PersonLookup.Values)
-      //{
-      //  if (connector.Node.Person != logic.Current)
-      //  {
-      //    connector.Node.Visibility = Visibility.Hidden;
-      //  }
-      //}
+            // First hide all of the nodes except the primary node.
+  
+              foreach (DiagramConnectorNode connectorNode in Nodes)
+              {
+                if (connectorNode.Node.Model != logic.Current)
+                {
+                     connectorNode.Node.Visibility = Visibility.Hidden;
+                }
+              }
 
-      // Required to update (hide) the connector lines.            
-      InvalidateVisual();
+            // Required to update (hide) the connector lines.            
+            InvalidateVisual();
       InvalidateArrange();
       InvalidateMeasure();
 
@@ -437,13 +516,14 @@ namespace Microsoft.FamilyShow.Controls.Diagram
       // Turn off the timer.
       animationTimer.IsEnabled = false;
 
-      // Fade each node into view.
-      foreach (DiagramConnectorNode connector in logic.PersonLookup.Values)
-      {
-        if (connector.Node.Visibility != Visibility.Visible)
+            // Fade each node into view.
+    
+                    foreach (DiagramConnectorNode connectorNode in Nodes)
+                    {
+                        if (connectorNode.Node.Visibility != Visibility.Visible)
         {
-          connector.Node.Visibility = Visibility.Visible;
-          connector.Node.BeginAnimation(OpacityProperty,
+                            connectorNode.Node.Visibility = Visibility.Visible;
+                            connectorNode.Node.BeginAnimation(OpacityProperty,
               new DoubleAnimation(0, 1,
               App.GetAnimationDuration(Const.NodeFadeInDuration)));
         }
@@ -534,22 +614,42 @@ namespace Microsoft.FamilyShow.Controls.Diagram
     /// Called when the current person in the main People collection changes.
     /// This means the diagram should be updated based on the new selected person.
     /// </summary>
-    public void OnFamilyCurrentChanged(object sender, EventArgs e)
+    private void OnFamilyCurrentChanged(object sender, EventArgs e)
     {
       // Save the bounds for the current primary person, this 
       // is required later when animating the diagram.
-      selectedNodeBounds = logic.GetNodeBounds(logic.Current);
+      selectedNodeBounds = PrimaryNodeBounds;
 
       // Repopulate the diagram.
       Populate();
     }
 
-    /// <summary>
-    /// Called when data changed in the main People collection. This can be
-    /// a new node added to the collection, updated Person details, and 
-    /// updated relationship data.
-    /// </summary>
-    private void OnFamilyContentChanged(object sender, ContentChangedEventArgs e)
+
+        /// <summary>
+        /// Return the bounds (relative to the diagram) for the specified person.
+        /// </summary>
+        public Rect GetNodeBounds(object person)
+        {
+
+            Rect bounds = Rect.Empty;
+
+
+          
+                DiagramConnectorNode connector = logic.GetDiagramConnectorNode(person);
+                bounds = new Rect(connector.TopLeft.X, connector.TopLeft.Y,
+                    connector.Node.ActualWidth, connector.Node.ActualHeight);
+            
+
+            return bounds;
+        }
+
+
+        /// <summary>
+        /// Called when data changed in the main People collection. This can be
+        /// a new node added to the collection, updated Person details, and 
+        /// updated relationship data.
+        /// </summary>
+        private void OnFamilyContentChanged(object sender, ContentChangedEventArgs e)
     {
       // Ignore if currently repopulating the diagram.
       if (populating)
@@ -562,7 +662,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
       newPerson = e.NewPerson;
 
       // Redraw the diagram.
-      logic.UpdateDiagram(this);
+      Update();
       InvalidateMeasure();
       InvalidateArrange();
       InvalidateVisual();
@@ -571,16 +671,16 @@ namespace Microsoft.FamilyShow.Controls.Diagram
     /// <summary>
     /// A node was clicked, make that node the primary node. 
     /// </summary>
-    private void OnNodeClick(object sender, EventArgs e)
-    {
-      // Get the node that was clicked.
-      if (sender is DiagramNode node)
-      {
-        // Make it the primary node. This raises the CurrentChanged
-        // event, which repopulates the diagram.
-        logic.Current = node.Person;
-      }
-    }
+    //private void OnNodeClick(object sender, EventArgs e)
+    //{
+    //  // Get the node that was clicked.
+    //  if (sender is DiagramNode node)
+    //  {
+    //    // Make it the primary node. This raises the CurrentChanged
+    //    // event, which repopulates the diagram.
+    //    logic.Current = node.Person;
+    //  }
+    //}
 
     /// <summary>
     /// Animate the new person that was added to the diagram.
@@ -594,7 +694,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
       }
 
       // Get the UI element to animate.                
-      DiagramNode node = logic.GetDiagramNode(newPerson);
+      DiagramNode node = logic.GetDiagramConnectorNode(newPerson).Node;
       if (node != null)
       {
         // Create the new person animation.

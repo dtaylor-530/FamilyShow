@@ -1,4 +1,5 @@
 ﻿using Abstractions;
+using Diagram.Logic;
 using Microsoft.FamilyShow.Controls.Diagram;
 using Microsoft.FamilyShowLib;
 using System;
@@ -28,86 +29,36 @@ namespace Demo
 
         public MainWindow()
         {
-            model = new DiagramLogic(family);
-            
+            var personLookup = new Dictionary<object, DiagramConnectorNode>();
+            model = new DiagramLogic(family, new DiagramFactory(personLookup, new NodeConverter(), new ConnectorConverter()), personLookup);
+            family.CollectionChanged += Family_CollectionChanged;
             family.Current = new Person();
-            family.Add(family.Current);
-            family.AddChild(family.Current,  new Person(), ParentChildModifier.Natural);
-            family.AddChild(family.Current, new Person() { }, ParentChildModifier.Natural);
+            family.Add(family as INode);
+            family.AddChild(family.Current as Person,  new Person());
+            family.AddChild(family.Current as Person, new Person() { });
             InitializeComponent();
             DiagramView1.Logic = model;
         }
 
+        private void Family_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            DiagramView1?.TheDiagram.Populate();
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            family.AddChild(family.Current, new Person(), ParentChildModifier.Adopted);
-            DiagramView1.TheDiagram.OnFamilyCurrentChanged(default, default);
-            //model.primaryRowSubject.OnNext(new System.Reactive.Unit());
+            family.AddChild(family.Current as Person, new Person());
+            //DiagramView1.TheDiagram.OnFamilyCurrentChanged(default, default);
         }
 
         private void Button_Click1(object sender, RoutedEventArgs e)
         {
+            family.AddSpouse(family.Current as Person, new Person(), SpouseModifier.Current);
         }
 
         private void Button_Click2(object sender, RoutedEventArgs e)
         {
+            family.AddParent(family.Current as Person, new Person());
         }
-    }
-
-    static class Helper
-    {
-        #region Add new people / relationships
-
-        /// <summary>
-        /// Adds Parent-Child relationship between person and child with the provided parent-child relationship type.
-        /// </summary>
-        public static void AddChild(this PeopleCollection<INode> people, INode parent, Person child, ParentChildModifier parentChildType)
-        {
-            //add child relationship to person
-            parent.Relationships.Add(new ChildRelationship(child, parentChildType));
-
-            //add person as parent of child
-            child.Relationships.Add(new ParentRelationship(parent, parentChildType));
-
-            //add the child to the main people list
-            if (!people.Contains(child))
-            {
-                people.Add(child);
-            }
-        }
-
-        /// <summary>
-        /// Add Spouse relationship between the person and the spouse with the provided spouse relationship type.
-        /// </summary>
-        public static void AddSpouse(this PeopleCollection<INode> people, INode person, Person spouse, SpouseModifier spouseType)
-        {
-            //assign spouses to each other    
-            person.Relationships.Add(new SpouseRelationship(spouse, spouseType));
-            spouse.Relationships.Add(new SpouseRelationship(person, spouseType));
-
-            //add the spouse to the main people list
-            if (!people.Contains(spouse))
-            {
-                people.Add(spouse);
-            }
-        }
-
-        /// <summary>
-        /// Adds sibling relation between the person and the sibling
-        /// </summary>
-        public static void AddSibling(this PeopleCollection<INode> people, Person person, Person sibling)
-        {
-            //assign sibling to each other    
-            person.Relationships.Add(new SiblingRelationship(sibling));
-            sibling.Relationships.Add(new SiblingRelationship(person));
-
-            //add the sibling to the main people list
-            if (!people.Contains(sibling))
-            {
-                people.Add(sibling);
-            }
-        }
-
-        #endregion
     }
 }

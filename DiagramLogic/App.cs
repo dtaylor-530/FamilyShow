@@ -1,4 +1,5 @@
 using Abstractions;
+using Diagram.Logic;
 using Microsoft.FamilyShowLib;
 using System;
 using System.Windows.Input;

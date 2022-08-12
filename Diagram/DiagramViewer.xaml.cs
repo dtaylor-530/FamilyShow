@@ -36,7 +36,7 @@ namespace Microsoft.FamilyShow
             diagramView.TimeSlider.Value = diagramView.TimeSlider.Maximum;
         }
 
-        public Diagram TheDiagram => Diagram;
+        public Microsoft.FamilyShow.Controls.Diagram.Diagram TheDiagram => Diagram;
 
         #region fields
 

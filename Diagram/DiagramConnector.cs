@@ -5,6 +5,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
@@ -12,105 +13,12 @@ using System.Windows.Media.Animation;
 
 namespace Microsoft.FamilyShow.Controls.Diagram
 {
-  /// <summary>
-  /// One of the nodes in a connection.
-  /// </summary>
-  public class DiagramConnectorNode
-  {
-    #region fields
 
-    // Node location in the diagram.
-    private DiagramRow row;
-    private DiagramGroup group;
-    private DiagramNode node;
-
-    #endregion
-
-    #region properties
 
     /// <summary>
-    /// Node for this connection point.
+    /// Base class for child and married diagram connectors.
     /// </summary>
-    public DiagramNode Node
-    {
-      get { return node; }
-    }
-
-    /// <summary>
-    /// Center of the node relative to the diagram.
-    /// </summary>
-    public Point Center
-    {
-      get { return GetPoint(node.Center); }
-    }
-
-    /// <summary>
-    /// LeftCenter of the node relative to the diagram.
-    /// </summary>
-    public Point LeftCenter
-    {
-      get { return GetPoint(node.LeftCenter); }
-    }
-
-    /// <summary>
-    /// RightCenter of the node relative to the diagram.
-    /// </summary>
-    public Point RightCenter
-    {
-      get { return GetPoint(node.RightCenter); }
-    }
-
-    /// <summary>
-    /// TopCenter of the node relative to the diagram.
-    /// </summary>
-    public Point TopCenter
-    {
-      get { return GetPoint(node.TopCenter); }
-    }
-
-    /// <summary>
-    /// TopRight of the node relative to the diagram.
-    /// </summary>
-    public Point TopRight
-    {
-      get { return GetPoint(node.TopRight); }
-    }
-
-    /// <summary>
-    /// TopLeft of the node relative to the diagram.
-    /// </summary>
-    public Point TopLeft
-    {
-      get { return GetPoint(node.TopLeft); }
-    }
-
-    #endregion
-
-    public DiagramConnectorNode(DiagramNode node, DiagramGroup group, DiagramRow row)
-    {
-      this.node = node;
-      this.group = group;
-      this.row = row;
-    }
-
-    /// <summary>
-    /// Return the point shifted by the row and group location.
-    /// </summary>
-    private Point GetPoint(Point point)
-    {
-      point.Offset(
-          row.Location.X + group.Location.X,
-          row.Location.Y + group.Location.Y);
-
-      return point;
-    }
-  }
-
-
-  /// <summary>
-  /// Base class for child and married diagram connectors.
-  /// </summary>
-  public abstract class DiagramConnector
+    public abstract class DiagramConnector
   {
     private static class Const
     {
@@ -131,41 +39,51 @@ namespace Microsoft.FamilyShow.Controls.Diagram
     private bool isFiltered;
 
     // Animation if the filtered state has changed.
-    private DoubleAnimation animation;
+    private DoubleAnimation? animation;
 
     // Pen to draw connector line.
     private Pen resourcePen;
 
-    #endregion
+        #endregion
 
-    /// <summary>
-    /// Return true if this is a child connector.
-    /// </summary>
-    virtual public bool IsChildConnector
+        /// <summary>
+        /// Consturctor that specifies the two nodes that are connected.
+        /// </summary>
+        protected DiagramConnector(DiagramConnectorNode startConnector, DiagramConnectorNode endConnector, IConnectorConverter converter)
+        {
+            start = startConnector;
+            end = endConnector;
+            Converter = converter;
+        }
+
+        /// <summary>
+        /// Return true if this is a child connector.
+        /// </summary>
+        virtual public bool IsChildConnector
     {
       get { return true; }
     }
 
-    /// <summary>
-    /// Gets the married date for the connector. Can be null.
-    /// </summary>
-    virtual public DateTime? MarriedDate
-    {
-      get { return null; }
-    }
+        ///// <summary>
+        ///// Gets the married date for the connector. Can be null.
+        ///// </summary>
+        //virtual public DateTime? MarriedDate
+        //{
+        //    get { return null; }
+        //}
 
-    /// <summary>
-    /// Get the previous married date for the connector. Can be null.
-    /// </summary>
-    virtual public DateTime? PreviousMarriedDate
-    {
-      get { return null; }
-    }
+        ///// <summary>
+        ///// Get the previous married date for the connector. Can be null.
+        ///// </summary>
+        //virtual public DateTime? PreviousMarriedDate
+        //{
+        //    get { return null; }
+        //}
 
-    /// <summary>
-    /// Get the starting node.
-    /// </summary>
-    protected DiagramConnectorNode StartNode
+        /// <summary>
+        /// Get the starting node.
+        /// </summary>
+        protected DiagramConnectorNode StartNode
     {
       get { return start; }
     }
@@ -177,6 +95,9 @@ namespace Microsoft.FamilyShow.Controls.Diagram
     {
       get { return end; }
     }
+
+        public ICollection<DiagramConnectorNode> Nodes => new[] { StartNode, EndNode };
+
 
     /// <summary>
     /// Get or set the pen that specifies the connector line.
@@ -237,20 +158,12 @@ namespace Microsoft.FamilyShow.Controls.Diagram
       }
     }
 
-    /// <summary>
-    /// Consturctor that specifies the two nodes that are connected.
-    /// </summary>
-    protected DiagramConnector(DiagramConnectorNode startConnector,
-        DiagramConnectorNode endConnector)
-    {
-      start = startConnector;
-      end = endConnector;
-    }
+        public IConnectorConverter Converter { get; }
 
-    /// <summary>
-    /// Return true if should continue drawing, otherwise false.
-    /// </summary>
-    virtual public bool Draw(DrawingContext drawingContext)
+        /// <summary>
+        /// Return true if should continue drawing, otherwise false.
+        /// </summary>
+        virtual public bool Draw(DrawingContext drawingContext)
     {
       // Don't draw if either of the nodes are filtered.
       if (start.Node.Visibility != Visibility.Visible ||
@@ -322,7 +235,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
   public class ChildDiagramConnector : DiagramConnector
   {
     public ChildDiagramConnector(DiagramConnectorNode startConnector,
-        DiagramConnectorNode endConnector) : base(startConnector, endConnector)
+        DiagramConnectorNode endConnector, IConnectorConverter converter) : base(startConnector, endConnector, converter)
     {
       // Get the pen that is used to draw the connection line.
       ResourcePen = (Pen)Application.Current.TryFindResource("ChildConnectionPen");
@@ -373,36 +286,36 @@ namespace Microsoft.FamilyShow.Controls.Diagram
     /// <summary>
     /// Gets the married date for the connector. Can be null.
     /// </summary>
-    override public DateTime? MarriedDate
-    {
-      get
-      {
-        //if (married)
-        //{
-        //  SpouseRelationship rel = StartNode.Node.Person.GetSpouseRelationship(EndNode.Node.Person);
-        //  if (rel != null)
-        //    return rel.MarriageDate;
-        //}
-        return null;
-      }
-    }
+    //override public DateTime? MarriedDate
+    //{
+    //  get
+    //  {
+    //    //if (married)
+    //    //{
+    //    //  SpouseRelationship rel = StartNode.Node.Person.GetSpouseRelationship(EndNode.Node.Person);
+    //    //  if (rel != null)
+    //    //    return rel.MarriageDate;
+    //    //}
+    //    return null;
+    //  }
+    //}
 
-    /// <summary>
-    /// Get the previous married date for the connector. Can be null.
-    /// </summary>
-    override public DateTime? PreviousMarriedDate
-    {
-      get
-      {
-        //if (!married)
-        //{
-        //  SpouseRelationship rel = StartNode.Node.Person.GetSpouseRelationship(EndNode.Node.Person);
-        //  if (rel != null)
-        //    return rel.DivorceDate;
-        //}
-        return null;
-      }
-    }
+    ///// <summary>
+    ///// Get the previous married date for the connector. Can be null.
+    ///// </summary>
+    //override public DateTime? PreviousMarriedDate
+    //{
+    //  get
+    //  {
+    //    //if (!married)
+    //    //{
+    //    //  SpouseRelationship rel = StartNode.Node.Person.GetSpouseRelationship(EndNode.Node.Person);
+    //    //  if (rel != null)
+    //    //    return rel.DivorceDate;
+    //    //}
+    //    return null;
+    //  }
+    //}
 
     /// <summary>
     /// Get the new filtered state of the connection. This depends
@@ -440,8 +353,8 @@ namespace Microsoft.FamilyShow.Controls.Diagram
     #endregion
 
     public MarriedDiagramConnector(bool isMarried,
-        DiagramConnectorNode startConnector, DiagramConnectorNode endConnector) :
-        base(startConnector, endConnector)
+        DiagramConnectorNode startConnector, DiagramConnectorNode endConnector, IConnectorConverter converter) :
+        base(startConnector, endConnector, converter)
     {
       // Store if curretnly married or former.
       married = isMarried;
@@ -473,56 +386,35 @@ namespace Microsoft.FamilyShow.Controls.Diagram
     /// </summary>
     private void DrawMarried(DrawingContext drawingContext)
     {
-      //const double TextSpace = 3;
+            const double TextSpace = 3;
 
-      //// Determine the start and ending points based on what node is on the left / right.
-      //Point startPoint = (StartNode.TopCenter.X < EndNode.TopCenter.X) ? StartNode.TopCenter : EndNode.TopCenter;
-      //Point endPoint = (StartNode.TopCenter.X < EndNode.TopCenter.X) ? EndNode.TopCenter : StartNode.TopCenter;
+            // Determine the start and ending points based on what node is on the left / right.
+            Point startPoint = (StartNode.TopCenter.X < EndNode.TopCenter.X) ? StartNode.TopCenter : EndNode.TopCenter;
+            Point endPoint = (StartNode.TopCenter.X < EndNode.TopCenter.X) ? EndNode.TopCenter : StartNode.TopCenter;
 
-      //// Use a higher arc when the nodes are further apart.
-      //double arcHeight = (endPoint.X - startPoint.X) / 4;
-      //Point middlePoint = new Point(startPoint.X + ((endPoint.X - startPoint.X) / 2), startPoint.Y - arcHeight);
+            // Use a higher arc when the nodes are further apart.
+            double arcHeight = (endPoint.X - startPoint.X) / 4;
+            Point middlePoint = new Point(startPoint.X + ((endPoint.X - startPoint.X) / 2), startPoint.Y - arcHeight);
 
-      //// Draw the arc, get the bounds so can draw connection text.
-      //Rect bounds = DrawArc(drawingContext, Pen, startPoint, middlePoint, endPoint);
+            // Draw the arc, get the bounds so can draw connection text.
+            Rect bounds = DrawArc(drawingContext, Pen, startPoint, middlePoint, endPoint);
 
-      //// Get the relationship info so the dates can be displayed.
-      //SpouseRelationship rel = StartNode.Node.Person.GetSpouseRelationship(EndNode.Node.Person);
-      //if (rel != null)
-      //{
-      //  // Marriage date.
-      //  if (rel.MarriageDate != null)
-      //  {
-      //    string text = rel.MarriageDate.Value.Year.ToString(CultureInfo.CurrentCulture);
+            // Get the relationship info so the dates can be displayed.
+            //var rel = Converter.Relationship(StartNode.Node.Model, EndNode.Node.Model);
 
-      //    FormattedText format = new FormattedText(text,
-      //        CultureInfo.CurrentUICulture,
-      //        FlowDirection.LeftToRight, new Typeface(connectionTextFont,
-      //        FontStyles.Normal, FontWeights.Normal, FontStretches.Normal,
-      //        connectionTextFont), connectionTextSize, GetBrush(connectionTextColor));
+            string text = Converter.Text(StartNode.Node.Model, EndNode.Node.Model);
 
-      //    drawingContext.DrawText(format, new Point(
-      //        bounds.Left + ((bounds.Width / 2) - (format.Width / 2)),
-      //        bounds.Top - format.Height - TextSpace));
-      //  }
+                    FormattedText format = new FormattedText(text,
+                        CultureInfo.CurrentUICulture,
+                        FlowDirection.LeftToRight, new Typeface(connectionTextFont,
+                        FontStyles.Normal, FontWeights.Normal, FontStretches.Normal,
+                        connectionTextFont), connectionTextSize, GetBrush(connectionTextColor));
 
-      //  // Previous marriage date.
-      //  if (!married && rel.DivorceDate != null)
-      //  {
-      //    string text = rel.DivorceDate.Value.Year.ToString(CultureInfo.CurrentCulture);
-
-      //    FormattedText format = new FormattedText(text,
-      //        CultureInfo.CurrentUICulture,
-      //        FlowDirection.LeftToRight, new Typeface(connectionTextFont,
-      //        FontStyles.Normal, FontWeights.Normal, FontStretches.Normal,
-      //        connectionTextFont), connectionTextSize, GetBrush(connectionTextColor));
-
-      //    drawingContext.DrawText(format, new Point(
-      //        bounds.Left + ((bounds.Width / 2) - (format.Width / 2)),
-      //        bounds.Top + TextSpace));
-      //  }
-      //}
-    }
+                    drawingContext.DrawText(format, new Point(
+                        bounds.Left + ((bounds.Width / 2) - (format.Width / 2)),
+                        bounds.Top - format.Height - TextSpace));
+               
+        }
 
     /// <summary>
     /// Draw an arc connecting the two nodes.

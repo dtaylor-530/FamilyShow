@@ -64,6 +64,11 @@ namespace Microsoft.FamilyShowLib
         //    get { return personFullname; }
         //    set { personFullname = value; }
         //}
+
+        public DateTime? StartDate { get; set; }
+    
+        public DateTime? EndDate { get; set; }
+
     }
 
     /// <summary>
@@ -138,17 +143,17 @@ namespace Microsoft.FamilyShowLib
       set { spouseModifier = value; }
     }
 
-    public DateTime? MarriageDate
-    {
-      get { return marriageDate; }
-      set { marriageDate = value; }
-    }
+    //public DateTime? StartDate
+    //{
+    //  get { return marriageDate; }
+    //  set { marriageDate = value; }
+    //}
 
-    public DateTime? DivorceDate
-    {
-      get { return divorceDate; }
-      set { divorceDate = value; }
-    }
+    //public DateTime? EndDate
+    //{
+    //  get { return divorceDate; }
+    //  set { divorceDate = value; }
+    //}
     public String MarriagePlace
     {
       get { return marriagePlace; }

@@ -69,7 +69,7 @@ namespace Diagram.Logic
                 foreach (DiagramNode node in group.Nodes)
                 {
                     if (node.Type == NodeType.Related || node.Type == NodeType.Primary)
-                        list.Add(node.Person as INode);
+                        list.Add(node.Model as INode);
                 }
             }
 

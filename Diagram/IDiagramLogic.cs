@@ -27,23 +27,22 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 
     public interface IDiagramLogic
     {
-        List<DiagramConnector> Connections { get; }
-        double DisplayYear { set; }
-        //PeopleCollection Family { get; }
-        double MinimumYear { get; }
-        EventHandler NodeClickHandler { get; set; }
-        Dictionary<object, DiagramConnectorNode> PersonLookup { get; }
+
+        //EventHandler NodeClickHandler { get; set; }
+   
+
         EventHandler<ContentChangedEventArgs> ContentChanged { get; set; }
         EventHandler CurrentChanged { get; set; }
-        object Current { get; set; }
-        //object Family { get; }
 
-        void Clear();
-        //DiagramRow CreateChildrenRow(List<object> children, double scale, double scaleRelated);
-        //DiagramRow CreateParentRow(System.Collections.ObjectModel.Collection<object> parents, double scale, double scaleRelated);
-        //DiagramRow CreatePrimaryRow(object person, double scale, double scaleRelated);
-        DiagramNode GetDiagramNode(object person);
-        Rect GetNodeBounds(object person);
-        void UpdateDiagram(Diagram diagram);
+        //List<DiagramConnectorNode> DiagramConnectorNodes { get; }
+        //List<DiagramConnector> Connections { get; }
+
+        double DisplayYear { set; }
+        //double MinimumYear { get; }
+        object Current { get; set; }
+
+        void Clear();       
+        DiagramConnectorNode GetDiagramConnectorNode(object person);
+        IEnumerable<DiagramRow> GenerateRows();
     }
 }

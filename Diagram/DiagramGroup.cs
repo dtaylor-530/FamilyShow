@@ -26,10 +26,10 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 
     // List of nodes in the group.
     private List<DiagramNode> nodes = new List<DiagramNode>();
+    private List<DiagramConnector> connectors = new List<DiagramConnector>();
 
     #endregion
 
-    #region properties
 
     /// <summary>
     /// Location of the group, relative to the row.
@@ -47,12 +47,18 @@ namespace Microsoft.FamilyShow.Controls.Diagram
     {
       get { return new ReadOnlyCollection<DiagramNode>(nodes); }
     }
+        /// <summary>
+        /// List of nodes in the group.
+        /// </summary>
+        public ReadOnlyCollection<DiagramConnector> Connectors
+        {
+            get { return new ReadOnlyCollection<DiagramConnector>(connectors); }
+        }
 
-    #endregion
 
-    #region overrides
+        #region overrides
 
-    protected override Size MeasureOverride(Size availableSize)
+        protected override Size MeasureOverride(Size availableSize)
     {
       // Let each node determine how large they want to be.
       Size size = new Size(double.PositiveInfinity, double.PositiveInfinity);
@@ -92,15 +98,26 @@ namespace Microsoft.FamilyShow.Controls.Diagram
       AddVisualChild(node);
     }
 
-    /// <summary>
-    /// Remove all nodes from the group.
-    /// </summary>
-    public void Clear()
+        public void Add(DiagramConnector conn)
+        {
+            connectors.Add(conn);
+        }
+
+        public void Add(IEnumerable<ChildDiagramConnector> item2)
+        {
+            connectors.AddRange(item2);
+        }
+
+        /// <summary>
+        /// Remove all nodes from the group.
+        /// </summary>
+        public void Clear()
     {
       foreach (DiagramNode node in nodes)
         RemoveVisualChild(node);
 
       nodes.Clear();
+            connectors.Clear();
     }
 
     /// <summary>
@@ -151,5 +168,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 
       return totalSize;
     }
-  }
+
+   
+    }
 }

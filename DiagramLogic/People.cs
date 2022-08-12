@@ -1,41 +1,18 @@
-using Abstractions;
+﻿using Abstractions;
+using Microsoft.FamilyShowLib;
 using System;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace Microsoft.FamilyShowLib
+namespace Diagram.Logic
 {
-  /// <summary>
-  /// Argument that is passed with the ContentChanged event. Contains the
-  /// person that was added to the list. The person can be null.
-  /// </summary>
-  public class ContentChangedEventArgs : EventArgs
-  {
-    private INode newPerson;
 
-    public INode NewPerson
-    {
-      get { return newPerson; }
-    }
-
-    public ContentChangedEventArgs(INode newPerson)
-    {
-      this.newPerson = newPerson;
-    }
-  }
-
-  /// <summary>
-  /// Contains the collection of person nodes and which person in the list is the currently
-  /// selected person. This class exists mainly because of xml serialization limitations.
-  /// Properties are not serialized in a class that is derived from a collection class 
-  /// (as the PeopleCollection class is). Therefore the People collection is contained in 
-  /// this class, along with other important properties that need to be serialized.
-  /// </summary>
-  [XmlRoot("Family")]
+          [XmlRoot("Family")]
   //[XmlInclude(typeof(ParentRelationship))]
   //[XmlInclude(typeof(ChildRelationship))]
   //[XmlInclude(typeof(SpouseRelationship))]
@@ -215,7 +192,7 @@ namespace Microsoft.FamilyShowLib
     /// <summary>
     /// Load the list of people from Family.Show version 2.0 file format
     /// </summary>
-    [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+  //  [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
     public void LoadVersion2()
     {
       //// Loading, clear existing nodes
@@ -403,129 +380,5 @@ namespace Microsoft.FamilyShowLib
 
     #endregion
   }
-
-
-
-  /// <summary>
-  /// List of people.
-  /// </summary>
-  [Serializable]
-  public class PeopleCollection<T> : ObservableCollection<T>, INotifyPropertyChanged where T:INode
-  {
-    public PeopleCollection() { }
-
-    private T current;
-    private bool dirty;
-
-    /// <summary>
-    /// Person currently selected in application
-    /// </summary>
-    public T Current
-    {
-      get { return current; }
-      set
-      {
-        if (current?.Equals(value) != true)
-        {
-          current = value;
-          OnPropertyChanged(nameof(Current));
-          OnCurrentChanged();
-        }
-      }
     }
 
-    /// <summary>
-    /// Get or set if the list has been modified.
-    /// </summary>
-    public bool IsDirty
-    {
-      get { return dirty; }
-      set { dirty = value; }
-    }
-
-    public bool IsOldVersion { get; set; }
-
-    /// <summary>
-    /// A person or relationship was added, removed or modified in the list. This is used
-    /// instead of CollectionChanged since CollectionChanged can be raised before the 
-    /// relationships are setup (the Person was added to the list, but its Parents, Children,
-    /// Sibling and Spouse collections have not been established). This means the subscriber 
-    /// (the diagram control) will update before all of the information is available and 
-    /// relationships will not be displayed.
-    /// 
-    /// The ContentChanged event addresses this problem and allows the flexibility to
-    /// raise the event after *all* people have been added to the list, and *all* of
-    /// their relationships have been established. 
-    /// 
-    /// Objects that add or remove people from the list, or add or remove relationships
-    /// should call OnContentChanged when they want to notify subscribers that all
-    /// changes have been made.
-    /// </summary>
-    public event EventHandler<ContentChangedEventArgs> ContentChanged;
-
-    /// <summary>
-    /// The details of a person changed.
-    /// </summary>
-    public void OnContentChanged()
-    {
-      dirty = true;
-      if (ContentChanged != null)
-      {
-        ContentChanged(this, new ContentChangedEventArgs(null));
-      }
-    }
-
-    /// <summary>
-    /// The details of a person changed, and a new person was added to the collection.
-    /// </summary>
-    public void OnContentChanged(INode newPerson)
-    {
-      dirty = true;
-      if (ContentChanged != null)
-      {
-        ContentChanged(this, new ContentChangedEventArgs(newPerson));
-      }
-    }
-
-    /// <summary> 
-    /// The primary person changed in the list.
-    /// </summary>
-    public event EventHandler CurrentChanged;
-    protected void OnCurrentChanged()
-    {
-      if (CurrentChanged != null)
-      {
-        CurrentChanged(this, EventArgs.Empty);
-      }
-    }
-
-  
-
-    public T? Find(string id)
-    {
-      foreach (T person in this)
-      {
-        if (person.Id == id)
-        {
-          return person;
-        }
-      }
-
-      return default;
-    }
-
-    #region INotifyPropertyChanged Members
-
-    protected override event PropertyChangedEventHandler PropertyChanged;
-
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-      if (PropertyChanged != null)
-      {
-        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-      }
-    }
-
-    #endregion
-  }
-}

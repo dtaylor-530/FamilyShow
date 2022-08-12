@@ -7,6 +7,8 @@
         RelationshipType RelationshipType { get; set; }
         INode RelationTo { get; set; }
         SpouseModifier SpouseModifier { get; }
+        DateTime? StartDate { get; set; }
+        DateTime? EndDate { get; set; }
     }
 
 }

@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
@@ -30,10 +31,9 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 
     // List of groups in the row.
     private List<DiagramGroup> groups = new List<DiagramGroup>();
+    private List<DiagramConnector> connectors = new List<DiagramConnector>();
 
     #endregion
-
-    #region properties
 
     /// <summary>
     /// Space between each group.
@@ -72,11 +72,19 @@ namespace Microsoft.FamilyShow.Controls.Diagram
       }
     }
 
-    #endregion
+        public void Add(DiagramConnector conn)
+        {
+            connectors.Add(conn);
+        }
 
-    #region overrides
+        public void Add(IEnumerable<ChildDiagramConnector> item2)
+        {
+            connectors.AddRange(item2);
+        }
 
-    protected override Size MeasureOverride(Size availableSize)
+        #region overrides
+
+        protected override Size MeasureOverride(Size availableSize)
     {
       // Let each group determine how large they want to be.
       Size size = new Size(double.PositiveInfinity, double.PositiveInfinity);
@@ -107,12 +115,17 @@ namespace Microsoft.FamilyShow.Controls.Diagram
       return groups[index];
     }
 
-    #endregion
+        #endregion
 
-    /// <summary>
-    /// Add the group to the row.
-    /// </summary>
-    public void Add(DiagramGroup group)
+        /// <summary>
+        /// Gets the list of connections between nodes.
+        /// </summary>
+        public ICollection<DiagramConnector> Connections => connectors.Concat(groups.SelectMany(a => a.Connectors)).ToArray();
+
+        /// <summary>
+        /// Add the group to the row.
+        /// </summary>
+        public void Add(DiagramGroup group)
     {
       groups.Add(group);
       AddVisualChild(group);
@@ -128,7 +141,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         group.Clear();
         RemoveVisualChild(group);
       }
-
+            connectors.Clear();
       groups.Clear();
     }
 
@@ -172,5 +185,6 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 
       return totalSize;
     }
-  }
+
+    }
 }

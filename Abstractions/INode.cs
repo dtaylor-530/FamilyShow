@@ -29,6 +29,9 @@ namespace Abstractions
         IParentSet ParentSet { get; }
         Gender Gender { get; set; }
         bool HasSpouse { get; set; }
+        bool IsLiving { get; }
+        int? Age { get; }
+        DateTime? DeathDate { get; }
     }
 
     public enum Gender

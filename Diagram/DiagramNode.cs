@@ -17,6 +17,7 @@
 */
 
 //using Abstractions;
+using Microsoft.FamilyShow.Controls.Diagram;
 using System;
 using System.Globalization;
 using System.Windows;
@@ -44,17 +45,18 @@ namespace Microsoft.FamilyShow
   /// </summary>
   public partial class DiagramNode : Button
   {
-    private static class Const
+        public static class Const
     {
       public static double OpacityFiltered = 0.15;
       public static double OpacityNormal = 1.0;
       public static double AnimationDuration = 300;
+      public static double Scale = 1;
     }
 
     #region fields
 
     // Person object associated with the node.
-    private object person;
+    private object? model;
 
     // Location of the node, relative to its parent group.
     private Point location = new Point();
@@ -63,7 +65,7 @@ namespace Microsoft.FamilyShow
     private NodeType type = NodeType.Related;
 
     // The amount to scale the node. 
-    private double scale = 1;
+    private double scale = Const.Scale;
 
     // The current display year, this is used for the time filter.
     private double displayYear = DateTime.Now.Year;
@@ -74,7 +76,20 @@ namespace Microsoft.FamilyShow
 
     #endregion
 
-    #region properties
+        public DiagramNode(object model, NodeType type, INodeConverter converter)
+        {
+            this.model = model;
+            this.type = type;
+            Converter = converter;
+
+            DataContext = this;
+
+            // Update the template to reflect the gender.
+            UpdateTemplate();
+
+            UpdateBottomLabel();
+
+        }
 
     /// <summary>
     /// Get the fill brush for the node based on the node type.
@@ -126,9 +141,9 @@ namespace Microsoft.FamilyShow
       {
         displayYear = value;
 
-        // Update the filtered state based on the birth date.
-        //IsFiltered = (person != null && person.BirthDate != null && person.BirthDate.Value.Year > displayYear);
-        IsFiltered = true;
+                // Update the filtered state based on the birth date.
+        IsFiltered = Converter.IsFiltered(model, displayYear);
+   
         // Recompuate the bottom label which contains the age,
         // the new age is relative to the new display year
         UpdateBottomLabel();
@@ -162,79 +177,30 @@ namespace Microsoft.FamilyShow
     {
       get
       {
-        //// Living, example: 1900 | 107
-        //if (person.IsLiving)
-        //{
-        //  if (person.BirthDate == null)
-        //  {
-        //    return string.Empty;
-        //  }
-
-        //  if (!person.Age.HasValue)
-        //  {
-        //    return string.Empty;
-        //  }
-
-        //  int age = person.Age.Value - (DateTime.Now.Year - (int)displayYear);
-        //  return string.Format(CultureInfo.CurrentUICulture, "{0} | {1}", person.BirthDate.Value.Year, Math.Max(0, age));
-        //}
-
-        //// Deceased, example: 1900 - 1950 | 50                    
-        //if (person.BirthDate != null && person.DeathDate != null)
-        //{
-        //  if (!person.Age.HasValue)
-        //  {
-        //    return string.Empty;
-        //  }
-
-        //  int age = (displayYear >= person.DeathDate.Value.Year) ?
-        //      person.Age.Value : person.Age.Value - (person.DeathDate.Value.Year - (int)displayYear);
-
-        //  return string.Format(CultureInfo.CurrentUICulture,
-        //      "{0} - {1} | {2}", person.BirthDate.Value.Year,
-        //      person.DeathDate.Value.Year, Math.Max(0, age));
-        //}
-
-        //// Deceased, example: ? - 1950 | ?
-        //if (person.BirthDate == null && person.DeathDate != null)
-        //{
-        //  return string.Format(CultureInfo.CurrentUICulture,
-        //      "? - {0} | ?", person.DeathDate.Value.Year);
-        //}
-
-        //// Deceased, example: 1900 - ? | ?
-        //if (person.BirthDate != null && person.DeathDate == null)
-        //{
-        //  return string.Format(CultureInfo.CurrentUICulture,
-        //      "{0} - ? | ?", person.BirthDate.Value.Year);
-        //}
-
-        return string.Empty;
+                return Converter.DateInformation(model, displayYear);
+    
       }
     }
 
     /// <summary>
     /// Person object associated with the node.
     /// </summary>
-    public object Person
+    public object Model
     {
-      get { return person; }
-      set
-      {
-        person = value;
-        DataContext = this;
-
-        // Update the template to reflect the gender.
-        UpdateTemplate();
-
-        UpdateBottomLabel();
-      }
+      get { return model; }
+      //set
+      //{
+      //  model = value;
+       
+      //}
     }
+
+    public INodeConverter Converter { get; set; }
 
     /// <summary>
     /// Set the scale value of the node.
     /// </summary>
-    public double Scale
+        public double Scale
     {
       get { return scale; }
       set
@@ -278,7 +244,7 @@ namespace Microsoft.FamilyShow
 
         // Shift the center to the left. This is an estimate since we don't 
         // know the exact position of the person drawing within the node.
-        FrameworkElement personElement = Template.FindName("Person", this) as FrameworkElement;
+        FrameworkElement personElement = Template.FindName(Converter.NodeTemplate(), this) as FrameworkElement;
         double offset = (type == NodeType.Primary) ? 12 : 5;
         point.X -= (personElement.ActualWidth / offset);
         return point;
@@ -334,14 +300,14 @@ namespace Microsoft.FamilyShow
     public NodeType Type
     {
       get { return type; }
-      set
-      {
-        type = value;
-        UpdateTemplate();
-      }
+      //set
+      //{
+      //  type = value;
+      //  UpdateTemplate();
+      //}
     }
 
-    #endregion
+  
 
     #region dependency properties
 
@@ -412,14 +378,8 @@ namespace Microsoft.FamilyShow
     /// </summary>
     private void UpdateTemplate()
     {
-      // Determine the node template based on node properties.
-      string template = string.Format(
-          CultureInfo.InvariantCulture, "{0}{1}NodeTemplate",
-          /*(person.Gender == Gender.Female) ? "Female" :*/ "Male",
-          (type == NodeType.Primary) ? "Primary" : "");
-
       // Assign the node template.                
-      Template = (ControlTemplate)FindResource(template);
+      Template = (ControlTemplate)FindResource(Converter.NodeTemplate(model,Type));
     }
 
     /// <summary>
@@ -434,7 +394,7 @@ namespace Microsoft.FamilyShow
       }
 
       // Determine if the group indicator should be displayed.
-      bool isGrouping = ShouldDisplayGroupIndicator();
+      bool isGrouping = Converter.ShouldDisplayGroupIndicator(model, type);
 
       FrameworkElement element = Template.FindName("Group", this) as FrameworkElement;
       if (element != null)
@@ -446,49 +406,7 @@ namespace Microsoft.FamilyShow
     /// <summary>
     /// Return true if the group indicator should be displayed.
     /// </summary>
-    private bool ShouldDisplayGroupIndicator()
-    {
-      // Primary and related nodes never display the group indicator.
-      if (type == NodeType.Primary || type == NodeType.Related)
-      {
-        return false;
-      }
-
-      bool show = false;
-      //switch (type)
-      //{
-      //  // Spouse - if have parents, siblings, or ex spouses.
-      //  case NodeType.Spouse:
-      //    if (person.Parents.Count > 0 || person.Siblings.Count > 0 || person.PreviousSpouses.Count > 0)
-      //    {
-      //      show = true;
-      //    }
-
-      //    break;
-
-      //  // Sibling - if have spouse, or children.
-      //  case NodeType.Sibling:
-      //    if (person.Spouses.Count > 0 || person.Children.Count > 0)
-      //    {
-      //      show = true;
-      //    }
-
-      //    break;
-
-      //  // Half sibling - like sibling, but also inherits the 
-      //  // group status from all parents.
-      //  case NodeType.SiblingLeft:
-      //  case NodeType.SiblingRight:
-      //    if (person.Spouses.Count > 0 || person.Children.Count > 0)
-      //    {
-      //      show = true;
-      //    }
-
-      //    break;
-      //}
-
-      return show;
-    }
+  
 
     /// <summary>
     /// Update the bottom label which contains the name, year range and age.

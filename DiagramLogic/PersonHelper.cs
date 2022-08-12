@@ -12,20 +12,20 @@ namespace Diagram.Logic
 {
     public static class PersonHelper
     {
-        public static void AddChildConnections(this DiagramLogic logic, IList<INode> parents)
+        public static IEnumerable<(INode, IEnumerable<ChildDiagramConnector>)> AddChildConnections(this Dictionary<object, DiagramConnectorNode> logic, IList<INode> parents, IConnectorConverter converter)
         {
             foreach (INode person in parents)
-                AddChildConnections(logic, person);
+                yield return (person, AddChildConnections(logic, person, converter));
         }
 
         /// <summary>
         /// Add connections between the parent and parent’s children.
         /// </summary>
-        public static void AddChildConnections(this DiagramLogic logic, INode parent)
+        public static IEnumerable<ChildDiagramConnector> AddChildConnections(this Dictionary<object, DiagramConnectorNode> logic, INode parent, IConnectorConverter converter)
         {
             foreach (INode child in parent.Children)
             {
-                Add(logic, parent, child);
+                yield return Add(logic, parent, child, converter);
             }
         }
 
@@ -33,22 +33,21 @@ namespace Diagram.Logic
         /// <summary>
         /// Add connections between the child and child's parents.
         /// </summary>
-        public static void AddParentConnections(this DiagramLogic logic, INode child)
+        public static IEnumerable<ChildDiagramConnector> AddParentConnections(this Dictionary<object, DiagramConnectorNode> logic, INode child, IConnectorConverter converter)
         {
             foreach (INode parent in child.Parents)
             {
-                Add(logic, parent, child);
+                yield return Add(logic, parent, child, converter);
             }
         }
 
-        public static void Add(this DiagramLogic logic, INode parent, INode child)
+        public static ChildDiagramConnector Add(this Dictionary<object, DiagramConnectorNode> logic, INode parent, INode child, IConnectorConverter converter)
         {
-            if (logic.PersonLookup.ContainsKey(parent) &&
-                logic.PersonLookup.ContainsKey(child))
+            if (logic.ContainsKey(parent) && logic.ContainsKey(child))
             {
-                logic.Connections.Add(new ChildDiagramConnector(
-                    logic.PersonLookup[parent], logic.PersonLookup[child]));
+                return new ChildDiagramConnector(logic[parent], logic[child], converter);
             }
+            throw new Exception("dfg 3424 dfgdf");
         }
 
         /// <summary>
@@ -58,8 +57,8 @@ namespace Diagram.Logic
         {
             foreach (IRelationship relationship in person.Relationships)
             {
-                
-                if (relationship.RelationshipType== RelationshipType.Spouse)
+
+                if (relationship.RelationshipType == RelationshipType.Spouse)
                 {
                     if (relationship.RelationTo.Equals(spouse))
                     {
