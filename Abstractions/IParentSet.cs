@@ -4,9 +4,9 @@ namespace Microsoft.FamilyShowLib
 {
     public interface IParentSet
     {
-        INode FirstParent { get; set; }
+        INode FirstParent { get; }
         string Name { get; }
-        INode SecondParent { get; set; }
+        INode SecondParent { get;  }
 
         bool Equals(IParentSet other);
     }

@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Demo" xmlns:diagram="clr-namespace:Microsoft.FamilyShow;assembly=Diagram"
+        xmlns:local="clr-namespace:Demo" xmlns:diagram="clr-namespace:Microsoft.FamilyShow;assembly=Diagram" xmlns:diagram1="clr-namespace:Microsoft.FamilyShow.Controls.Diagram;assembly=Diagram"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
@@ -27,11 +27,16 @@
         <DockPanel>
             <ToolBar DockPanel.Dock="Top" Height="30">
                 <Button Click="Button_Click">Add Child</Button>
-                <Button Click="Button_Click1">Add Child 1</Button>
-                <Button Click="Button_Click2">Add Child 2</Button>
+                <Button Click="Button_Click1">Add Spouse</Button>
+                <Button Click="Button_Click2">Add Parent</Button>
+                <Button Click="Button_Click3">Add Sibling</Button>
             </ToolBar>
-            <diagram:DiagramViewer x:Name="DiagramView1">
-            </diagram:DiagramViewer>
+            <UniformGrid Rows="1">
+                <diagram:DiagramViewer x:Name="DiagramView1"/>
+                <Viewbox>
+                    <diagram1:Diagram x:Name="Diagram"/>
+                </Viewbox>
+            </UniformGrid>
         </DockPanel>
     </UniformGrid>
 </Window>

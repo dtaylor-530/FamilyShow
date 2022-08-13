@@ -8,8 +8,9 @@ using System.Threading;
 using System.Windows.Media.TextFormatting;
 using System.Windows.Media;
 using System.Windows;
+using Diagram.Logic;
 
-namespace Diagram.Logic
+namespace Demo
 {
     public class ConnectorConverter : IConnectorConverter
     {
@@ -48,8 +49,8 @@ namespace Diagram.Logic
             //    minimumYear = Math.Min(minimumYear, date.Value.Year);
 
             //DateTime? date = person.BirthDate;
-   
-           //return date;
+
+            //return date;
         }
         public IRelationship? Relationship(object obj1, object obj2)
         {
@@ -63,7 +64,7 @@ namespace Diagram.Logic
             }
 
             return person1.GetSpouseRelationship(person2);
-   
+
         }
         public string Text(object obj1, object obj2)
         {

@@ -26,11 +26,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
     }
 
     public interface IDiagramLogic
-    {
-
-        //EventHandler NodeClickHandler { get; set; }
-   
-
+    { 
         EventHandler<ContentChangedEventArgs> ContentChanged { get; set; }
         EventHandler CurrentChanged { get; set; }
 
@@ -40,6 +36,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         double DisplayYear { set; }
         //double MinimumYear { get; }
         object Current { get; set; }
+
 
         void Clear();       
         DiagramConnectorNode GetDiagramConnectorNode(object person);

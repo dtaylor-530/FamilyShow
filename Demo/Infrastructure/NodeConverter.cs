@@ -1,6 +1,7 @@
 ﻿using Abstractions;
 using Microsoft.FamilyShow;
 using Microsoft.FamilyShow.Controls.Diagram;
+using Microsoft.FamilyShowLib;
 using System;
 using System.Globalization;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Diagram.Logic
 
         public bool IsFiltered(object obj, double displayYear)
         {
-            if (obj is INode { } person)
+            if (obj is Person { } person)
             {
                 return person.BirthDate != null && person.BirthDate.Value.Year > displayYear;
             }
@@ -24,7 +25,7 @@ namespace Diagram.Logic
 
         public bool ShouldDisplayGroupIndicator(object obj, NodeType nodeType)
         {
-            if (obj is INode { } person)
+            if (obj is Person { } person)
             {
                 switch (nodeType)
                 {
@@ -33,7 +34,7 @@ namespace Diagram.Logic
                     case NodeType.Related:
                         return false;
                     // Spouse - if have parents, siblings, or ex spouses.
-                    case NodeType.Spouse when (person.Parents.Count() > 0 || person.Siblings.Count() > 0 || person.PreviousSpouses.Count() > 0):
+                    case NodeType.Spouse when (person.Parents.Count() > 0 || person.FullSiblings.Count() > 0 || person.PreviousSpouses.Count() > 0):
                         return true;
                     // Sibling - if have spouse, or children.
                     case NodeType.Sibling when (person.Spouses.Count() > 0 || person.Children.Count() > 0):
@@ -52,7 +53,7 @@ namespace Diagram.Logic
 
         public string DateInformation(object obj, double displayYear)
         {
-            if (obj is INode { } person)
+            if (obj is Person { } person)
             {
                 // Living, example: 1900 | 107
                 if (person.IsLiving)
@@ -107,7 +108,7 @@ namespace Diagram.Logic
 
         public string NodeTemplate(object obj, NodeType type)
         {
-            if (obj is not INode { } person)
+            if (obj is not Person { } person)
             {
                 throw new Exception("Tfbgdgfdgf");
             }
@@ -125,7 +126,7 @@ namespace Diagram.Logic
 
         public DateTime? MinimumDate(object obj)
         {
-            if (obj is not INode { } person)
+            if (obj is not Person { } person)
             {
                 throw new Exception("Tfbgdgfdgf");
             }
@@ -137,7 +138,7 @@ namespace Diagram.Logic
 
         public object BrushResource(object? model, NodeType type, string part)
         {
-            if (model is not INode { } person)
+            if (model is not Person { } person)
             {
                 throw new Exception("Tfbgdgfdgf");
             }

@@ -87,32 +87,32 @@ namespace Microsoft.FamilyShowLib
     /// <summary>
     /// Return a string for the parent group.
     /// </summary>
-    private static string GetKey(INode partnerLeft, INode partnerRight)
-    {
-      // This is used as the key to the list. This is tricky since parent
-      // groups should not be duplicated. For example, the list should
-      // not contain the parent groups:
-      //
-      //  Bob Bee
-      //  Bee Bob
-      //  
-      // The list should only contain the group:
-      //
-      //  Bob Bee
-      //
-      // This is accomplished by concatenating the parent
-      // ID's together when creating the key.
+    //private static string GetKey(INode partnerLeft, INode partnerRight)
+    //{
+    //  // This is used as the key to the list. This is tricky since parent
+    //  // groups should not be duplicated. For example, the list should
+    //  // not contain the parent groups:
+    //  //
+    //  //  Bob Bee
+    //  //  Bee Bob
+    //  //  
+    //  // The list should only contain the group:
+    //  //
+    //  //  Bob Bee
+    //  //
+    //  // This is accomplished by concatenating the parent
+    //  // ID's together when creating the key.
 
-      string key = partnerLeft.Id;
-      if (partnerRight != null)
-      {
-        if (partnerLeft.Id.CompareTo(partnerRight.Id) < 0)
-          key = partnerLeft.Id + partnerRight.Id;
-        else
-          key = partnerRight.Id + partnerLeft.Id;
-      }
+    //  string key = partnerLeft.Id;
+    //  if (partnerRight != null)
+    //  {
+    //    if (partnerLeft.Id.CompareTo(partnerRight.Id) < 0)
+    //      key = partnerLeft.Id + partnerRight.Id;
+    //    else
+    //      key = partnerRight.Id + partnerLeft.Id;
+    //  }
 
-      return key;
-    }
+    //  return key;
+    //}
   }
 }

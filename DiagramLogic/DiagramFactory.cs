@@ -104,22 +104,22 @@ namespace Diagram.Logic
             personLookup.Add(node.Model, new DiagramConnectorNode(node, primaryGroup, row));
 
             // Current spouses.
-            IList<object> currentSpouses = person.CurrentSpouses.Cast<object>().ToList();
+            IList<object> currentSpouses = person.Spouses.Cast<object>().ToList();
             foreach (var conn in AddSpouseNodes(person, row, leftGroup, currentSpouses,
                 NodeType.Spouse, scaleRelated, true))
                 row.Add(conn);
             // Previous spouses.
-            IList<object> previousSpouses = person.PreviousSpouses.Cast<object>().ToList();
-            foreach (var conn in AddSpouseNodes(person, row, leftGroup, previousSpouses,
-                NodeType.Spouse, scaleRelated, false))
-                row.Add(conn);
+            //IList<object> previousSpouses = person.PreviousSpouses.Cast<object>().ToList();
+            //foreach (var conn in AddSpouseNodes(person, row, leftGroup, previousSpouses,
+            //    NodeType.Spouse, scaleRelated, false))
+            //    row.Add(conn);
             // Siblings.
             IList<object> siblings = person.Siblings.Cast<object>().ToList();
             AddSiblingNodes(row, leftGroup, siblings, NodeType.Sibling, scaleRelated);
 
             // Half siblings.
-            IList<object> halfSiblings = person.HalfSiblings.Cast<object>().ToList();
-            AddSiblingNodes(row, leftGroup, halfSiblings, NodeType.SiblingLeft, scaleRelated);
+            //IList<object> halfSiblings = person.HalfSiblings.Cast<object>().ToList();
+            //AddSiblingNodes(row, leftGroup, halfSiblings, NodeType.SiblingLeft, scaleRelated);
 
             if (leftGroup.Nodes.Count > 0)
             {
@@ -139,7 +139,7 @@ namespace Diagram.Logic
         public DiagramRow CreateChildrenRow(IList<object> children, double scale, double scaleRelated)
         {
             // Setup the row.
-            DiagramRow row = new DiagramRow() { IsParent =false};
+            DiagramRow row = new DiagramRow() { IsParent = false };
 
             foreach (INode child in children)
             {
@@ -157,15 +157,15 @@ namespace Diagram.Logic
                 }
 
                 // Current spouses.
-                IList<object> currentSpouses = child.CurrentSpouses.Cast<object>().ToList();
+                IList<object> currentSpouses = child.Spouses.Cast<object>().ToList();
                 foreach (var conn in AddSpouseNodes(child, row, group, currentSpouses,
                     NodeType.Spouse, scaleRelated, true))
                     group.Add(conn);
                 // Previous spouses.
-                IList<object> previousSpouses = child.PreviousSpouses.Cast<object>().ToList();
-                foreach (var conn in AddSpouseNodes(child, row, group, previousSpouses,
-                    NodeType.Spouse, scaleRelated, false))
-                    group.Add(conn);
+                //IList<object> previousSpouses = child.PreviousSpouses.Cast<object>().ToList();
+                //foreach (var conn in AddSpouseNodes(child, row, group, previousSpouses,
+                //    NodeType.Spouse, scaleRelated, false))
+                //    group.Add(conn);
                 // Connections.
                 foreach (var conn in this.personLookup.AddParentConnections(child, connectorConverter))
                 {
@@ -208,32 +208,32 @@ namespace Diagram.Logic
                 }
 
                 // Current spouses.
-                IList<object> currentSpouses = person.CurrentSpouses.Cast<object>().ToList();
+                IList<object> currentSpouses = person.Spouses.Cast<object>().ToList();
                 DiagramHelper.RemoveDuplicates(currentSpouses, parents);
                 foreach (var conn in AddSpouseNodes(person, row, group, currentSpouses, NodeType.Spouse, scaleRelated, true))
                     group.Add(conn);
                 // Previous spouses.
-                IList<object> previousSpouses = person.PreviousSpouses.Cast<object>().ToList();
-                previousSpouses.RemoveDuplicates(parents);
-                foreach (var conn in AddSpouseNodes(person, row, group, previousSpouses, NodeType.Spouse, scaleRelated, false))
-                    group.Add(conn);
+                //IList<object> previousSpouses = person.PreviousSpouses.Cast<object>().ToList();
+                //previousSpouses.RemoveDuplicates(parents);
+                //foreach (var conn in AddSpouseNodes(person, row, group, previousSpouses, NodeType.Spouse, scaleRelated, false))
+                //    group.Add(conn);
 
                 // Siblings.
                 IList<object> siblings = person.Siblings.Cast<object>().ToList();
                 AddSiblingNodes(row, group, siblings, NodeType.Sibling, scaleRelated);
 
                 // Half siblings.
-                IList<object> halfSiblings = person.HalfSiblings.Cast<object>().ToList();
-                AddSiblingNodes(row, group, halfSiblings, left ?
-                    NodeType.SiblingLeft : NodeType.SiblingRight, scaleRelated);
+                //IList<object> halfSiblings = person.HalfSiblings.Cast<object>().ToList();
+                //AddSiblingNodes(row, group, halfSiblings, left ?
+                //    NodeType.SiblingLeft : NodeType.SiblingRight, scaleRelated);
 
                 // Connections.
                 foreach (var conn in personLookup.AddChildConnections(person, connectorConverter))
                     group.Add(conn);
                 foreach (var conn in personLookup.AddChildConnections(currentSpouses.Cast<INode>().ToList(), connectorConverter))
                     group.Add(conn.Item2);
-                foreach (var conn in personLookup.AddChildConnections(previousSpouses.Cast<INode>().ToList(), connectorConverter))
-                    group.Add(conn.Item2);
+                //foreach (var conn in personLookup.AddChildConnections(previousSpouses.Cast<INode>().ToList(), connectorConverter))
+                //    group.Add(conn.Item2);
                 if (left)
                     group.Reverse();
             }
@@ -264,10 +264,9 @@ namespace Diagram.Logic
                     IRelationship rel = person.GetSpouseRelationship(spouse);
 
                     // Current marriage.
-                    if (rel != null && rel.SpouseModifier == SpouseModifier.Current)
+                    if (rel != null && rel.Existence == Existence.Current)
                     {
-                        if (personLookup.ContainsKey(person) &&
-                            personLookup.ContainsKey(spouse))
+                        if (personLookup.ContainsKey(person) && personLookup.ContainsKey(spouse))
                         {
                             yield return (new MarriedDiagramConnector(true,
                                 personLookup[person], personLookup[spouse], connectorConverter));
@@ -275,10 +274,9 @@ namespace Diagram.Logic
                     }
 
                     // Former marriage
-                    if (rel != null && rel.SpouseModifier == SpouseModifier.Former)
+                    if (rel != null && rel.Existence == Existence.Former)
                     {
-                        if (personLookup.ContainsKey(person) &&
-                            personLookup.ContainsKey(spouse))
+                        if (personLookup.ContainsKey(person) && personLookup.ContainsKey(spouse))
                         {
                             yield return (new MarriedDiagramConnector(false,
                                 personLookup[person], personLookup[spouse], connectorConverter));

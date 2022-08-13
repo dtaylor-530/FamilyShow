@@ -47,6 +47,12 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             this.factory = factory;
             Clear();
             factory.CurrentNode += Factory_CurrentNode;
+            family.CollectionChanged += Family_CollectionChanged;
+        }
+
+        private void Family_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            ContentChanged.Invoke(this, new ContentChangedEventArgs(Family.Current));
         }
 
         private void Factory_CurrentNode(object obj)

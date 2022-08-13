@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Family", "Family\Family.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo", "Demo\Demo.csproj", "{A27C193B-59C4-41E7-AD86-CE870851760C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Diagram.Logic", "DiagramLogic\Diagram.Logic.csproj", "{4A541BB6-DA70-4135-91D5-22E4D270FDAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Diagram.Map", "DiagramLogic\Diagram.Map.csproj", "{4A541BB6-DA70-4135-91D5-22E4D270FDAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

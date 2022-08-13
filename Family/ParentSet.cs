@@ -8,23 +8,23 @@ namespace Microsoft.FamilyShowLib
     /// </summary>
     public class ParentSet : IEquatable<IParentSet>, IParentSet
     {
-        private INode firstParent;
+        private Person firstParent;
 
-        private INode secondParent;
+        private Person secondParent;
 
         public INode FirstParent
         {
             get { return firstParent; }
-            set { firstParent = value; }
+            //set { firstParent = value; }
         }
 
         public INode SecondParent
         {
             get { return secondParent; }
-            set { secondParent = value; }
+            //set { secondParent = value; }
         }
 
-        public ParentSet(INode firstParent, INode secondParent)
+        public ParentSet(Person firstParent, Person secondParent)
         {
             this.firstParent = firstParent;
             this.secondParent = secondParent;

@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DiagramLogic\Diagram.Logic.csproj" />
+    <ProjectReference Include="..\DiagramLogic\Diagram.Map.csproj" />
     <ProjectReference Include="..\Family\Family.csproj" />
   </ItemGroup>
 

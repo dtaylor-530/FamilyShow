@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 
 namespace Microsoft.FamilyShowLib
@@ -39,7 +40,7 @@ namespace Microsoft.FamilyShowLib
     /// </summary>
 
 
-    public class CurrentCollection : INotifyPropertyChanged
+    public class CurrentCollection : INotifyPropertyChanged, INotifyCollectionChanged
     {
         public event EventHandler<ContentChangedEventArgs> ContentChanged;
 
@@ -63,7 +64,7 @@ namespace Microsoft.FamilyShowLib
                 if (current?.Equals(value) != true)
                 {
                     current = value;
-                    OnPropertyChanged(nameof(Current));
+                    OnPropertyChanged();
                     OnCurrentChanged();
                 }
             }
@@ -85,17 +86,36 @@ namespace Microsoft.FamilyShowLib
                 ContentChanged(this, new ContentChangedEventArgs(null));
             }
         }
+
+        public event NotifyCollectionChangedEventHandler? CollectionChanged;
+
+
         #region INotifyPropertyChanged Members
 
         public event PropertyChangedEventHandler PropertyChanged;
 
 
-        protected virtual void OnPropertyChanged(string propertyName)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = default)
         {
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        protected virtual void ItemAddedToCollection(object item)
+        {
+            CollectionChanged.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new[] { item }));
+        }   
+        protected virtual void ItemRemovedFromCollection(object item)
+        {
+            CollectionChanged.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, new[] { item }));
+
+        }
+        protected virtual void CollectionReset()
+        {
+            CollectionChanged.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+
         }
         #endregion
     }
@@ -104,7 +124,7 @@ namespace Microsoft.FamilyShowLib
     /// List of people.
     /// </summary>
     [Serializable]
-    public class CurrentCollection<T> : CurrentCollection, ICollection<T>, INotifyCollectionChanged
+    public class CurrentCollection<T> : CurrentCollection, ICollection<T>
     //where T: INotifyPropertyChanged
     {
         private ICollection<T> collection = new List<T>();
@@ -115,7 +135,6 @@ namespace Microsoft.FamilyShowLib
 
 
 
-        public event NotifyCollectionChangedEventHandler? CollectionChanged;
         //private T current;
 
 
@@ -191,13 +210,13 @@ namespace Microsoft.FamilyShowLib
         public void Add(T item)
         {
             collection.Add(item);
-            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new[] { item }));
+            ItemAddedToCollection(item);
         }
 
         public void Clear()
         {
             collection.Clear();
-            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            CollectionReset();
 
         }
 
@@ -217,7 +236,7 @@ namespace Microsoft.FamilyShowLib
         {
             var b = collection.Remove(item);
             if (b)
-                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove));
+                ItemRemovedFromCollection(item);
             return b;
         }
 
@@ -236,7 +255,7 @@ namespace Microsoft.FamilyShowLib
         public void AddRange(IEnumerable<T> enumerable)
         {
             var arr = enumerable.ToArray();
-            foreach(var item in arr)
+            foreach (var item in arr)
                 collection.Add(item);
             CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, arr));
 

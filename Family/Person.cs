@@ -10,15 +10,25 @@ using System.Xml.Serialization;
 
 namespace Microsoft.FamilyShowLib
 {
+ 
+    public enum ParentChildModifier
+    {
+        Natural,
+        Adopted,
+        Foster
+    }
 
+    public enum Gender
+    {
+        Male, Female
+    }
 
-
-  /// <summary>
-  /// Representation for a single serializable Person.
-  /// INotifyPropertyChanged allows properties of the Person class to
-  /// participate as source in data bindings.
-  /// </summary>
-  [Serializable]
+    /// <summary>
+    /// Representation for a single serializable Person.
+    /// INotifyPropertyChanged allows properties of the Person class to
+    /// participate as source in data bindings.
+    /// </summary>
+    [Serializable]
   public class Person : INotifyPropertyChanged, IEquatable<Person>, IDataErrorInfo, INode
     {
     #region Fields and Constants
@@ -573,7 +583,7 @@ namespace Microsoft.FamilyShowLib
       get
       {
                 var parentsCount = Parents.Count();
-                var siblingsCount = Siblings.Count();
+                var siblingsCount = FullSiblings.Count();
                 var childrenCount = Children.Count();
                 var spousesCount = Spouses.Count();
 
@@ -622,10 +632,19 @@ namespace Microsoft.FamilyShowLib
     /// <summary>
     /// Collections of relationship connection for the person
     /// </summary>
-    public ObservableCollection<IRelationship> Relationships
+    public IEnumerable<IRelationship> Relationships
     {
-      get { return relationships; }
+      get { return relationships.Cast<IRelationship>(); }
     }
+
+        public void Add(Relationship relationship)
+        {
+            relationships.Add(relationship);
+        }
+                public void Remove(Relationship relationship)
+        {
+            relationships.Remove(relationship);
+        }
 
     /// <summary>
     /// Accessor for the person's spouse(s)
@@ -647,7 +666,7 @@ namespace Microsoft.FamilyShowLib
                 foreach (var rel in ListSpousesRelationShip)
                 {
 
-                    if (rel != null && (rel as SpouseRelationship).SpouseModifier == SpouseModifier.Current)
+                    if (rel != null && (rel as SpouseRelationship).SpouseModifier == Existence.Current)
                     {
                         yield return (rel.RelationTo);
                     }
@@ -665,7 +684,7 @@ namespace Microsoft.FamilyShowLib
                 foreach (var rel in ListSpousesRelationShip)
                 {
 
-                    if (rel != null && (rel as SpouseRelationship).SpouseModifier == SpouseModifier.Former)
+                    if (rel != null && (rel as SpouseRelationship).SpouseModifier == Existence.Former)
                     {
                         yield return (rel.RelationTo);
                     }
@@ -698,27 +717,33 @@ namespace Microsoft.FamilyShowLib
       }
     }
 
-    /// <summary>
-    /// Accessor for all of the person's parents
-    /// </summary>
-    [XmlIgnore]
+        private Person[] SelectParents()
+        {
+
+            return RelationShips(RelationshipType.Parent).Select(a => a.RelationTo).Cast<Person>().ToArray();
+        }
+
+        /// <summary>
+        /// Accessor for all of the person's parents
+        /// </summary>
+        [XmlIgnore]
     public IEnumerable<INode> Parents
     {
       get
             {
-                return Relations(RelationshipType.Parent);
+                return SelectParents();
             }
         }
 
-        private IEnumerable<INode> Relations(RelationshipType relationshipType)
+        private IEnumerable<Person> Relations(RelationshipType relationshipType)
         {
 
-            return RelationShips(relationshipType).Select(a=>a.RelationTo);
+            return RelationShips(relationshipType).Select(a=>a.RelationTo).Cast<Person>();
         }
             
-        private IEnumerable<IRelationship> RelationShips(RelationshipType relationshipType)
+        private IEnumerable<Relationship> RelationShips(RelationshipType relationshipType)
         {
-            foreach (IRelationship relationship in relationships)
+            foreach (Relationship relationship in relationships)
             {
                 if (relationship.RelationshipType == relationshipType)
                 {
@@ -733,7 +758,7 @@ namespace Microsoft.FamilyShowLib
         /// Accessor for the person's siblings
         /// </summary>
         [XmlIgnore]
-    public IEnumerable<INode> Siblings
+    public IEnumerable<INode> FullSiblings
     {
       get
       {
@@ -742,6 +767,8 @@ namespace Microsoft.FamilyShowLib
                 return Relations(RelationshipType.Sibling);
       }
     }
+
+        public IEnumerable<INode> Siblings => HalfSiblings.Concat(FullSiblings);
 
     /// <summary>
     /// Accessor for the person's half siblings. A half sibling is a person
@@ -757,11 +784,11 @@ namespace Microsoft.FamilyShowLib
         Collection<Person> halfSiblings = new Collection<Person>();
 
         // Get list of full siblings (a full sibling cannot be a half sibling).
-        var siblings = Siblings.ToArray();
+        var siblings = FullSiblings.ToArray();
 
         // Iterate through each parent, and determine if the parent's children
         // are half siblings.
-        foreach (Person parent in Parents)
+        foreach (Person parent in SelectParents())
         {
           foreach (Person child in parent.Children)
           {
@@ -784,9 +811,9 @@ namespace Microsoft.FamilyShowLib
     {
       get
       {
-                var parents = Parents.ToList();
+                var parents = SelectParents();
         // Only need to get the parent set if there are two parents.
-        if (parents.Count == 2)
+        if (parents.Length == 2)
         {
           var parentSet = new ParentSet(parents[0], parents[1]);
           return parentSet;
@@ -808,7 +835,7 @@ namespace Microsoft.FamilyShowLib
       {
         ParentSetCollection parentSets = new ParentSetCollection();
 
-        foreach (Person parent in Parents)
+        foreach (Person parent in SelectParents())
         {
           foreach (Person spouse in parent.Spouses)
           {
@@ -833,7 +860,7 @@ namespace Microsoft.FamilyShowLib
     {
       get
       {
-        foreach (Person item in Parents)
+        foreach (Person item in SelectParents())
         {
           if (item.Gender == Gender.Male)
             return item;
@@ -849,7 +876,7 @@ namespace Microsoft.FamilyShowLib
     {
       get
       {
-        foreach (Person item in Parents)
+        foreach (Person item in SelectParents())
         {
           if (item.Gender == Gender.Female)
             return item;
@@ -944,22 +971,22 @@ namespace Microsoft.FamilyShowLib
     {
       get
       {
-        List<INode> parents = Parents.ToList();
+              var parents = SelectParents();
 
         string parentsText = string.Empty;
-        if (parents.Count > 0)
+        if (parents.Length > 0)
         {
           parentsText = parents[0].Name;
 
-          if (parents.Count == 2)
+          if (parents.Length == 2)
           {
             parentsText += " and " + parents[1].Name;
           }
           else
           {
-            for (int i = 1; i < parents.Count; i++)
+            for (int i = 1; i < parents.Length; i++)
             {
-              if (i == parents.Count - 1)
+              if (i == parents.Length - 1)
               {
                 parentsText += ", and " + parents[i].Name;
               }
@@ -1002,7 +1029,7 @@ namespace Microsoft.FamilyShowLib
     {
       get
       {
-        List<INode> siblings = Siblings.ToList();
+        List<Person> siblings = FullSiblings.Cast<Person>().ToList();
 
         string siblingsText = string.Empty;
         if (siblings.Count > 0)
@@ -1060,7 +1087,7 @@ namespace Microsoft.FamilyShowLib
     {
       get
       {
-                List<INode> spouses = Spouses.ToList();
+                List<Person> spouses = Spouses.Cast<Person>().ToList();
 
                 string spousesText = string.Empty;
         if (spouses.Count > 0)
@@ -1118,7 +1145,7 @@ namespace Microsoft.FamilyShowLib
     {
       get
       {
-                List<INode> children = Children.ToList();
+                List<Person> children = Children.Cast<Person>().ToList();
 
                 string childrenText = string.Empty;
         if (children.Count > 0)

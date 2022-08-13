@@ -49,7 +49,7 @@ namespace Microsoft.FamilyShowLib
             }
         }
 
-        public SpouseModifier SpouseModifier { get; }
+        public Existence Existence { get; set; }
 
         // public IPerson Person { get; set; }
 
@@ -97,7 +97,7 @@ namespace Microsoft.FamilyShowLib
 
     public override string ToString()
     {
-      return RelationTo.Name;
+      return (RelationTo as Person).Name;
     }
   }
 
@@ -132,12 +132,12 @@ namespace Microsoft.FamilyShowLib
   [Serializable]
   public class SpouseRelationship : Relationship
   {
-    private SpouseModifier spouseModifier;
+    private Existence spouseModifier;
     private DateTime? marriageDate;
     private DateTime? divorceDate;
     private String marriagePlace;
 
-    public SpouseModifier SpouseModifier
+    public Existence SpouseModifier
     {
       get { return spouseModifier; }
       set { spouseModifier = value; }
@@ -164,7 +164,7 @@ namespace Microsoft.FamilyShowLib
     // Paramaterless constructor required for XML serialization
     public SpouseRelationship() { }
 
-    public SpouseRelationship(INode person, SpouseModifier spouseType)
+    public SpouseRelationship(INode person, Existence spouseType)
     {
       RelationshipType = RelationshipType.Spouse;
       spouseModifier = spouseType;

@@ -247,6 +247,10 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 
                 //logic.UpdateDiagram(diagram);
                 diagram.Update();
+                if(diagram.needsPopulating)
+                {
+                    diagram.Populate();
+                }
             }
         }
 
@@ -486,13 +490,18 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             logic.Clear();
         }
 
-
+        bool needsPopulating;
         /// <summary>
         /// Populate the diagram. Update the diagram and hide all non-primary nodes.
         /// Then pause, and finish the populate by fading in the new nodes.
         /// </summary>
         public void Populate()
         {
+            if (logic == null)
+            {
+                needsPopulating = true;
+                return;
+            }
             // Set flag to ignore future updates until complete.
             populating = true;
 
