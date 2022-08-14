@@ -119,10 +119,6 @@ namespace Diagram.Logic
             (type == NodeType.Primary) ? "Primary" : "");
             return template;
         }
-        public string NodeTemplate()
-        {
-            return "Person";
-        }
 
         public DateTime? MinimumDate(object obj)
         {
@@ -136,7 +132,7 @@ namespace Diagram.Logic
            return date;
         }
 
-        public object BrushResource(object? model, NodeType type, string part)
+        public string BrushResource(object? model, NodeType type, string part)
         {
             if (model is not Person { } person)
             {

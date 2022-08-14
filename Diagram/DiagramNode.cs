@@ -170,20 +170,12 @@ namespace Microsoft.FamilyShow
       }
     }
 
-    /// <summary>
-    /// Person object associated with the node.
-    /// </summary>
-    public object Model
-    {
-      get { return model; }
-      //set
-      //{
-      //  model = value;
-       
-      //}
-    }
+        /// <summary>
+        /// Person object associated with the node.
+        /// </summary>
+        public object Model => model;
 
-    public INodeConverter Converter { get; set; }
+        public INodeConverter Converter { get; set; }
 
     /// <summary>
     /// Set the scale value of the node.
@@ -232,9 +224,9 @@ namespace Microsoft.FamilyShow
 
         // Shift the center to the left. This is an estimate since we don't 
         // know the exact position of the person drawing within the node.
-        FrameworkElement personElement = Template.FindName(Converter.NodeTemplate(), this) as FrameworkElement;
+        FrameworkElement? personElement = Template.FindName("Person", this) as FrameworkElement;
         double offset = (type == NodeType.Primary) ? 12 : 5;
-        point.X -= (personElement.ActualWidth / offset);
+        point.X -= (personElement?.ActualWidth?? offset) / offset;
         return point;
       }
     }

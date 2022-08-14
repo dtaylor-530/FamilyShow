@@ -109,13 +109,16 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 
         public EventHandler<ContentChangedEventArgs> ContentChanged { get; set; }
         public EventHandler CurrentChanged { get; set; }
-        public object Current { get => current; set {
+        public object Current {
+            get => current;
+            set {
                 if (current != value)
                 {
                     current = value;
                     CurrentChanged?.Invoke(this, EventArgs.Empty);
                 }
-            } }
+            } 
+        }
 
         /// <summary>
         /// Clear 

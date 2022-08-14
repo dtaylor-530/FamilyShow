@@ -12,17 +12,12 @@ namespace Abstractions
 
     public interface INode
     {
-
-
-
         IEnumerable<IRelationship> Relationships { get; }
-
         IEnumerable<INode> Children { get; }
         IEnumerable<INode> Spouses { get; }
         IEnumerable<INode> Parents { get; }
         IEnumerable<INode> Siblings { get; }
         //IEnumerable<INode> FullSiblings { get; }
-        bool HasParents { get; set; }
       //  //IEnumerable<INode> PreviousSpouses { get; }
         //IEnumerable<INode> CurrentSpouses { get; }
         //IEnumerable<INode> HalfSiblings { get; }

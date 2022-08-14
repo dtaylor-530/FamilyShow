@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abstractions", "Abstraction
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Family", "Family\Family.csproj", "{B3A5D721-5B5A-416A-B62B-1E9072565381}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo", "Demo\Demo.csproj", "{A27C193B-59C4-41E7-AD86-CE870851760C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo.Family", "Demo.Family\Demo.Family.csproj", "{A27C193B-59C4-41E7-AD86-CE870851760C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Diagram.Map", "DiagramLogic\Diagram.Map.csproj", "{4A541BB6-DA70-4135-91D5-22E4D270FDAD}"
 EndProject

@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Page Remove="Skins\Black\BlackResources - Copy.xaml" />
     <Page Remove="Skins\Black\BlackResources.xaml" />
   </ItemGroup>
 

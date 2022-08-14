@@ -1259,12 +1259,12 @@
     <!--<demo:ImageConverter x:Key="ImageConverter" />-->
 
     <!--  Converter for avatar  -->
-    <!--<local:ComposingConverter x:Key="ComposingConverter">
-        <local:ComposingConverter.Converters>
-            <local:NotConverter />
-            <local:BoolToVisibilityConverter />
-        </local:ComposingConverter.Converters>
-    </local:ComposingConverter>-->
+    <diagram:ComposingConverter x:Key="ComposingConverter">
+        <diagram:ComposingConverter.Converters>
+            <diagram:NotConverter />
+            <diagram:BoolToVisibilityConverter />
+        </diagram:ComposingConverter.Converters>
+    </diagram:ComposingConverter>
     
     <!--  ToolTip  -->
   <Style x:Key="DiagramToolTip" TargetType="ToolTip">
@@ -1303,7 +1303,7 @@
                                         Stretch="Uniform"
                                         StretchDirection="DownOnly" />-->
                 </Border>
-                <!--<Border
+                <Border
                                     x:Name="NoPhotoBorder"
                                     Margin="10,5,10,0"
                                     Background="#02FFFFFF"
@@ -1319,7 +1319,7 @@
                       <DropShadowBitmapEffect ShadowDepth="7" Softness="0.75" />
                     </Rectangle.BitmapEffect>
                   </Rectangle>
-                </Border>-->
+                </Border>
               </StackPanel>
                             <StackPanel MaxWidth="170" Margin="0,0,5,10" 
                           DataContext="{Binding Model}">

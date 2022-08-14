@@ -245,12 +245,8 @@ namespace Microsoft.FamilyShow.Controls.Diagram
                 logic.ContentChanged += new EventHandler<ContentChangedEventArgs>(diagram.OnFamilyContentChanged);
                 logic.CurrentChanged += new EventHandler(diagram.OnFamilyCurrentChanged);
 
-                //logic.UpdateDiagram(diagram);
-                //diagram.Update();
-                //if(diagram.needsPopulating)
-                //{
-                    diagram.Populate();
-               // }
+                 diagram.Populate();
+               
             }
         }
 
@@ -490,7 +486,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             logic.Clear();
         }
 
-       // bool needsPopulating;
+        bool needsRepopulating;
         /// <summary>
         /// Populate the diagram. Update the diagram and hide all non-primary nodes.
         /// Then pause, and finish the populate by fading in the new nodes.
@@ -498,12 +494,18 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         public void Populate()
         {
             if (populating)
-                throw new Exception("sdf3 rgr");
+            {
+                needsRepopulating =true;
+                //throw new Exception("sdf3 rgr");
+                return;
+            }
             // Set flag to ignore future updates until complete.
-            populating = true;
-
+      
             if (logic == null)
                 return;
+
+            populating = true;
+            needsRepopulating = false;
             // Save the bounds for the current primary person, this 
             // is required later when animating the diagram.
             selectedNodeBounds = PrimaryNodeBounds;
@@ -554,6 +556,12 @@ namespace Microsoft.FamilyShow.Controls.Diagram
                 InvalidateVisual();
 
                 populating = false;
+
+                if (needsRepopulating)
+                {
+                    Populate();
+                    return;
+                }
                 // Let other controls know the diagram has been repopulated.
                 OnDiagramPopulated();
             }

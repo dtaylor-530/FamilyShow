@@ -12,10 +12,9 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         bool IsFiltered(object obj, double displayYear);
         string DateInformation(object obj, double displayYear);
         string NodeTemplate(object obj, NodeType type);
-        string NodeTemplate();
-
+    
         DateTime? MinimumDate(object obj);
-        object BrushResource(object? model, NodeType type, string part);
+        string BrushResource(object? model, NodeType type, string part);
     }  
     
     public interface IConnectorConverter
