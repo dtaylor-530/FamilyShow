@@ -103,13 +103,13 @@ namespace Microsoft.FamilyShowLib
             }
         }
 
-        protected virtual void ItemAddedToCollection(object item)
+        protected virtual void ItemsAddedToCollection(params object[] item)
         {
-            CollectionChanged.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new[] { item }));
+            CollectionChanged.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item ));
         }   
-        protected virtual void ItemRemovedFromCollection(object item)
+        protected virtual void ItemsRemovedFromCollection(params object[] items)
         {
-            CollectionChanged.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, new[] { item }));
+            CollectionChanged.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items ));
 
         }
         protected virtual void CollectionReset()
@@ -210,7 +210,7 @@ namespace Microsoft.FamilyShowLib
         public void Add(T item)
         {
             collection.Add(item);
-            ItemAddedToCollection(item);
+            ItemsAddedToCollection(item);
         }
 
         public void Clear()
@@ -236,7 +236,7 @@ namespace Microsoft.FamilyShowLib
         {
             var b = collection.Remove(item);
             if (b)
-                ItemRemovedFromCollection(item);
+                ItemsRemovedFromCollection(item);
             return b;
         }
 
@@ -257,7 +257,7 @@ namespace Microsoft.FamilyShowLib
             var arr = enumerable.ToArray();
             foreach (var item in arr)
                 collection.Add(item);
-            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, arr));
+            ItemsAddedToCollection(arr);
 
         }
     }

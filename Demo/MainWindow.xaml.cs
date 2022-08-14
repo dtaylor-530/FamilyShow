@@ -21,6 +21,7 @@ namespace Demo
         public MainWindow()
         {
             InitializeComponent();
+        
             this.Loaded += MainWindow_Loaded;
         }
 
@@ -37,7 +38,7 @@ namespace Demo
             family.Add(RelationshipHelper.AddChild(family.Current as Person, new Person() { }));
 
             DiagramView1.Logic = model;
-            //Diagram.Logic = model;
+            Diagram.Logic = model;
         }
 
         private void Factory_CurrentNode(object obj)

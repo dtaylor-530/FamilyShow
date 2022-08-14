@@ -36,7 +36,7 @@ namespace Microsoft.FamilyShow
             diagramView.TimeSlider.Value = diagramView.TimeSlider.Maximum;
         }
 
-        public Microsoft.FamilyShow.Controls.Diagram.Diagram TheDiagram => Diagram;
+        //public Microsoft.FamilyShow.Controls.Diagram.Diagram TheDiagram => Diagram;
 
         #region fields
 
@@ -90,11 +90,14 @@ namespace Microsoft.FamilyShow
         public DiagramViewer()
         {
             InitializeComponent();
-
+            this.SizeChanged += _SizeChanged;
             // Default zoom level.
-            Zoom = 1;
+            Zoom = 1;     
+        }
 
-      
+        private void _SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Diagram.Populate();
         }
 
         #region event handlers

@@ -15,7 +15,7 @@ using Diagram.Logic;
 namespace Microsoft.FamilyShow.Controls.Diagram
 {
     public class DiagramLogic : IDiagramLogic
-    {  
+    {
         #region fields
 
         //// List of the connections, specify connections between two nodes.
@@ -23,7 +23,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 
         // Map that allows quick lookup of a Person object to connection information.
         // Used when setting up the connections between nodes.
-        
+
         private Dictionary<object, DiagramConnectorNode> personLookup;
 
         // List of people, global list that is shared by all objects in the application.
@@ -35,6 +35,8 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 
         // Filter year for nodes and connectors.
         private double displayYear;
+        private object current;
+
         //private DiagramFactory factory;
 
         #endregion
@@ -52,7 +54,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 
         private void Family_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            ContentChanged.Invoke(this, new ContentChangedEventArgs(Family.Current));
+            ContentChanged?.Invoke(this, new ContentChangedEventArgs(Family.Current));
         }
 
         private void Factory_CurrentNode(object obj)
@@ -103,12 +105,18 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         /// <summary>
         /// Gets the minimum year in all nodes and connectors.
         /// </summary>
-    
+
 
         public EventHandler<ContentChangedEventArgs> ContentChanged { get; set; }
         public EventHandler CurrentChanged { get; set; }
-        public object Current { get; set; }
- 
+        public object Current { get => current; set {
+                if (current != value)
+                {
+                    current = value;
+                    CurrentChanged?.Invoke(this, EventArgs.Empty);
+                }
+            } }
+
         /// <summary>
         /// Clear 
         /// </summary>
@@ -178,7 +186,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
                 if (childRow != null)
                 {
                     // Get list of children for the current row.
-                    var children = factory.GetChildren(childRow); 
+                    var children = factory.GetChildren(childRow);
                     if (children.Count != 0)
                     {
                         // Add bottom space to existing row.
@@ -208,7 +216,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
                     {
                         // Add another row.
                         DiagramRow grandParentRow = factory.CreateParentRow(grandParents, nodeScale, nodeScale * Diagram.Const.RelatedMultiplier);
-                         
+
 
                         grandParentRow.Margin = new Thickness(0, 0, 0, Diagram.Const.RowSpace);
                         grandParentRow.GroupSpace = Diagram.Const.ParentRowGroupSpace;

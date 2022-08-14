@@ -206,7 +206,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         /// <summary>
         /// Gets the bounding area (relative to the diagram) of the primary node.
         /// </summary>
-        public Rect PrimaryNodeBounds => GetNodeBounds(logic.Current);
+        public Rect PrimaryNodeBounds => logic?.Current!=null? GetNodeBounds(logic.Current): default;
 
         /// <summary>
         /// Gets the bounding area (relative to the diagram) of the selected node.
@@ -246,11 +246,11 @@ namespace Microsoft.FamilyShow.Controls.Diagram
                 logic.CurrentChanged += new EventHandler(diagram.OnFamilyCurrentChanged);
 
                 //logic.UpdateDiagram(diagram);
-                diagram.Update();
-                if(diagram.needsPopulating)
-                {
+                //diagram.Update();
+                //if(diagram.needsPopulating)
+                //{
                     diagram.Populate();
-                }
+               // }
             }
         }
 
@@ -490,26 +490,28 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             logic.Clear();
         }
 
-        bool needsPopulating;
+       // bool needsPopulating;
         /// <summary>
         /// Populate the diagram. Update the diagram and hide all non-primary nodes.
         /// Then pause, and finish the populate by fading in the new nodes.
         /// </summary>
         public void Populate()
         {
-            if (logic == null)
-            {
-                needsPopulating = true;
-                return;
-            }
+            if (populating)
+                throw new Exception("sdf3 rgr");
             // Set flag to ignore future updates until complete.
             populating = true;
 
+            if (logic == null)
+                return;
+            // Save the bounds for the current primary person, this 
+            // is required later when animating the diagram.
+            selectedNodeBounds = PrimaryNodeBounds;
+                   
             // Update the nodes in the diagram.
             Update();
 
             // First hide all of the nodes except the primary node.
-
             foreach (DiagramConnectorNode connectorNode in Nodes)
             {
                 if (connectorNode.Node.Model != logic.Current)
@@ -528,35 +530,36 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             animationTimer.Tick += new EventHandler(OnAnimationTimer);
             animationTimer.IsEnabled = true;
 
-            // Let other controls know the diagram has been repopulated.
-            OnDiagramPopulated();
-        }
-
-        /// <summary>
-        /// The animation pause timer is complete, finish populating the diagram.
-        /// </summary>
-        void OnAnimationTimer(object sender, EventArgs e)
-        {
-            // Turn off the timer.
-            animationTimer.IsEnabled = false;
-
-            // Fade each node into view.
-
-            foreach (DiagramConnectorNode connectorNode in Nodes)
+            /// <summary>
+            /// The animation pause timer is complete, finish populating the diagram.
+            /// </summary>
+            void OnAnimationTimer(object sender, EventArgs e)
             {
-                if (connectorNode.Node.Visibility != Visibility.Visible)
+                // Turn off the timer.
+                animationTimer.IsEnabled = false;
+
+                // Fade each node into view.
+
+                foreach (DiagramConnectorNode connectorNode in Nodes)
                 {
-                    connectorNode.Node.Visibility = Visibility.Visible;
-                    connectorNode.Node.BeginAnimation(OpacityProperty,
-                        new DoubleAnimation(0, 1, App.GetAnimationDuration(Const.NodeFadeInDuration)));
+                    if (connectorNode.Node.Visibility != Visibility.Visible)
+                    {
+                        connectorNode.Node.Visibility = Visibility.Visible;
+                        connectorNode.Node.BeginAnimation(OpacityProperty,
+                            new DoubleAnimation(0, 1, App.GetAnimationDuration(Const.NodeFadeInDuration)));
+                    }
                 }
+
+                // Redraw connector lines.
+                InvalidateVisual();
+
+                populating = false;
+                // Let other controls know the diagram has been repopulated.
+                OnDiagramPopulated();
             }
-
-            // Redraw connector lines.
-            InvalidateVisual();
-
-            populating = false;
         }
+
+
 
     
         /// <summary>
@@ -565,10 +568,6 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         /// </summary>
         private void OnFamilyCurrentChanged(object sender, EventArgs e)
         {
-            // Save the bounds for the current primary person, this 
-            // is required later when animating the diagram.
-            selectedNodeBounds = PrimaryNodeBounds;
-
             // Repopulate the diagram.
             Populate();
         }
@@ -637,71 +636,6 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         /// </summary>
 
 
-        /// <summary>
-        /// Add a child row to the diagram.
-        /// </summary>
-        //public DiagramRow? AddChildRow(DiagramRow row)
-        //{
-        //  // Get list of children for the current row.
-        //  List<object> children = DiagramLogic.GetChildren(row);
-        //  if (children.Count == 0)
-        //  {
-        //    return null;
-        //  }
-
-        //  // Add bottom space to existing row.
-        //  row.Margin = new Thickness(0, 0, 0, Const.RowSpace);
-
-        //  // Add another row.
-        //  DiagramRow childRow = logic.CreateChildrenRow(children, 1.0, Const.RelatedMultiplier);
-        //  childRow.GroupSpace = Const.ChildRowGroupSpace;
-        //  AddRow(childRow);
-        //  return childRow;
-        //}
-
-        //    /// <summary>
-        //    /// Add a parent row to the diagram.
-        //    /// </summary>
-        //public DiagramRow AddParentRow(DiagramRow row, double nodeScale)
-        //{
-        //  // Get list of parents for the current row.
-        //  Collection<Person> parents = DiagramLogic.GetParents(row);
-        //  if (parents.Count == 0)
-        //  {
-        //    return null;
-        //  }
-
-        //  // Add another row.
-        //  DiagramRow parentRow = logic.CreateParentRow(parents, nodeScale, nodeScale * Const.RelatedMultiplier);
-        //  parentRow.Margin = new Thickness(0, 0, 0, Const.RowSpace);
-        //  parentRow.GroupSpace = Const.ParentRowGroupSpace;
-        //  InsertRow(parentRow);
-        //  return parentRow;
-        //}
-
-        /// <summary>
-        /// Add a row to the visual tree.
-        /// </summary>
-        //public void AddRow(DiagramRow row)
-        //{
-        //  if (row != null && row.NodeCount > 0)
-        //  {
-        //    AddVisualChild(row);
-        //    rows.Add(row);
-        //  }
-        //}
-
-        //    /// <summary>
-        //    /// Insert a row in the visual tree.
-        //    /// </summary>
-        //    public void InsertRow(DiagramRow row)
-        //{
-        //  if (row != null && row.NodeCount > 0)
-        //  {
-        //    AddVisualChild(row);
-        //    rows.Insert(0, row);
-        //  }
-        //}
-
+   
     }
 }
