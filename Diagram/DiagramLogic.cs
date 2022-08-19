@@ -18,26 +18,15 @@ namespace Microsoft.FamilyShow.Controls.Diagram
     {
         #region fields
 
-        //// List of the connections, specify connections between two nodes.
-        //private List<DiagramConnector> connections = new List<DiagramConnector>();
-
-        // Map that allows quick lookup of a Person object to connection information.
-        // Used when setting up the connections between nodes.
-
         private Dictionary<object, DiagramConnectorNode> personLookup;
 
         // List of people, global list that is shared by all objects in the application.
         private CurrentCollection family;
         private readonly IDiagramFactory factory;
-
-        // Callback when a node is clicked.
-        //private EventHandler nodeClickHandler;
-
         // Filter year for nodes and connectors.
         private double displayYear;
         private object current;
 
-        //private DiagramFactory factory;
 
         #endregion
 
@@ -62,16 +51,6 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             Current = obj;
         }
 
-
-        /// <summary>
-        /// Sets the callback that is called when a node is clicked.
-        /// </summary>
-        //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        //public EventHandler NodeClickHandler
-        //{
-        //    get => nodeClickHandler;
-        //    set { nodeClickHandler = value; }
-        //}
 
         /// <summary>
         /// Gets the list of people in the family.
@@ -183,7 +162,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             DiagramRow? childRow = primaryRow;
             DiagramRow? parentRow = primaryRow;
 
-            while (nodeCount < Diagram.Const.MaximumNodes && (childRow != null || parentRow != null))
+            while (nodeCount < Diagram.Const.MaximumNodes && (childRow != null && parentRow != null))
             {
                 // Child Row.
                 if (childRow != null)
@@ -199,7 +178,6 @@ namespace Microsoft.FamilyShow.Controls.Diagram
                         DiagramRow grandChildRow = factory.CreateChildrenRow(children, 1.0, Diagram.Const.RelatedMultiplier);
                         grandChildRow.GroupSpace = Diagram.Const.ChildRowGroupSpace;
                         childRow = grandChildRow;
-                        //diagram.AddRow(grandChildRow);
                         yield return grandChildRow;
                     }
                     else
@@ -214,17 +192,14 @@ namespace Microsoft.FamilyShow.Controls.Diagram
                     nodeScale *= Diagram.Const.GenerationMultiplier;
 
                     // Get list of parents for the current row.
-                    IList<object> grandParents = factory.GetParents(parentRow);
-                    if (grandParents.Count != 0)
+                    IList<object> parents = factory.GetParents(parentRow);
+                    if (parents.Count != 0)
                     {
                         // Add another row.
-                        DiagramRow grandParentRow = factory.CreateParentRow(grandParents, nodeScale, nodeScale * Diagram.Const.RelatedMultiplier);
-
-
+                        DiagramRow grandParentRow = factory.CreateParentRow(parents, nodeScale, nodeScale * Diagram.Const.RelatedMultiplier);
                         grandParentRow.Margin = new Thickness(0, 0, 0, Diagram.Const.RowSpace);
                         grandParentRow.GroupSpace = Diagram.Const.ParentRowGroupSpace;
                         parentRow = grandParentRow;
-                        //diagram.InsertRow(grandParentRow);
                         yield return grandParentRow;
 
                     }
@@ -233,7 +208,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
                         parentRow = null;
                     }
                 }
-
+     
                 // See if reached node limit yet.                                       
                 nodeCount = personLookup.Count;
             }

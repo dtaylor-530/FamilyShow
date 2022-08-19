@@ -9,7 +9,6 @@ namespace Diagram.Logic
     public interface IDiagramFactory
     {
         event Action<object> CurrentNode;
-
         DiagramRow CreateChildrenRow(IList<object> children, double scale, double scaleRelated);
         DiagramNode CreateNode(object person, NodeType type, bool clickEvent, double? scale = null);
         DiagramRow CreateParentRow(IList<object> parents, double scale, double scaleRelated);

@@ -250,15 +250,13 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             }
         }
 
-        private void Update()
+        private async void Update()
         {
             // First reset everything.
             Clear();
 
-            var tempRows = logic.GenerateRows().ToList();
-
-            foreach (var row in tempRows)
-            {
+            foreach(var row in logic.GenerateRows())
+            { 
                 if (row.IsParent)
                     rows.Insert(0, row);
                 else

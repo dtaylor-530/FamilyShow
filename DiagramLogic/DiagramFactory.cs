@@ -4,7 +4,6 @@ using Microsoft.FamilyShow.Controls.Diagram;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 
 namespace Diagram.Logic
 {
@@ -14,7 +13,6 @@ namespace Diagram.Logic
         INodeConverter nodeConverter;
         IConnectorConverter connectorConverter;
         public event Action<object> CurrentNode;
-
         public DiagramFactory(Dictionary<object, DiagramConnectorNode> personLookup, INodeConverter nodeConverter, IConnectorConverter connectorConverter)
         {
             this.personLookup = personLookup;
@@ -167,7 +165,8 @@ namespace Diagram.Logic
                 //    NodeType.Spouse, scaleRelated, false))
                 //    group.Add(conn);
                 // Connections.
-                foreach (var conn in this.personLookup.AddParentConnections(child, connectorConverter))
+
+                foreach (var conn in this.personLookup.ParentConnections(child, connectorConverter))
                 {
                     group.Add(conn);
                 }
@@ -228,9 +227,9 @@ namespace Diagram.Logic
                 //    NodeType.SiblingLeft : NodeType.SiblingRight, scaleRelated);
 
                 // Connections.
-                foreach (var conn in personLookup.AddChildConnections(person, connectorConverter))
+                foreach (var conn in personLookup.ChildConnections(person, connectorConverter))
                     group.Add(conn);
-                foreach (var conn in personLookup.AddChildConnections(currentSpouses.Cast<INode>().ToList(), connectorConverter))
+                foreach (var conn in personLookup.ChildConnections(currentSpouses.Cast<INode>().ToList(), connectorConverter))
                     group.Add(conn.Item2);
                 //foreach (var conn in personLookup.AddChildConnections(previousSpouses.Cast<INode>().ToList(), connectorConverter))
                 //    group.Add(conn.Item2);
@@ -241,6 +240,7 @@ namespace Diagram.Logic
             // Add connections that span across groups.
             foreach (var conn in AddSpouseConnections(parents.Cast<INode>().ToList()))
                 row.Add(conn);
+
             return row;
         }
 
