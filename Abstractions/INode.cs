@@ -1,22 +1,17 @@
-﻿using Microsoft.FamilyShowLib;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Abstractions
+﻿namespace Abstractions
 {
 
     public interface INode
     {
+        public string Key { get; }
         IEnumerable<IRelationship> Relationships { get; }
         IEnumerable<INode> Children { get; }
         IEnumerable<INode> Spouses { get; }
         IEnumerable<INode> Parents { get; }
         IEnumerable<INode> Siblings { get; }
+        void Add(IRelationship relationship);
+        void Remove(IRelationship relationship);
+
         //IEnumerable<INode> FullSiblings { get; }
       //  //IEnumerable<INode> PreviousSpouses { get; }
         //IEnumerable<INode> CurrentSpouses { get; }

@@ -80,6 +80,8 @@ namespace Microsoft.FamilyShowLib
       }
     }
 
+        public string Key => FullName; 
+
     /// <summary>
     /// Gets or sets the name that occurs first in a given name
     /// </summary>
@@ -637,11 +639,11 @@ namespace Microsoft.FamilyShowLib
       get { return relationships.Cast<IRelationship>(); }
     }
 
-        public void Add(Relationship relationship)
+        public void Add(IRelationship relationship)
         {
             relationships.Add(relationship);
         }
-                public void Remove(Relationship relationship)
+                public void Remove(IRelationship relationship)
         {
             relationships.Remove(relationship);
         }

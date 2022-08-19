@@ -6,7 +6,7 @@ namespace Models
 {
     public class Model : INotifyPropertyChanged, IEquatable<Model>, INode
     {
-        private List<Relationship> relationships = new();
+        private List<IRelationship> relationships = new();
         public readonly DateTime? Created;
 
 
@@ -17,21 +17,25 @@ namespace Models
 
         public string Key { get; }
 
-        public void Add(Relationship relationship)
+        public void Add(IRelationship relationship)
         {
+            if (relationships.Any(a => a.RelationshipType == relationship.RelationshipType && a.RelationTo == relationship.RelationTo))
+            {
+                throw new Exception("vdf fd ");
+            }
             relationships.Add(relationship);
         }
-        public void Remove(Relationship relationship)
+        public void Remove(IRelationship relationship)
         {
             relationships.Remove(relationship);
         }
 
         public IEnumerable<IRelationship> Relationships => relationships;
-        public IEnumerable<INode> Children => Relations(RelationshipType.Child);
-        public IEnumerable<INode> Spouses =>Relations(RelationshipType.Spouse);
-        public IEnumerable<INode> Parents => Relations(RelationshipType.Parent);
-        public IEnumerable<INode> Siblings => Relations(RelationshipType.Sibling);
-    
+        public IEnumerable<INode> Children => this.Children();
+        public IEnumerable<INode> Spouses => this.Spouses();
+        public IEnumerable<INode> Parents => this.Parents();
+        public IEnumerable<INode> Siblings => this.Siblings();
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public override bool Equals(object? obj)
@@ -41,7 +45,7 @@ namespace Models
 
         public bool Equals(Model? other)
         {
-            throw new NotImplementedException();
+            return Key == other?.Key;
         }
 
         public override int GetHashCode()
@@ -54,22 +58,7 @@ namespace Models
             return base.ToString();
         }
 
-        private IEnumerable<Model> Relations(RelationshipType relationshipType)
-        {
-            return Relationships(relationshipType).Select(a => a.RelationTo).Cast<Model>();
 
-            IEnumerable<Relationship> Relationships(RelationshipType relationshipType)
-            {
-                foreach (Relationship relationship in relationships)
-                {
-                    if (relationship.RelationshipType == relationshipType)
-                    {
-                        yield return (relationship);
-                    }
-                }
-            }
-        }
 
-      
     }
 }

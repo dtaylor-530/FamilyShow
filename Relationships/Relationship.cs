@@ -13,7 +13,7 @@ namespace Models
     {
         private RelationshipType relationshipType;
 
-        private Model relationTo;
+        private INode relationTo;
 
         // The person's Id will be serialized instead of the relationTo person object to avoid
         // circular references during Xml Serialization. When family data is loaded, the corresponding
@@ -41,7 +41,7 @@ namespace Models
             get { return relationTo; }
             set
             {
-                relationTo = value as Model;
+                relationTo = value as INode;
                 //personId = ((IPerson)value).Id;
                 //personFullname = ((IPerson)value).FullName;
             }
@@ -49,7 +49,7 @@ namespace Models
 
         public Existence Existence { get; set; }
 
-        // public IPerson Model { get; set; }
+        // public IPerson INode { get; set; }
 
         //public string PersonId
         //{
@@ -87,7 +87,7 @@ namespace Models
         // Paramaterless constructor required for XML serialization
         public ParentRelationship() { }
 
-        public ParentRelationship(Model personId)
+        public ParentRelationship(INode personId)
         {
             RelationshipType = RelationshipType.Parent;
             RelationTo = personId;   
@@ -95,7 +95,7 @@ namespace Models
 
         public override string ToString()
         {
-            return (RelationTo as Model).Key;
+            return (RelationTo as INode).Key;
         }
     }
 
@@ -108,7 +108,7 @@ namespace Models
         // Paramaterless constructor required for XML serialization
         public ChildRelationship() { }
 
-        public ChildRelationship(Model person)
+        public ChildRelationship(INode person)
         {
             RelationshipType = RelationshipType.Child;
             RelationTo = person;
@@ -139,7 +139,7 @@ namespace Models
         // Paramaterless constructor required for XML serialization
         public SpouseRelationship() { }
 
-        public SpouseRelationship(Model person)
+        public SpouseRelationship(INode person)
         {
             RelationshipType = RelationshipType.Spouse;
             RelationTo = person;
@@ -155,7 +155,7 @@ namespace Models
         // Paramaterless constructor required for XML serialization
         public SiblingRelationship() { }
 
-        public SiblingRelationship(Model person)
+        public SiblingRelationship(INode person)
         {
             RelationshipType = RelationshipType.Sibling;
             RelationTo = person;

@@ -27,20 +27,33 @@ namespace Demo.Family
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            var personLookup = new Dictionary<object, DiagramConnectorNode>();
-            var factory = new DiagramFactory(personLookup, new NodeConverter(), new ConnectorConverter());
-            factory.CurrentNode += Factory_CurrentNode;
-            model = new DiagramLogic(family, factory, personLookup);
-           // family.CollectionChanged += Family_CollectionChanged;
-            family.Current = new Person() { FirstName = name };
-            family.Add(family.Current as Person);
-            family.Add(RelationshipHelper.AddChild(family.Current as Person, new Person() { FirstName = name }));
-            family.Add(RelationshipHelper.AddChild(family.Current as Person, new Person() { FirstName = name }));
+            model = CreateDiagramLogic();
+            // family.CollectionChanged += Family_CollectionChanged;
+            BuildFamily();
 
             DiagramView1.Logic = model;
             Diagram.Logic = model;
             ContentControl.Content = family.Current;
+
+            DiagramLogic CreateDiagramLogic()
+            {
+                var personLookup = new Dictionary<object, DiagramConnectorNode>();
+                var factory = new DiagramFactory(personLookup, new NodeConverter(), new ConnectorConverter());
+                factory.CurrentNode += Factory_CurrentNode;
+                var model = new DiagramLogic(family, factory, personLookup);
+                return model;
+            }
+
+            void BuildFamily()
+            {
+                family.Current = new Person() { FirstName = name };
+                family.Add(family.Current as Person);
+                family.Add(RelationshipHelper.AddChild(family.Current as Person, new Person() { FirstName = name }));
+                family.Add(RelationshipHelper.AddChild(family.Current as Person, new Person() { FirstName = name }));
+            }
         }
+
+  
 
         private void Factory_CurrentNode(object obj)
         {

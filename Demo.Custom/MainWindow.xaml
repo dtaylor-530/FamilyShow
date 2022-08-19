@@ -34,9 +34,9 @@
             </ToolBar>
             <UniformGrid Rows="1">
                 <diagram:DiagramViewer x:Name="DiagramView1"/>
-                <Viewbox>
+                <!--<Viewbox>
                     <diagram1:Diagram x:Name="Diagram"/>
-                </Viewbox>
+                </Viewbox>-->
 
                 <ContentControl Template="{StaticResource StackPanel}" 
                                 x:Name="ContentControl"></ContentControl>

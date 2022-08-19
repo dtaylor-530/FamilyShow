@@ -26,8 +26,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DiagramLogic\Diagram.Map.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
+    <ProjectReference Include="..\Relationships\Relationships.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
 
