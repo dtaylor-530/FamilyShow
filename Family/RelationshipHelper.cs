@@ -203,8 +203,8 @@ namespace Demo
         private static IEnumerable<Person> GetChildren(IParentSet parentSet)
         {
             // Get list of both parents.
-            List<Person> firstParentChildren = new (parentSet.FirstParent.Children.Cast<Person>());
-            List<Person> secondParentChildren = new (parentSet.SecondParent.Children.Cast<Person>());
+            List<Person> firstParentChildren = new (parentSet.FirstParent.Children().Cast<Person>());
+            List<Person> secondParentChildren = new (parentSet.SecondParent.Children().Cast<Person>());
 
             // Go through and add the children that have both parents.            
             foreach (Person child in firstParentChildren)

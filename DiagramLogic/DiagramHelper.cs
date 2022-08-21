@@ -26,7 +26,7 @@ namespace Diagram.Logic
             foreach (INode person in GetPrimaryAndRelatedPeople(row))
             {
                 // Add each parent to the list, make sure the parent is only added once.
-                foreach (INode parent in person.Parents)
+                foreach (INode parent in person.Parents())
                 {
                     if (!list.Contains(parent))
                         list.Add(parent);
@@ -48,7 +48,7 @@ namespace Diagram.Logic
             foreach (INode person in GetPrimaryAndRelatedPeople(row))
             {        
                 // Add each child to the list, make sure the child is only added once
-                foreach (INode child in person.Children)
+                foreach (INode child in person.Children())
                 {
                     if (!list.Contains(child))
                         list.Add(child);

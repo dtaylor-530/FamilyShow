@@ -5,10 +5,10 @@
     {
         public string Key { get; }
         IEnumerable<IRelationship> Relationships { get; }
-        IEnumerable<INode> Children { get; }
-        IEnumerable<INode> Spouses { get; }
-        IEnumerable<INode> Parents { get; }
-        IEnumerable<INode> Siblings { get; }
+        //IEnumerable<INode> Children { get; }
+        //IEnumerable<INode> Spouses { get; }
+        //IEnumerable<INode> Parents { get; }
+        //IEnumerable<INode> Siblings { get; }
         void Add(IRelationship relationship);
         void Remove(IRelationship relationship);
 

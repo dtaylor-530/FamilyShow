@@ -11,7 +11,7 @@ namespace Relationships
         public static INode AddChild(INode model, INode child)
         {
             // Add the new child as a sibling to any existing children
-            foreach (INode existingSibling in model.Children)
+            foreach (INode existingSibling in model.Children())
             {
                 NodeHelper.AddSiblingRelationships(existingSibling as INode, child);
             }
@@ -32,7 +32,7 @@ namespace Relationships
             //    throw new Exception("dfg gdff343");
             //}
 
-            var parents = model.Parents.ToArray();
+            var parents = model.Parents().ToArray();
 
             NodeHelper.AddChildRelationships(parent, model);
                    
@@ -41,7 +41,7 @@ namespace Relationships
                 NodeHelper.AddSpouseRelationships(parent, spouse, startDate?? default); 
             }
 
-            foreach (INode sibling in model.Siblings)
+            foreach (INode sibling in model.Siblings())
             {
                 NodeHelper.AddChildRelationships(parent, sibling);
                 foreach (var spouse in parents)
@@ -75,7 +75,7 @@ namespace Relationships
             // Handle siblings
 
             // Connect the siblings to each other.
-            foreach (INode existingSibling in model.Siblings)
+            foreach (INode existingSibling in model.Siblings())
             {
                 NodeHelper.AddSiblingRelationships(existingSibling as INode, sibling);
             }

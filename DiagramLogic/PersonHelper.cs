@@ -18,7 +18,7 @@ namespace Diagram.Logic
         /// </summary>
         public static IEnumerable<ChildDiagramConnector> ChildConnections(this Dictionary<object, DiagramConnectorNode> logic, INode parent, IConnectorConverter converter)
         {
-            foreach (INode child in parent.Children)
+            foreach (INode child in parent.Children())
             {
                 yield return Add(logic, parent, child, converter);
             }
@@ -30,7 +30,7 @@ namespace Diagram.Logic
         /// </summary>
         public static IEnumerable<ChildDiagramConnector> ParentConnections(this Dictionary<object, DiagramConnectorNode> logic, INode child, IConnectorConverter converter)
         {
-            foreach (INode parent in child.Parents)
+            foreach (INode parent in child.Parents())
             {
                 yield return Add(logic, parent, child, converter);
             }
