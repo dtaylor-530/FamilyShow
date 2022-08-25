@@ -102,7 +102,7 @@ namespace Diagram.Logic
             personLookup.Add(node.Model, new DiagramConnectorNode(node, primaryGroup, row));
 
             // Current spouses.
-            IList<object> currentSpouses = person.Spouses.Cast<object>().ToList();
+            IList<object> currentSpouses = person.Spouses().Cast<object>().ToList();
             foreach (var conn in AddSpouseNodes(person, row, leftGroup, currentSpouses,
                 NodeType.Spouse, scaleRelated, true))
                 row.Add(conn);
@@ -112,7 +112,7 @@ namespace Diagram.Logic
             //    NodeType.Spouse, scaleRelated, false))
             //    row.Add(conn);
             // Siblings.
-            IList<object> siblings = person.Siblings.Cast<object>().ToList();
+            IList<object> siblings = person.Siblings().Cast<object>().ToList();
             AddSiblingNodes(row, leftGroup, siblings, NodeType.Sibling, scaleRelated);
 
             // Half siblings.
@@ -155,7 +155,7 @@ namespace Diagram.Logic
                 }
 
                 // Current spouses.
-                IList<object> currentSpouses = child.Spouses.Cast<object>().ToList();
+                IList<object> currentSpouses = child.Spouses().Cast<object>().ToList();
                 foreach (var conn in AddSpouseNodes(child, row, group, currentSpouses,
                     NodeType.Spouse, scaleRelated, true))
                     group.Add(conn);
@@ -207,7 +207,7 @@ namespace Diagram.Logic
                 }
 
                 // Current spouses.
-                IList<object> currentSpouses = person.Spouses.Cast<object>().ToList();
+                IList<object> currentSpouses = person.Spouses().Cast<object>().ToList();
                 DiagramHelper.RemoveDuplicates(currentSpouses, parents);
                 foreach (var conn in AddSpouseNodes(person, row, group, currentSpouses, NodeType.Spouse, scaleRelated, true))
                     group.Add(conn);
@@ -218,7 +218,7 @@ namespace Diagram.Logic
                 //    group.Add(conn);
 
                 // Siblings.
-                IList<object> siblings = person.Siblings.Cast<object>().ToList();
+                IList<object> siblings = person.Siblings().Cast<object>().ToList();
                 AddSiblingNodes(row, group, siblings, NodeType.Sibling, scaleRelated);
 
                 // Half siblings.
