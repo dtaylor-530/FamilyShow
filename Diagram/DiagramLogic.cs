@@ -1,14 +1,14 @@
 /*
- * Contains the logic to populate the diagram. Populates rows with 
- * groups and nodes based on the node relationships. 
+ * Contains the logic to populate the diagram. Populates rows with
+ * groups and nodes based on the node relationships.
 */
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Windows;
 using System.Linq;
+using System.Windows;
 using Microsoft.FamilyShowLib;
 using Diagram.Logic;
 
@@ -22,13 +22,15 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 
         // List of people, global list that is shared by all objects in the application.
         private CurrentCollection family;
+
         private readonly IDiagramFactory factory;
+
         // Filter year for nodes and connectors.
         private double displayYear;
+
         private object current;
 
-
-        #endregion
+        #endregion fields
 
         public DiagramLogic(CurrentCollection family, IDiagramFactory factory, Dictionary<object, DiagramConnectorNode> personLookup)
         {
@@ -51,16 +53,13 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             Current = obj;
         }
 
-
         /// <summary>
         /// Gets the list of people in the family.
         /// </summary>
         public CurrentCollection Family => family;
 
-
-
         /// <summary>
-        /// Gets the person lookup list. This includes all of the 
+        /// Gets the person lookup list. This includes all of the
         /// people and nodes that are displayed in the diagram.
         /// </summary>
         //public Dictionary<object, DiagramConnectorNode> PersonLookup => personLookup;
@@ -84,29 +83,31 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         /// <summary>
         /// Gets the minimum year in all nodes and connectors.
         /// </summary>
-
-
         public EventHandler<ContentChangedEventArgs> ContentChanged { get; set; }
+
         public EventHandler CurrentChanged { get; set; }
-        public object Current {
+
+        public object Current
+        {
             get => current;
-            set {
+            private set
+            {
                 if (current != value)
                 {
                     current = value;
                     CurrentChanged?.Invoke(this, EventArgs.Empty);
                 }
-            } 
+            }
         }
 
         /// <summary>
-        /// Clear 
+        /// Clear
         /// </summary>
         public void Clear()
         {
-            // Remove any event handlers from the nodes. Otherwise 
-            // the delegate maintains a reference to the object 
-            // which can hinder garbage collection. 
+            // Remove any event handlers from the nodes. Otherwise
+            // the delegate maintains a reference to the object
+            // which can hinder garbage collection.
             foreach (DiagramConnectorNode node in personLookup.Values)
                 factory.DestroyNode(node.Node);
 
@@ -121,16 +122,14 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         /// <summary>
         /// Return the DiagramNode for the specified Person.
         /// </summary>
-
-
         public DiagramConnectorNode? GetDiagramConnectorNode(object person)
         {
             if (person == null)
                 return null;
 
             if (!personLookup.ContainsKey(person))
-                return null;
-
+                //return null;
+                throw new Exception("vsdf  sdfsdfsdf");
             return personLookup[person];
         }
 
@@ -142,7 +141,8 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 
             // Nothing to draw if there is not a primary person.
             if (Family.Current == null)
-                yield break;
+                //yield break;
+                throw new Exception("dfgs 33 fes");
 
             // Primary row.
             var primaryPerson = Family.Current;
@@ -201,15 +201,14 @@ namespace Microsoft.FamilyShow.Controls.Diagram
                         grandParentRow.GroupSpace = Diagram.Const.ParentRowGroupSpace;
                         parentRow = grandParentRow;
                         yield return grandParentRow;
-
                     }
                     else
                     {
                         parentRow = null;
                     }
                 }
-     
-                // See if reached node limit yet.                                       
+
+                // See if reached node limit yet.
                 nodeCount = personLookup.Count;
             }
         }
