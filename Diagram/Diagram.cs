@@ -1,17 +1,16 @@
 /*
- * Arranges nodes based on relationships. Contains a series or rows (DiagramRow), 
- * each row contains a series of groups (DiagramGroup), and each group contains a 
+ * Arranges nodes based on relationships. Contains a series or rows (DiagramRow),
+ * each row contains a series of groups (DiagramGroup), and each group contains a
  * series of nodes (DiagramNode).
- * 
+ *
  * Contains a list of connections. Each connection describes where the node
  * is located in the diagram and type of connection. The lines are draw
  * during OnRender.
- * 
+ *
  * Diagram is responsible for managing the rows. The logic that populates the rows
  * and understand all of the relationships is contained in DiagramLogic.
  *
 */
-
 
 using System;
 using System.Collections.Generic;
@@ -50,6 +49,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 
             // Group space.
             public static double PrimaryRowGroupSpace = 20;
+
             public static double ChildRowGroupSpace = 20;
             public static double ParentRowGroupSpace = 40;
 
@@ -76,11 +76,11 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         // Zoom level of the diagram.
         private double scale = 1.0;
 
-        // Bounding area of the selected node, the selected node is the 
+        // Bounding area of the selected node, the selected node is the
         // non-primary node that is selected, and will become the primary node.
         private Rect selectedNodeBounds = Rect.Empty;
 
-        // Flag if currently populating or not. Necessary since diagram populate 
+        // Flag if currently populating or not. Necessary since diagram populate
         // contains several parts and animations, request to update the diagram
         // are ignored when this flag is set.
         private bool populating;
@@ -92,21 +92,21 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         private DispatcherTimer animationTimer = new DispatcherTimer();
 
 #if DEBUG
+
         // Flag if the row and group borders should be drawn.
-        bool displayBorder;
+        private bool displayBorder;
+
         private double displayYear;
 #endif
 
-        #endregion
-
+        #endregion fields
 
         public Diagram()
         {
         }
 
-  
-
         public event EventHandler DiagramUpdated;
+
         public void OnDiagramUpdated()
         {
             if (DiagramUpdated != null)
@@ -116,6 +116,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         }
 
         public event EventHandler DiagramPopulated;
+
         public void OnDiagramPopulated()
         {
             if (DiagramPopulated != null)
@@ -123,8 +124,6 @@ namespace Microsoft.FamilyShow.Controls.Diagram
                 DiagramPopulated(this, EventArgs.Empty);
             }
         }
-
-
 
         /// <summary>
         /// Gets or sets the zoom level of the diagram.
@@ -206,7 +205,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         /// <summary>
         /// Gets the bounding area (relative to the diagram) of the primary node.
         /// </summary>
-        public Rect PrimaryNodeBounds => logic?.Current!=null? GetNodeBounds(logic.Current): default;
+        public Rect PrimaryNodeBounds => logic?.Current != null ? GetNodeBounds(logic.Current) : default;
 
         /// <summary>
         /// Gets the bounding area (relative to the diagram) of the selected node.
@@ -222,7 +221,6 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         //{
         //  get { return logic.DiagramConnectorNodes.Count; }
         //}
-
 
         public static readonly DependencyProperty LogicProperty = DependencyProperty.Register("Logic", typeof(IDiagramLogic), typeof(Diagram), new PropertyMetadata(null, ModelChanged));
 
@@ -245,8 +243,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
                 logic.ContentChanged += new EventHandler<ContentChangedEventArgs>(diagram.OnFamilyContentChanged);
                 logic.CurrentChanged += new EventHandler(diagram.OnFamilyCurrentChanged);
 
-                 diagram.Populate();
-               
+                diagram.Populate();
             }
         }
 
@@ -255,8 +252,8 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             // First reset everything.
             Clear();
 
-            foreach(var row in logic.GenerateRows())
-            { 
+            foreach (var row in logic.GenerateRows())
+            {
                 if (row.IsParent)
                     rows.Insert(0, row);
                 else
@@ -277,7 +274,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
                     return;
                 }
 
-                // Get the UI element to animate.                
+                // Get the UI element to animate.
                 if (logic.GetDiagramConnectorNode(newPerson).Node is DiagramNode node)
                 {
                     // Create the new person animation.
@@ -295,7 +292,6 @@ namespace Microsoft.FamilyShow.Controls.Diagram
                 newPerson = null;
             }
         }
-
 
         public IEnumerable<DiagramConnectorNode> Nodes
         {
@@ -355,8 +351,8 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         }
 
         // Arrange the rows in the diagram, return the total size.
-        protected override Size ArrangeOverride(Size finalSize)=> ArrangeRows(true);
-  
+        protected override Size ArrangeOverride(Size finalSize) => ArrangeRows(true);
+
         /// <summary>
         /// Arrange the rows in the diagram, return the total size.
         /// </summary>
@@ -402,7 +398,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             return size;
         }
 
-        #endregion
+        #endregion layout
 
         /// <summary>
         /// Draw the connector lines at a lower level (OnRender) instead
@@ -452,9 +448,9 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             }
         }
 
-
 #if DEBUG
-        void OnToggleBorderClick(object sender, RoutedEventArgs e)
+
+        private void OnToggleBorderClick(object sender, RoutedEventArgs e)
         {
             // Display or hide the row and group borders.
             displayBorder = !displayBorder;
@@ -465,9 +461,8 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 
             InvalidateVisual();
         }
+
 #endif
-
-
 
         /// <summary>
         /// Reset all of the data associated with the diagram.
@@ -484,7 +479,8 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             logic.Clear();
         }
 
-        bool needsRepopulating;
+        private bool needsRepopulating;
+
         /// <summary>
         /// Populate the diagram. Update the diagram and hide all non-primary nodes.
         /// Then pause, and finish the populate by fading in the new nodes.
@@ -493,21 +489,21 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         {
             if (populating)
             {
-                needsRepopulating =true;
+                needsRepopulating = true;
                 //throw new Exception("sdf3 rgr");
                 return;
             }
             // Set flag to ignore future updates until complete.
-      
+
             if (logic == null)
                 return;
 
             populating = true;
             needsRepopulating = false;
-            // Save the bounds for the current primary person, this 
+            // Save the bounds for the current primary person, this
             // is required later when animating the diagram.
             selectedNodeBounds = PrimaryNodeBounds;
-                   
+
             // Update the nodes in the diagram.
             Update();
 
@@ -520,7 +516,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
                 }
             }
 
-            // Required to update (hide) the connector lines.            
+            // Required to update (hide) the connector lines.
             InvalidateVisual();
             InvalidateArrange();
             InvalidateMeasure();
@@ -565,9 +561,6 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             }
         }
 
-
-
-    
         /// <summary>
         /// Called when the current person in the main People collection changes.
         /// This means the diagram should be updated based on the new selected person.
@@ -577,7 +570,6 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             // Repopulate the diagram.
             Populate();
         }
-
 
         /// <summary>
         /// Return the bounds (relative to the diagram) for the specified person.
@@ -590,10 +582,9 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             return bounds;
         }
 
-
         /// <summary>
         /// Called when data changed in the main People collection. This can be
-        /// a new node added to the collection, updated Person details, and 
+        /// a new node added to the collection, updated Person details, and
         /// updated relationship data.
         /// </summary>
         private void OnFamilyContentChanged(object sender, ContentChangedEventArgs e)
@@ -616,7 +607,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         }
 
         /// <summary>
-        /// A node was clicked, make that node the primary node. 
+        /// A node was clicked, make that node the primary node.
         /// </summary>
         //private void OnNodeClick(object sender, EventArgs e)
         //{
@@ -632,16 +623,10 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         /// <summary>
         /// Animate the new person that was added to the diagram.
         /// </summary>
-       
-
-
         /// <summary>
         /// Reset the diagram with the nodes. This is accomplished by creating a series of rows.
-        /// Each row contains a series of groups, and each group contains the nodes. The elements 
+        /// Each row contains a series of groups, and each group contains the nodes. The elements
         /// are not laid out at this time. Also creates the connections between the nodes.
         /// </summary>
-
-
-   
     }
 }
