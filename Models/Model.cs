@@ -1,14 +1,11 @@
 ﻿using Abstractions;
 using System.ComponentModel;
-using System.Xml.Serialization;
 
 namespace Models
 {
     public class Model : INotifyPropertyChanged, IEquatable<Model>, INode
     {
         private List<IRelationship> relationships = new();
-        public readonly DateTime? Created;
-
 
         public Model(string key)
         {
@@ -25,6 +22,7 @@ namespace Models
             }
             relationships.Add(relationship);
         }
+
         public void Remove(IRelationship relationship)
         {
             relationships.Remove(relationship);
@@ -35,6 +33,8 @@ namespace Models
         public IEnumerable<INode> Spouses => this.Spouses();
         public IEnumerable<INode> Parents => this.Parents();
         public IEnumerable<INode> Siblings => this.Siblings();
+
+        public DateTime Created => DateTime.Now;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -57,8 +57,5 @@ namespace Models
         {
             return base.ToString();
         }
-
-
-
     }
 }

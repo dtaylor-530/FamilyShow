@@ -1,30 +1,15 @@
 ﻿using Abstractions;
-using Microsoft.FamilyShow;
+using Diagram.Logic;
 using Microsoft.FamilyShow.Controls.Diagram;
 using System;
 using System.Globalization;
-using System.Linq;
-using System.Threading;
-using System.Windows.Media.TextFormatting;
-using System.Windows.Media;
-using System.Windows;
-using Diagram.Logic;
 
 namespace Demo
 {
     public class ConnectorConverter : IConnectorConverter
     {
-        public DateTime? MinimumDate(object obj1, object obj2)
+        public DateTime? MinimumDate(INode person1, INode person2)
         {
-            if (obj1 is not INode { } person1)
-            {
-                throw new Exception("Tfbgdgfdgf");
-            }
-            if (obj2 is not INode { } person2)
-            {
-                throw new Exception("Tfbgdddgfdgf");
-            }
-
             var rel = person1.GetSpouseRelationship(person2);
             if (rel != null)
                 return rel.StartDate;
@@ -36,7 +21,6 @@ namespace Demo
             ////    if (rel != null)
             ////        return rel.DivorceDate;
             ////}
-
 
             //// Marriage date.
             ////DateTime? date = connector.MarriedDate;
@@ -52,43 +36,32 @@ namespace Demo
 
             //return date;
         }
-        public IRelationship? Relationship(object obj1, object obj2)
+
+        public IRelationship? Relationship(INode person1, INode person2)
         {
-            if (obj1 is not INode { } person1)
-            {
-                throw new Exception("Tfbgdgfdgf");
-            }
-            if (obj2 is not INode { } person2)
-            {
-                throw new Exception("Tfbgdddgfdgf");
-            }
-
             return person1.GetSpouseRelationship(person2);
-
         }
-        public string Text(object obj1, object obj2)
+
+        public string Text(INode person1, INode person2)
         {
             string text = default;
 
-            var rel = Relationship(obj1, obj2);
+            var rel = Relationship(person1, person2);
             if (rel != null)
             {
                 // Marriage date.
                 if (rel.StartDate.HasValue)
                 {
                     text = rel.StartDate.Value.Year.ToString(CultureInfo.CurrentCulture);
-
                 }
                 if (rel.EndDate.HasValue)
                 {
                     text = rel.EndDate.Value.Year.ToString(CultureInfo.CurrentCulture);
-
                 }
-
             }
             return text;
-
         }
+
         /// <summary>
         /// Gets the married date for the connector. Can be null.
         /// </summary>

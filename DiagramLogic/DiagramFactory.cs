@@ -10,23 +10,29 @@ namespace Diagram.Logic
     public class DiagramFactory : IDiagramFactory
     {
         private readonly Dictionary<object, DiagramConnectorNode> personLookup;
-        INodeConverter nodeConverter;
-        IConnectorConverter connectorConverter;
+        private INodeConverter nodeConverter;
+        private IConnectorConverter connectorConverter;
+        private readonly INodeLimits nodeLimits;
+
         public event Action<object> CurrentNode;
-        public DiagramFactory(Dictionary<object, DiagramConnectorNode> personLookup, INodeConverter nodeConverter, IConnectorConverter connectorConverter)
+
+        public DiagramFactory(Dictionary<object, DiagramConnectorNode> personLookup, INodeConverter nodeConverter, IConnectorConverter connectorConverter, INodeLimits nodeLimits)
         {
             this.personLookup = personLookup;
             this.nodeConverter = nodeConverter;
             this.connectorConverter = connectorConverter;
+            this.nodeLimits = nodeLimits;
         }
 
         /// <summary>
         /// Create a DiagramNode.
         /// </summary>
-        public DiagramNode CreateNode(object person, NodeType type, bool clickEvent, double? scale = default)
+        public DiagramNode CreateNode(INode person, NodeType type, bool clickEvent, double? scale = default)
         {
-            DiagramNode node = new(person, type, nodeConverter);
-            node.Scale = scale ?? DiagramNode.Const.Scale;
+            DiagramNode node = new(person, type, nodeConverter, nodeLimits)
+            {
+                Scale = scale ?? DiagramNode.Const.Scale
+            };
             if (clickEvent)
                 node.Click += (s, e) => CurrentNode?.Invoke(person);
 
@@ -80,8 +86,8 @@ namespace Diagram.Logic
         }
 
         /// <summary>
-        /// Creates the primary row. The row contains groups: 1) The primary-group 
-        /// that only contains the primary node, and 2) The optional left-group 
+        /// Creates the primary row. The row contains groups: 1) The primary-group
+        /// that only contains the primary node, and 2) The optional left-group
         /// that contains spouses and siblings.
         /// </summary>
         public DiagramRow CreatePrimaryRow(object obj, double scale, double scaleRelated)
@@ -89,7 +95,7 @@ namespace Diagram.Logic
             if (obj is not INode person)
                 throw new Exception("sdffs");
 
-            // The primary node contains two groups, 
+            // The primary node contains two groups,
             DiagramGroup primaryGroup = new DiagramGroup();
             DiagramGroup leftGroup = new DiagramGroup();
 
@@ -131,7 +137,7 @@ namespace Diagram.Logic
         }
 
         /// <summary>
-        /// Create the child row. The row contains a group for each child. 
+        /// Create the child row. The row contains a group for each child.
         /// Each group contains the child and spouses.
         /// </summary>
         public DiagramRow CreateChildrenRow(IList<object> children, double scale, double scaleRelated)
@@ -141,7 +147,7 @@ namespace Diagram.Logic
 
             foreach (INode child in children)
             {
-                // Each child is in their group, the group contains the child 
+                // Each child is in their group, the group contains the child
                 // and any spouses. The groups does not contain siblings.
                 DiagramGroup group = new DiagramGroup();
                 row.Add(group);
@@ -178,7 +184,7 @@ namespace Diagram.Logic
         }
 
         /// <summary>
-        /// Create the parent row. The row contains a group for each parent. 
+        /// Create the parent row. The row contains a group for each parent.
         /// Each groups contains the parent, spouses and siblings.
         /// </summary>
         public DiagramRow CreateParentRow(IList<object> parents, double scale, double scaleRelated)
@@ -244,20 +250,19 @@ namespace Diagram.Logic
             return row;
         }
 
-
         /// <summary>
-        /// Add marriage connections for the people specified in the 
+        /// Add marriage connections for the people specified in the
         /// list. Each marriage connection is only specified once.
         /// </summary>
         private IEnumerable<DiagramConnector> AddSpouseConnections(IList<INode> list)
         {
-            // Iterate through the list. 
+            // Iterate through the list.
             for (int current = 0; current < list.Count; current++)
             {
                 // The person to check for marriages.
                 INode person = list[current];
 
-                // Check for current / former marriages in the rest of the list.                    
+                // Check for current / former marriages in the rest of the list.
                 for (int i = current + 1; i < list.Count; i++)
                 {
                     INode spouse = list[i];
@@ -290,6 +295,7 @@ namespace Diagram.Logic
         {
             return row.GetParents().Cast<object>().ToArray();
         }
+
         public IList<object> GetChildren(DiagramRow row)
         {
             return row.GetChildren().Cast<object>().ToArray();

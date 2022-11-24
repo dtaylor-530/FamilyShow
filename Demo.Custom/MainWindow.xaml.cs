@@ -1,16 +1,15 @@
 ﻿using Abstractions;
+using Demo.Custom.Infrastructure;
 using Diagram.Logic;
+using Microsoft.FamilyShow;
 using Microsoft.FamilyShow.Controls.Diagram;
-using Microsoft.FamilyShowLib;
 using Models;
+using Relationships;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Windows;
-using Demo.Custom.Infrastructure;
 using System.Reactive.Subjects;
-using Relationships;
+using System.Windows;
 
 namespace Demo.Custom
 {
@@ -19,13 +18,14 @@ namespace Demo.Custom
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Infrastructure.Models family; 
+        private Infrastructure.Models family;
         private DiagramLogic model;
-        static int i = 'A';
+        private static int i = 'A';
+
         public MainWindow()
         {
             InitializeComponent();
-        
+
             this.Loaded += MainWindow_Loaded;
         }
 
@@ -53,7 +53,7 @@ namespace Demo.Custom
         {
             var currentChanges = new ReplaySubject<object>(1);
             var ModelLookup = new Dictionary<object, DiagramConnectorNode>();
-            var factory = new DiagramFactory(ModelLookup, new NodeConverter(), new ConnectorConverter());
+            var factory = new DiagramFactory(ModelLookup, new NodeConverter(), new ConnectorConverter(), new NodeLimits());
             factory.CurrentNode += Factory_CurrentNode;
             var model = new DiagramLogic(family, factory, ModelLookup);
             current = currentChanges;
@@ -64,14 +64,11 @@ namespace Demo.Custom
                 family.Current = obj as INotifyPropertyChanged;
                 currentChanges.OnNext(obj);
             }
-
         }
-
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            CreateAndAddModel(() => RelationshipHelper
-                        .AddChild(family.Current as Model, new Model(name)));           
+            CreateAndAddModel(() => RelationshipHelper.AddChild(family.Current as Model, new Model(name)));
 
             //DiagramView1.TheDiagram.OnFamilyCurrentChanged(default, default);
         }
@@ -84,9 +81,10 @@ namespace Demo.Custom
 
         private void Button_Click2(object sender, RoutedEventArgs e)
         {
-            CreateAndAddModel(()=>RelationshipHelper
+            CreateAndAddModel(() => RelationshipHelper
             .AddParent(family.Current as Model, new Model(name), new DateTime(2020, 2, 2)));
         }
+
         private void Button_Click3(object sender, RoutedEventArgs e)
         {
             CreateAndAddModel(() => RelationshipHelper
@@ -100,7 +98,6 @@ namespace Demo.Custom
             return Model;
         }
 
-        static string name => ((char)i++).ToString();
-
+        private static string name => ((char)i++).ToString();
     }
 }

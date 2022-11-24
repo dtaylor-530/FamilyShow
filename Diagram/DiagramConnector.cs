@@ -217,7 +217,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         {
           From = isFiltered ? Const.OpacityNormal : Const.OpacityFiltered,
           To = isFiltered ? Const.OpacityFiltered : Const.OpacityNormal,
-          Duration = App.GetAnimationDuration(Const.AnimationDuration)
+          Duration = AnimationHelper.GetAnimationDuration(Const.AnimationDuration)
         };
       }
       else

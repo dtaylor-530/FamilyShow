@@ -14,9 +14,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -278,7 +276,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
                 if (logic.GetDiagramConnectorNode(newPerson).Node is DiagramNode node)
                 {
                     // Create the new person animation.
-                    DoubleAnimation anim = new DoubleAnimation(0, 1, App.GetAnimationDuration(Const.NewPersonAnimationDuration));
+                    DoubleAnimation anim = new DoubleAnimation(0, 1, AnimationHelper.GetAnimationDuration(Const.NewPersonAnimationDuration));
                     // Animate the node.
                     ScaleTransform transform = new ScaleTransform();
                     transform.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
@@ -522,7 +520,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             InvalidateMeasure();
 
             // Pause before displaying the new nodes.
-            animationTimer.Interval = App.GetAnimationDuration(Const.AnimationPauseDuration);
+            animationTimer.Interval = AnimationHelper.GetAnimationDuration(Const.AnimationPauseDuration);
             animationTimer.Tick += new EventHandler(OnAnimationTimer);
             animationTimer.IsEnabled = true;
 
@@ -542,7 +540,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
                     {
                         connectorNode.Node.Visibility = Visibility.Visible;
                         connectorNode.Node.BeginAnimation(OpacityProperty,
-                            new DoubleAnimation(0, 1, App.GetAnimationDuration(Const.NodeFadeInDuration)));
+                            new DoubleAnimation(0, 1, AnimationHelper.GetAnimationDuration(Const.NodeFadeInDuration)));
                     }
                 }
 

@@ -1,17 +1,13 @@
 ﻿using Abstractions;
 using System.ComponentModel;
-using System.Reflection;
-using System.Xml.Serialization;
 
 namespace Models
 {
-    public class Service : INotifyPropertyChanged, IEquatable<Service>, INode
+    public class Node : INotifyPropertyChanged, IEquatable<Node>, INode
     {
         private List<IRelationship> relationships = new();
-        public readonly DateTime? Created;
 
-
-        public Service(string key)
+        public Node(string key)
         {
             Key = key;
         }
@@ -26,12 +22,16 @@ namespace Models
             }
             relationships.Add(relationship);
         }
+
         public void Remove(IRelationship relationship)
         {
             relationships.Remove(relationship);
         }
 
         public IEnumerable<IRelationship> Relationships => relationships;
+
+        public DateTime Created => DateTime.Now;
+
         //public IEnumerable<INode> Children => this.Children();
         //public IEnumerable<INode> Spouses => this.Spouses();
         //public IEnumerable<INode> Parents => this.Parents();
@@ -40,15 +40,14 @@ namespace Models
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public override bool Equals(object? obj)
-{
-            return base.Equals(obj as Service);
-}
+        {
+            return base.Equals(obj as Node);
+        }
 
-        public bool Equals(Service? other)
+        public bool Equals(Node? other)
         {
             return Key == other?.Key;
         }
-
 
         public override int GetHashCode()
         {
@@ -60,9 +59,9 @@ namespace Models
             return base.ToString();
         }
 
-        private IEnumerable<Service> Relations(RelationshipType relationshipType)
+        private IEnumerable<Node> Relations(RelationshipType relationshipType)
         {
-            return Relationships(relationshipType).Select(a => a.RelationTo).Cast<Service>();
+            return Relationships(relationshipType).Select(a => a.RelationTo).Cast<Node>();
 
             IEnumerable<IRelationship> Relationships(RelationshipType relationshipType)
             {
@@ -75,7 +74,5 @@ namespace Models
                 }
             }
         }
-
-      
     }
 }

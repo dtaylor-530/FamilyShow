@@ -1,32 +1,16 @@
 ﻿using Abstractions;
-using Microsoft.FamilyShow;
+using Diagram.Logic;
 using Microsoft.FamilyShow.Controls.Diagram;
 using System;
 using System.Globalization;
-using System.Linq;
-using System.Threading;
-using System.Windows.Media.TextFormatting;
-using System.Windows.Media;
-using System.Windows;
-using Diagram.Logic;
-using Demo;
 
 namespace Demo.Custom.Infrastructure
 {
     public class ConnectorConverter : IConnectorConverter
     {
-        public DateTime? MinimumDate(object obj1, object obj2)
+        public DateTime? MinimumDate(INode obj1, INode obj2)
         {
-            if (obj1 is not INode { } Model1)
-            {
-                throw new Exception("Tfbgdgfdgf");
-            }
-            if (obj2 is not INode { } Model2)
-            {
-                throw new Exception("Tfbgdddgfdgf");
-            }
-
-            var rel = Model1.GetSpouseRelationship(Model2);
+            var rel = obj1.GetSpouseRelationship(obj2);
             if (rel != null)
                 return rel.StartDate;
 
@@ -37,7 +21,6 @@ namespace Demo.Custom.Infrastructure
             ////    if (rel != null)
             ////        return rel.DivorceDate;
             ////}
-
 
             //// Marriage date.
             ////DateTime? date = connector.MarriedDate;
@@ -53,43 +36,30 @@ namespace Demo.Custom.Infrastructure
 
             //return date;
         }
-        public IRelationship? Relationship(object obj1, object obj2)
+
+        public IRelationship? Relationship(INode obj1, INode obj2)
         {
-            if (obj1 is not INode { } Model1)
-            {
-                throw new Exception("Tfbgdgfdgf");
-            }
-            if (obj2 is not INode { } Model2)
-            {
-                throw new Exception("Tfbgdddgfdgf");
-            }
-
-            return Model1.GetSpouseRelationship(Model2);
-
+            return obj1.GetSpouseRelationship(obj2);
         }
-        public string Text(object obj1, object obj2)
-        {
-            string text = default;
 
+        public string? Text(INode obj1, INode obj2)
+        {
             var rel = Relationship(obj1, obj2);
             if (rel != null)
             {
                 // Marriage date.
                 if (rel.StartDate.HasValue)
                 {
-                    text = rel.StartDate.Value.Year.ToString(CultureInfo.CurrentCulture);
-
+                    return rel.StartDate.Value.Year.ToString(CultureInfo.CurrentCulture);
                 }
                 if (rel.EndDate.HasValue)
                 {
-                    text = rel.EndDate.Value.Year.ToString(CultureInfo.CurrentCulture);
-
+                    return rel.EndDate.Value.Year.ToString(CultureInfo.CurrentCulture);
                 }
-
             }
-            return text;
-
+            return default;
         }
+
         /// <summary>
         /// Gets the married date for the connector. Can be null.
         /// </summary>

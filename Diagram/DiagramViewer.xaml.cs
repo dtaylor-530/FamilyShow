@@ -314,7 +314,7 @@ namespace Microsoft.FamilyShow
             ScrollViewer.ScrollToVerticalOffset(Grid.Height - offset.Y);
 
             // Set a timer so there is a pause before centering the diagram.
-            autoCenterTimer.Interval = Controls.Diagram.App.GetAnimationDuration(Const.AutoCenterAnimationPauseDuration);
+            autoCenterTimer.Interval = Controls.Diagram.AnimationHelper.GetAnimationDuration(Const.AutoCenterAnimationPauseDuration);
             autoCenterTimer.Tick += new EventHandler(OnAutoCenterPauseTimer);
             autoCenterTimer.IsEnabled = true;
         }
@@ -366,12 +366,12 @@ namespace Microsoft.FamilyShow
         {
             // Create the animations, nonlinear by using accelration and deceleration.
             DoubleAnimation horzAnim = new DoubleAnimation(endLocation.X, 0,
-                Controls.Diagram.App.GetAnimationDuration(Const.AutoCenterAnimationDuration));
+                Controls.Diagram.AnimationHelper.GetAnimationDuration(Const.AutoCenterAnimationDuration));
             horzAnim.AccelerationRatio = .5;
             horzAnim.DecelerationRatio = .5;
 
             DoubleAnimation vertAnim = new DoubleAnimation(endLocation.Y, 0,
-                Controls.Diagram.App.GetAnimationDuration(Const.AutoCenterAnimationDuration));
+                Controls.Diagram.AnimationHelper.GetAnimationDuration(Const.AutoCenterAnimationDuration));
             vertAnim.AccelerationRatio = .5;
             vertAnim.DecelerationRatio = .5;
 

@@ -5,12 +5,10 @@
      xmlns:System="clr-namespace:System;assembly=mscorlib"
            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:diagram="clr-namespace:Microsoft.FamilyShow;assembly=Diagram"
-    xmlns:family="clr-namespace:Microsoft.FamilyShowLib;assembly=Family"
-    xmlns:demo="clr-namespace:Demo"
     xmlns:local="clr-namespace:Microsoft.FamilyShow">
 
-    
     <!--  Male node  -->
+    <!--
     <ControlTemplate x:Key="MaleNodeTemplate" TargetType="{x:Type diagram:DiagramNode}">
         <StackPanel Cursor="Hand" ToolTipService.InitialShowDelay="300">
             <StackPanel.ToolTip>
@@ -31,8 +29,10 @@
                             Fill="#ff000000"
                             Opacity="0.400000" />
                     </Canvas>
-              
-                    <!--  group indicator  -->
+
+                    -->
+    <!--  group indicator  -->
+    <!--
                     <Canvas
                         Name="Group"
                         Canvas.Left="22.375"
@@ -144,8 +144,9 @@
                             </Ellipse.RenderTransform>
                         </Ellipse>
                     </Canvas>
-                    <!--  / group indicator  -->
-
+                    -->
+    <!--  / group indicator  -->
+    <!--
                 </Canvas>
             </Canvas>
             <Label
@@ -162,5 +163,5 @@
                 <Setter TargetName="ModelBody" Property="Fill" Value="{Binding Path=NodeHoverFill}" />
             </Trigger>
         </ControlTemplate.Triggers>
-    </ControlTemplate>
+    </ControlTemplate>-->
 </ResourceDictionary>

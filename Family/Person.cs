@@ -1,12 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using Abstractions;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Text;
 using System.Xml.Serialization;
-using Abstractions;
 
 namespace Microsoft.FamilyShowLib
 {
@@ -1297,6 +1294,8 @@ namespace Microsoft.FamilyShowLib
         {
             get { return null; }
         }
+
+        public DateTime Created => BirthDate ?? throw new Exception("fds de3 fg");
 
         public string this[string columnName]
         {

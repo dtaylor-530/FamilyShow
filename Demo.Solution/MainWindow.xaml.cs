@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using DependencyGraph;
+using Diagram.Logic;
+using Microsoft.FamilyShow;
+using Microsoft.FamilyShow.Controls.Diagram;
+using Microsoft.FamilyShowLib;
+using SampleCodeBase;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using Microsoft.FamilyShow.Controls.Diagram;
-using Microsoft.FamilyShowLib;
-using DependencyGraph;
-using Diagram.Logic;
-using SampleCodeBase;
 
 namespace Demo.Project
 {
@@ -23,7 +24,6 @@ namespace Demo.Project
         public MainWindow()
         {
             InitializeComponent();
-
             this.Loaded += MainWindow_Loaded;
         }
 
@@ -40,7 +40,7 @@ namespace Demo.Project
             DiagramLogic CreateDiagramLogic()
             {
                 var personLookup = new Dictionary<object, DiagramConnectorNode>();
-                factory = new DiagramFactory(personLookup, new NodeConverter(), new ConnectorConverter());
+                factory = new DiagramFactory(personLookup, new NodeConverter(), new ConnectorConverter(), new NodeLimits());
                 factory.CurrentNode += Factory_CurrentNode;
                 var model = new DiagramLogic(family, factory, personLookup);
                 return model;
@@ -48,8 +48,7 @@ namespace Demo.Project
 
             void BuildFamily()
             {
-                //var reflector = new Reflector(typeof(AcceptsFooAsCtorArg).Assembly);
-                var reflector = new Reflector(typeof(Microsoft.FamilyShow.Controls.Diagram.Diagram).Assembly);
+                var reflector = new Reflector(typeof(AcceptsFooAsCtorArg).Assembly);
                 reflector.GetDependencyGraph(family);
                 family.Current = family.First();
             }

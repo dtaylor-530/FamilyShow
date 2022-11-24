@@ -1,11 +1,11 @@
 ﻿using Abstractions;
+using Demo.Family.Infrastructure;
 using Diagram.Logic;
 using Microsoft.FamilyShow.Controls.Diagram;
 using Microsoft.FamilyShowLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows;
 
 namespace Demo.Family
@@ -17,11 +17,12 @@ namespace Demo.Family
     {
         private People family = new People();
         private DiagramLogic model;
-        int i = 'A';
+        private int i = 'A';
+
         public MainWindow()
         {
             InitializeComponent();
-        
+
             this.Loaded += MainWindow_Loaded;
         }
 
@@ -38,7 +39,7 @@ namespace Demo.Family
             DiagramLogic CreateDiagramLogic()
             {
                 var personLookup = new Dictionary<object, DiagramConnectorNode>();
-                var factory = new DiagramFactory(personLookup, new NodeConverter(), new ConnectorConverter());
+                var factory = new DiagramFactory(personLookup, new NodeConverter(), new ConnectorConverter(), new NodeLimits());
                 factory.CurrentNode += Factory_CurrentNode;
                 var model = new DiagramLogic(family, factory, personLookup);
                 return model;
@@ -46,14 +47,12 @@ namespace Demo.Family
 
             void BuildFamily()
             {
-                family.Current = new Person() { FirstName = name };
+                family.Current = new Person() { FirstName = name, BirthDate = DateTime.Now };
                 family.Add(family.Current as Person);
                 family.Add(RelationshipHelper.AddChild(family.Current as Person, new Person() { FirstName = name }));
                 family.Add(RelationshipHelper.AddChild(family.Current as Person, new Person() { FirstName = name }));
             }
         }
-
-  
 
         private void Factory_CurrentNode(object obj)
         {
@@ -64,7 +63,7 @@ namespace Demo.Family
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             CreateAndAddPerson(() => RelationshipHelper
-                        .AddChild(family.Current as Person, new Person() { FirstName = name }));           
+                        .AddChild(family.Current as Person, new Person() { FirstName = name }));
 
             //DiagramView1.TheDiagram.OnFamilyCurrentChanged(default, default);
         }
@@ -73,14 +72,14 @@ namespace Demo.Family
         {
             CreateAndAddPerson(() => RelationshipHelper
                .AddSpouse(family.Current as Person, new Person() { FirstName = name }, Existence.Current, new DateTime(2020, 2, 2)));
-                
         }
 
         private void Button_Click2(object sender, RoutedEventArgs e)
         {
-            CreateAndAddPerson(()=>RelationshipHelper
+            CreateAndAddPerson(() => RelationshipHelper
             .AddParent(family.Current as Person, new Person() { FirstName = name }, new DateTime(2020, 2, 2)));
         }
+
         private void Button_Click3(object sender, RoutedEventArgs e)
         {
             CreateAndAddPerson(() => RelationshipHelper
@@ -94,7 +93,6 @@ namespace Demo.Family
             return person;
         }
 
-        string name => ((char)i++).ToString();
-
+        private string name => ((char)i++).ToString();
     }
 }
