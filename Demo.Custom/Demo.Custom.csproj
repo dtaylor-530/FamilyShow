@@ -33,7 +33,6 @@
     <ProjectReference Include="..\DiagramLogic\Diagram.Map.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
     <ProjectReference Include="..\Relationships\Relationships.csproj" />
-    <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
 
 </Project>
