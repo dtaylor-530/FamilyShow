@@ -5,7 +5,6 @@ using Microsoft.FamilyShow.Controls.Diagram;
 using Microsoft.FamilyShowLib;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows;
 
 namespace Demo.Family
@@ -38,7 +37,7 @@ namespace Demo.Family
 
             DiagramLogic CreateDiagramLogic()
             {
-                var personLookup = new Dictionary<object, DiagramConnectorNode>();
+                var personLookup = new Dictionary<INode, DiagramConnectorNode>();
                 var factory = new DiagramFactory(personLookup, new NodeConverter(), new ConnectorConverter(), new NodeLimits());
                 factory.CurrentNode += Factory_CurrentNode;
                 var model = new DiagramLogic(family, factory, personLookup);
@@ -54,9 +53,9 @@ namespace Demo.Family
             }
         }
 
-        private void Factory_CurrentNode(object obj)
+        private void Factory_CurrentNode(INode obj)
         {
-            family.Current = obj as INotifyPropertyChanged;
+            family.Current = obj;
             ContentControl.Content = obj;
         }
 
@@ -71,7 +70,7 @@ namespace Demo.Family
         private void Button_Click1(object sender, RoutedEventArgs e)
         {
             CreateAndAddPerson(() => RelationshipHelper
-               .AddSpouse(family.Current as Person, new Person() { FirstName = name }, Existence.Current, new DateTime(2020, 2, 2)));
+               .AddSpouse(family.Current as Person, new Person() { FirstName = name }, ExistenceState.Current, new DateTime(2021, 2, 2), new DateTime(2020, 2, 2)));
         }
 
         private void Button_Click2(object sender, RoutedEventArgs e)

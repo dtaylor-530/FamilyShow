@@ -1,10 +1,9 @@
 using Abstractions;
-using System;
 using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 
 namespace Models
-{ 
+{
     /// <summary>
     /// Describes the kinship between person objects
     /// </summary>
@@ -41,42 +40,23 @@ namespace Models
             get { return relationTo; }
             set
             {
-                relationTo = value as INode;
-                //personId = ((IPerson)value).Id;
-                //personFullname = ((IPerson)value).FullName;
+                relationTo = value;
             }
         }
 
-        public Existence Existence { get; set; }
-
-        // public IPerson INode { get; set; }
-
-        //public string PersonId
-        //{
-        //    get { return personId; }
-        //    set { personId = value; }
-        //}
-
-        //public string PersonFullname
-        //{
-        //    get { return personFullname; }
-        //    set { personFullname = value; }
-        //}
+        public ExistenceState Existence { get; set; }
 
         public DateTime? StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }
-
     }
-
-
 
     /// <summary>
     /// Collection of relationship for a person object
     /// </summary>
     [Serializable]
-    public class RelationshipCollection : ObservableCollection<IRelationship> { }
-
+    public class RelationshipCollection : ObservableCollection<IRelationship>
+    { }
 
     /// <summary>
     /// Describes the kinship between a child and parent.
@@ -85,17 +65,13 @@ namespace Models
     public class ParentRelationship : Relationship
     {
         // Paramaterless constructor required for XML serialization
-        public ParentRelationship() { }
+        public ParentRelationship()
+        { }
 
         public ParentRelationship(INode personId)
         {
             RelationshipType = RelationshipType.Parent;
-            RelationTo = personId;   
-        }
-
-        public override string ToString()
-        {
-            return (RelationTo as INode).Key;
+            RelationTo = personId;
         }
     }
 
@@ -106,7 +82,8 @@ namespace Models
     public class ChildRelationship : Relationship
     {
         // Paramaterless constructor required for XML serialization
-        public ChildRelationship() { }
+        public ChildRelationship()
+        { }
 
         public ChildRelationship(INode person)
         {
@@ -137,7 +114,8 @@ namespace Models
         }
 
         // Paramaterless constructor required for XML serialization
-        public SpouseRelationship() { }
+        public SpouseRelationship()
+        { }
 
         public SpouseRelationship(INode person)
         {
@@ -153,7 +131,8 @@ namespace Models
     public class SiblingRelationship : Relationship
     {
         // Paramaterless constructor required for XML serialization
-        public SiblingRelationship() { }
+        public SiblingRelationship()
+        { }
 
         public SiblingRelationship(INode person)
         {
@@ -161,8 +140,4 @@ namespace Models
             RelationTo = person;
         }
     }
-
-
-
-
 }

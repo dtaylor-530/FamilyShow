@@ -1,12 +1,6 @@
 ﻿//using Abstractions;
 using Abstractions;
 using Microsoft.FamilyShowLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace Demo
 {
@@ -20,7 +14,7 @@ namespace Demo
             // Add the new child as a sibling to any existing children
             foreach (Person existingSibling in person.Children)
             {
-                 Helper.AddSibling( existingSibling as Person, child);
+                Helper.AddSibling(existingSibling as Person, child);
             }
 
             switch (person.Spouses.Count())
@@ -49,25 +43,25 @@ namespace Demo
             if (person.Parents.Count() == 2)
             {
                 throw new Exception("dfg gdff343");
-            }     
+            }
 
             switch (person.Parents.Count())
             {
                 // No exisitng parents
                 case 0:
-                    Helper.AddChild( parent, person, ParentChildModifier.Natural);
+                    Helper.AddChild(parent, person, ParentChildModifier.Natural);
                     break;
 
                 // An existing parent
                 case 1:
-                    Helper.AddChild( parent, person, ParentChildModifier.Natural);
+                    Helper.AddChild(parent, person, ParentChildModifier.Natural);
                     if (person.Parents.First().Relationships.SingleOrDefault() is not Relationship { StartDate: DateTime date } relationship)
                     {
-                        if (startDate.HasValue==false)
+                        if (startDate.HasValue == false)
                             throw new Exception("$T fghgfh");
                         date = startDate.Value;
                     }
-                    Helper.AddSpouse( parent, person.Parents.First() as Person, Existence.Current, date);
+                    Helper.AddSpouse(parent, person.Parents.First() as Person, ExistenceState.Current, date);
                     break;
             }
 
@@ -77,7 +71,7 @@ namespace Demo
                 // Make siblings the child of the new parent
                 foreach (Person sibling in person.FullSiblings)
                 {
-                     Helper.AddChild( parent, sibling, ParentChildModifier.Natural);
+                    Helper.AddChild(parent, sibling, ParentChildModifier.Natural);
                 }
             }
 
@@ -89,7 +83,7 @@ namespace Demo
         /// <summary>
         /// Performs the business logic for adding the Spousal relationship between the person and the spouse.
         /// </summary>
-        public static Person AddSpouse(Person person, Person spouse, Existence modifier, DateTime startDate)
+        public static Person AddSpouse(Person person, Person spouse, ExistenceState modifier, DateTime startDate, DateTime? endDate = default)
         {
             // Assume the spouse's gender based on the counterpart of the person's gender
             if (person.Gender == Gender.Male)
@@ -101,55 +95,49 @@ namespace Demo
                 spouse.Gender = Gender.Male;
             }
 
-       
-                switch (person.Spouses.Count())
-                {
-                    // No existing spouse	
-                    case 0:
-                        Helper.AddSpouse(person, spouse, modifier, startDate);
+            switch (person.Spouses.Count())
+            {
+                // No existing spouse
+                case 0:
+                    Helper.AddSpouse(person, spouse, modifier, startDate);
 
-                        // Add any of the children as the child of the spouse.
-                        if (person.Children != null || person.Children.Count() > 0)
+                    // Add any of the children as the child of the spouse.
+                    if (person.Children != null || person.Children.Count() > 0)
+                    {
+                        foreach (Person child in person.Children)
                         {
-                            foreach (Person child in person.Children)
+                            Helper.AddChild(spouse, child, ParentChildModifier.Natural);
+                        }
+                    }
+                    break;
+
+                // Existing spouse(s)
+                default:
+                    // If specifying a new married spouse, make existing spouses former.
+                    if (modifier == ExistenceState.Current)
+                    {
+                        foreach (Relationship relationship in person.Relationships)
+                        {
+                            if (relationship.RelationshipType == RelationshipType.Spouse)
                             {
-                                Helper.AddChild(spouse, child, ParentChildModifier.Natural);
+                                ((SpouseRelationship)relationship).Existence = ExistenceState.Former;
+                                ((SpouseRelationship)relationship).EndDate = endDate ?? throw new Exception("sdf sd f");
                             }
                         }
-                        break;
+                    }
 
-                    // Existing spouse(s)
-                    default:
-                        // If specifying a new married spouse, make existing spouses former.
-                        if (modifier == Existence.Current)
-                        {
-                            foreach (Relationship relationship in person.Relationships)
-                            {
-                                if (relationship.RelationshipType == RelationshipType.Spouse)
-                                {
-                                    ((SpouseRelationship)relationship).Existence = Existence.Former;
-                                }
-                            }
-                        }
-
-                        Helper.AddSpouse(person, spouse, modifier, startDate);
-                        break;
-                
-
-            
-                 
+                    Helper.AddSpouse(person, spouse, modifier, startDate);
+                    break;
             }
             // Setter for property change notification
             person.HasSpouse = true;
             return spouse;
         }
 
-
-
         /// <summary>
         /// Performs the business logic for adding the Sibling relationship between the person and the sibling.
         /// </summary>
-        public static Person AddSibling( Person person, Person sibling)
+        public static Person AddSibling(Person person, Person sibling)
         {
             // Handle siblings
             if (person.FullSiblings.Count() > 0)
@@ -157,7 +145,7 @@ namespace Demo
                 // Connect the siblings to each other.
                 foreach (Person existingSibling in person.FullSiblings)
                 {
-                    Helper.AddSibling( existingSibling as Person, sibling);
+                    Helper.AddSibling(existingSibling as Person, sibling);
                 }
             }
 
@@ -167,13 +155,13 @@ namespace Demo
                 {
                     // No parents
                     case 0:
-                        Helper.AddSibling( person, sibling);
+                        Helper.AddSibling(person, sibling);
                         break;
 
                     // Single parent
                     case 1:
-                         Helper.AddSibling( person, sibling);
-                        Helper.AddChild( person.Parents.First() as Person, sibling, ParentChildModifier.Natural);
+                        Helper.AddSibling(person, sibling);
+                        Helper.AddChild(person.Parents.First() as Person, sibling, ParentChildModifier.Natural);
                         break;
 
                     // 2 parents
@@ -181,21 +169,19 @@ namespace Demo
                         // Add the sibling as a child of the same parents
                         foreach (Person parent in person.Parents)
                         {
-                          Helper.AddChild( parent, sibling, ParentChildModifier.Natural);
+                            Helper.AddChild(parent, sibling, ParentChildModifier.Natural);
                         }
 
-                        Helper.AddSibling( person, sibling);
+                        Helper.AddSibling(person, sibling);
                         break;
 
                     default:
-                        Helper.AddSibling( person, sibling);
+                        Helper.AddSibling(person, sibling);
                         break;
                 }
             }
             return sibling;
         }
-
-
 
         /// <summary>
         /// Return a list of children for the parent set.
@@ -203,10 +189,10 @@ namespace Demo
         private static IEnumerable<Person> GetChildren(IParentSet parentSet)
         {
             // Get list of both parents.
-            List<Person> firstParentChildren = new (parentSet.FirstParent.Children().Cast<Person>());
-            List<Person> secondParentChildren = new (parentSet.SecondParent.Children().Cast<Person>());
+            List<Person> firstParentChildren = new(parentSet.FirstParent.Children().Cast<Person>());
+            List<Person> secondParentChildren = new(parentSet.SecondParent.Children().Cast<Person>());
 
-            // Go through and add the children that have both parents.            
+            // Go through and add the children that have both parents.
             foreach (Person child in firstParentChildren)
             {
                 if (secondParentChildren.Contains(child))
@@ -219,7 +205,7 @@ namespace Demo
         ///// <summary>
         ///// Performs the business logic for updating the spouse status
         ///// </summary>
-        public static void UpdateSpouseStatus(Person person, Person spouse, Existence modifier)
+        public static void UpdateSpouseStatus(Person person, Person spouse, ExistenceState modifier)
         {
             foreach (Relationship relationship in person.Relationships.Cast<Relationship>())
             {
@@ -312,7 +298,6 @@ namespace Demo
             // Add the new parents
             AddParent(person, newParentSet);
 
-
             /// <summary>
             /// Performs the business logic for adding the Parent relationship between the person and the parents.
             /// </summary>
@@ -322,8 +307,8 @@ namespace Demo
                 Helper.AddChild(parentSet.FirstParent as Person, person, ParentChildModifier.Natural);
                 Helper.AddChild(parentSet.SecondParent as Person, person, ParentChildModifier.Natural);
 
-                // Next update the siblings. Get the list of full siblings for the person. 
-                // A full sibling is a sibling that has both parents in common.            
+                // Next update the siblings. Get the list of full siblings for the person.
+                // A full sibling is a sibling that has both parents in common.
                 foreach (Person sibling in GetChildren(parentSet))
                 {
                     if (sibling != person)
@@ -339,7 +324,7 @@ namespace Demo
         /// </summary>
         private static void RemoveSiblingRelationships(Person person)
         {
-            foreach(var rel in person.Relationships.Reverse())
+            foreach (var rel in person.Relationships.Reverse())
             {
                 if ((rel as Relationship).RelationshipType == RelationshipType.Sibling)
                 {
@@ -402,9 +387,9 @@ namespace Demo
             family.Remove(personToDelete);
         }
 
-        static class Helper
+        private static class Helper
         {
-            class Package
+            private class Package
             {
                 public Package(Relationship relationship, Person? person)
                 {
@@ -415,6 +400,7 @@ namespace Demo
                 public Relationship Relationship { get; }
                 public Person? Person { get; }
             }
+
             /// <summary>
             /// Adds Parent-Child relationship between person and child with the provided parent-child relationship type.
             /// </summary>
@@ -430,11 +416,11 @@ namespace Demo
             /// <summary>
             /// Add Spouse relationship between the person and the spouse with the provided spouse relationship type.
             /// </summary>
-            public static void AddSpouse(Person person, Person spouse, Existence spouseType, DateTime startDate)
+            public static void AddSpouse(Person person, Person spouse, ExistenceState spouseType, DateTime startDate)
             {
-                //assign spouses to each other    
-                person.Add(new SpouseRelationship(spouse, spouseType) { StartDate = startDate });
-                spouse.Add(new SpouseRelationship(person, spouseType) { StartDate = startDate });
+                //assign spouses to each other
+                person.Add(new SpouseRelationship(spouse, spouseType) { StartDate = startDate, Existence = spouseType });
+                spouse.Add(new SpouseRelationship(person, spouseType) { StartDate = startDate, Existence = spouseType });
             }
 
             /// <summary>
@@ -442,13 +428,10 @@ namespace Demo
             /// </summary>
             public static void AddSibling(Person person, Person sibling)
             {
-                //assign sibling to each other    
+                //assign sibling to each other
                 person.Add(new SiblingRelationship(sibling));
                 sibling.Add(new SiblingRelationship(person));
-
-  
             }
         }
     }
 }
-

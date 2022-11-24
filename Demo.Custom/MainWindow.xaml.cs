@@ -7,7 +7,6 @@ using Models;
 using Relationships;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Reactive.Subjects;
 using System.Windows;
 
@@ -44,24 +43,24 @@ namespace Demo.Custom
             var family = new Infrastructure.Models();
             family.Current = new Model(name);
             family.Add(family.Current as Model);
-            family.Add(RelationshipHelper.AddChild(family.Current as Model, new Model(name)) as Model);
-            family.Add(RelationshipHelper.AddChild(family.Current as Model, new Model(name)) as Model);
+            //family.Add(RelationshipHelper.AddChild(family.Current as Model, new Model(name)) as Model);
+            //family.Add(RelationshipHelper.AddChild(family.Current as Model, new Model(name)) as Model);
             return family;
         }
 
         private static DiagramLogic DiagramLogic(Infrastructure.Models family, out IObservable<object> current)
         {
             var currentChanges = new ReplaySubject<object>(1);
-            var ModelLookup = new Dictionary<object, DiagramConnectorNode>();
+            var ModelLookup = new Dictionary<INode, DiagramConnectorNode>();
             var factory = new DiagramFactory(ModelLookup, new NodeConverter(), new ConnectorConverter(), new NodeLimits());
             factory.CurrentNode += Factory_CurrentNode;
             var model = new DiagramLogic(family, factory, ModelLookup);
             current = currentChanges;
             return model;
 
-            void Factory_CurrentNode(object obj)
+            void Factory_CurrentNode(INode obj)
             {
-                family.Current = obj as INotifyPropertyChanged;
+                family.Current = obj;
                 currentChanges.OnNext(obj);
             }
         }

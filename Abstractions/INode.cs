@@ -1,34 +1,24 @@
 ﻿namespace Abstractions
 {
-    public interface INode
+    public interface INodeRelationshipEditor : IRelationshipEditor, INode
     {
-        public string Key { get; }
-        IEnumerable<IRelationship> Relationships { get; }
-        DateTime Created { get; }
+    }
 
-        //IEnumerable<INode> Children { get; }
-        //IEnumerable<INode> Spouses { get; }
-        //IEnumerable<INode> Parents { get; }
-        //IEnumerable<INode> Siblings { get; }
+    public interface IRelationshipEditor
+    {
         void Add(IRelationship relationship);
 
         void Remove(IRelationship relationship);
+    }
 
-        //IEnumerable<INode> FullSiblings { get; }
-        //  //IEnumerable<INode> PreviousSpouses { get; }
-        //IEnumerable<INode> CurrentSpouses { get; }
-        //IEnumerable<INode> HalfSiblings { get; }
+    public interface INode
+    {
+        IEnumerable<IRelationship> Relationships { get; }
 
-        //IParentSet ParentSet { get; }
-        //public string Id { get; set; }
+        DateTime Created { get; }
+    }
 
-        //string Name { get; }
-        //string FullName { get; }
-        //DateTime? BirthDate { get; }
-        //Gender Gender { get; set; }
-        //bool HasSpouse { get; set; }
-        //bool IsLiving { get; }
-        //int? Age { get; }
-        //DateTime? DeathDate { get; }
+    public interface IConnector
+    {
     }
 }

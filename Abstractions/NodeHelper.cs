@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Abstractions
+﻿namespace Abstractions
 {
     public static class NodeHelper
     {
         public static IEnumerable<INode> Children(this INode node) => node.Relations(RelationshipType.Child);
+
         public static IEnumerable<INode> Spouses(this INode node) => node.Relations(RelationshipType.Spouse);
+
         public static IEnumerable<INode> Parents(this INode node) => node.Relations(RelationshipType.Parent);
+
         public static IEnumerable<INode> Siblings(this INode node) => node.Relations(RelationshipType.Sibling);
 
         public static IEnumerable<INode> Relations(this INode node, RelationshipType relationshipType)
@@ -25,6 +22,17 @@ namespace Abstractions
                     {
                         yield return (relationship);
                     }
+                }
+            }
+        }
+
+        public static IEnumerable<IRelationship> Relationships(this INode node, RelationshipType relationshipType)
+        {
+            foreach (IRelationship relationship in node.Relationships)
+            {
+                if (relationship.RelationshipType == relationshipType)
+                {
+                    yield return (relationship);
                 }
             }
         }

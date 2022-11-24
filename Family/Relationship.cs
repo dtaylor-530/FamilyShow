@@ -1,5 +1,4 @@
 using Abstractions;
-using System;
 using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 
@@ -15,7 +14,11 @@ namespace Microsoft.FamilyShowLib
     {
         private RelationshipType relationshipType;
 
-        private INode relationTo;
+        private INode? relationTo;
+
+        public Relationship()
+        {
+        }
 
         // The person's Id will be serialized instead of the relationTo person object to avoid
         // circular references during Xml Serialization. When family data is loaded, the corresponding
@@ -49,182 +52,126 @@ namespace Microsoft.FamilyShowLib
             }
         }
 
-        public Existence Existence { get; set; }
-
-        // public IPerson Person { get; set; }
-
-        //public string PersonId
-        //{
-        //    get { return personId; }
-        //    set { personId = value; }
-        //}
-
-        //public string PersonFullname
-        //{
-        //    get { return personFullname; }
-        //    set { personFullname = value; }
-        //}
+        public ExistenceState Existence { get; set; } = ExistenceState.Current;
 
         public DateTime? StartDate { get; set; }
-    
-        public DateTime? EndDate { get; set; }
 
+        public DateTime? EndDate { get; set; }
     }
 
     /// <summary>
     /// Describes the kinship between a child and parent.
     /// </summary>
     [Serializable]
-  public class ParentRelationship : Relationship
-  {
-    // The ParentChildModifier are not currently used by the application
-    private ParentChildModifier parentChildModifier;
-    public ParentChildModifier ParentChildModifier
+    public class ParentRelationship : Relationship
     {
-      get { return parentChildModifier; }
-      set { parentChildModifier = value; }
+        // The ParentChildModifier are not currently used by the application
+        private ParentChildModifier parentChildModifier;
+
+        public ParentChildModifier ParentChildModifier
+        {
+            get { return parentChildModifier; }
+            set { parentChildModifier = value; }
+        }
+
+        // Paramaterless constructor required for XML serialization
+        public ParentRelationship()
+        { }
+
+        public ParentRelationship(INode personId, ParentChildModifier parentChildType)
+        {
+            RelationshipType = RelationshipType.Parent;
+            RelationTo = personId;
+            parentChildModifier = parentChildType;
+        }
+
+        public override string ToString()
+        {
+            return (RelationTo as Person).Name;
+        }
     }
 
-    // Paramaterless constructor required for XML serialization
-    public ParentRelationship() { }
-
-    public ParentRelationship(INode personId, ParentChildModifier parentChildType)
+    /// <summary>
+    /// Describes the kindship between a parent and child.
+    /// </summary>
+    [Serializable]
+    public class ChildRelationship : Relationship
     {
-      RelationshipType = RelationshipType.Parent;
-      RelationTo = personId;
-      parentChildModifier = parentChildType;
+        // The ParentChildModifier are not currently used by the application
+        private ParentChildModifier parentChildModifier;
+
+        public ParentChildModifier ParentChildModifier
+        {
+            get { return parentChildModifier; }
+            set { parentChildModifier = value; }
+        }
+
+        // Paramaterless constructor required for XML serialization
+        public ChildRelationship()
+        { }
+
+        public ChildRelationship(INode person, ParentChildModifier parentChildType)
+        {
+            RelationshipType = RelationshipType.Child;
+            RelationTo = person;
+            parentChildModifier = parentChildType;
+        }
     }
 
-    public override string ToString()
+    /// <summary>
+    /// Describes the kindship between a couple
+    /// </summary>
+    [Serializable]
+    public class SpouseRelationship : Relationship
     {
-      return (RelationTo as Person).Name;
-    }
-  }
+        private string marriagePlace;
 
-  /// <summary>
-  /// Describes the kindship between a parent and child.
-  /// </summary>
-  [Serializable]
-  public class ChildRelationship : Relationship
-  {
-    // The ParentChildModifier are not currently used by the application
-    private ParentChildModifier parentChildModifier;
-    public ParentChildModifier ParentChildModifier
-    {
-      get { return parentChildModifier; }
-      set { parentChildModifier = value; }
-    }
+        // Paramaterless constructor required for XML serialization
+        public SpouseRelationship()
+        {
+        }
 
-    // Paramaterless constructor required for XML serialization
-    public ChildRelationship() { }
+        public string MarriagePlace
+        {
+            get { return marriagePlace; }
+            set { marriagePlace = value; }
+        }
 
-    public ChildRelationship(INode person, ParentChildModifier parentChildType)
-    {
-      RelationshipType = RelationshipType.Child;
-      RelationTo = person;
-      parentChildModifier = parentChildType;
-    }
-  }
-
-  /// <summary>
-  /// Describes the kindship between a couple
-  /// </summary>
-  [Serializable]
-  public class SpouseRelationship : Relationship
-  {
-    private Existence spouseModifier;
-    private DateTime? marriageDate;
-    private DateTime? divorceDate;
-    private String marriagePlace;
-
-    public Existence SpouseModifier
-    {
-      get { return spouseModifier; }
-      set { spouseModifier = value; }
+        public SpouseRelationship(INode person, ExistenceState spouseType)
+        {
+            RelationshipType = RelationshipType.Spouse;
+            Existence = spouseType;
+            RelationTo = person;
+        }
     }
 
-    //public DateTime? StartDate
-    //{
-    //  get { return marriageDate; }
-    //  set { marriageDate = value; }
-    //}
-
-    //public DateTime? EndDate
-    //{
-    //  get { return divorceDate; }
-    //  set { divorceDate = value; }
-    //}
-    public String MarriagePlace
+    /// <summary>
+    /// Describes the kindship between a siblings
+    /// </summary>
+    [Serializable]
+    public class SiblingRelationship : Relationship
     {
-      get { return marriagePlace; }
-      set { marriagePlace = value; }
+        // Paramaterless constructor required for XML serialization
+        public SiblingRelationship()
+        { }
+
+        public SiblingRelationship(INode person)
+        {
+            RelationshipType = RelationshipType.Sibling;
+            RelationTo = person;
+        }
     }
 
+    #endregion Relationship classes
 
-    // Paramaterless constructor required for XML serialization
-    public SpouseRelationship() { }
+    #region Relationships collection
 
-    public SpouseRelationship(INode person, Existence spouseType)
-    {
-      RelationshipType = RelationshipType.Spouse;
-      spouseModifier = spouseType;
-      RelationTo = person;
-    }
-  }
+    /// <summary>
+    /// Collection of relationship for a person object
+    /// </summary>
+    [Serializable]
+    public class RelationshipCollection : ObservableCollection<IRelationship>
+    { }
 
-  /// <summary>
-  /// Describes the kindship between a siblings
-  /// </summary>
-  [Serializable]
-  public class SiblingRelationship : Relationship
-  {
-    // Paramaterless constructor required for XML serialization
-    public SiblingRelationship() { }
-
-    public SiblingRelationship(INode person)
-    {
-      RelationshipType = RelationshipType.Sibling;
-      RelationTo = person;
-    }
-  }
-
-  #endregion
-
-  #region Relationships collection
-
-  /// <summary>
-  /// Collection of relationship for a person object
-  /// </summary>
-  [Serializable]
-  public class RelationshipCollection : ObservableCollection<IRelationship> { }
-
-  #endregion
-
-  #region Relationship Type/Modifier Enums
-
-  /// <summary>
-  /// Enumeration of connection types between person objects
-  /// </summary>
-  //public enum RelationshipType
-  //{
-  //  Child,
-  //  Parent,
-  //  Sibling,
-  //  Spouse
-  //}
-
-  //public enum SpouseModifier
-  //{
-  //  Current,
-  //  Former
-  //}
-
-  //public enum ParentChildModifier
-  //{
-  //  Natural,
-  //  Adopted,
-  //  Foster
-  //}
-
-  #endregion
+    #endregion Relationships collection
 }

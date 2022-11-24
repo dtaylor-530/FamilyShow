@@ -8,12 +8,12 @@ namespace Relationships
         /// <summary>
         /// Performs the business logic for adding the Child relationship between the INode and the child.
         /// </summary>
-        public static INode AddChild(INode model, INode child)
+        public static INode AddChild(INodeRelationshipEditor model, INodeRelationshipEditor child)
         {
             // Add the new child as a sibling to any existing children
-            foreach (INode existingSibling in model.Children())
+            foreach (INodeRelationshipEditor existingSibling in model.Children())
             {
-                NodeHelper.AddSiblingRelationships(existingSibling as INode, child);
+                NodeHelper.AddSiblingRelationships(existingSibling, child);
             }
 
             NodeHelper.AddChildRelationships(model, child);
@@ -24,7 +24,7 @@ namespace Relationships
         /// <summary>
         /// Performs the business logic for adding the Parent relationship between the INode and the parent.
         /// </summary>
-        public static INode AddParent(INode model, INode parent, DateTime? startDate = default)
+        public static INode AddParent(INodeRelationshipEditor model, INodeRelationshipEditor parent, DateTime? startDate = default)
         {
             // A INode can only have 2 parents, do nothing
             //if (model.Parents.Count() == 2)
@@ -35,22 +35,24 @@ namespace Relationships
             var parents = model.Parents().ToArray();
 
             NodeHelper.AddChildRelationships(parent, model);
-                   
-            foreach (var spouse in parents)
+
+            foreach (INodeRelationshipEditor spouse in parents)
             {
-                NodeHelper.AddSpouseRelationships(parent, spouse, startDate?? default); 
+                NodeHelper.AddSpouseRelationships(parent, spouse, startDate ?? default);
             }
 
-            foreach (INode sibling in model.Siblings())
+            foreach (INodeRelationshipEditor sibling in model.Siblings())
             {
                 NodeHelper.AddChildRelationships(parent, sibling);
-                foreach (var spouse in parents)
+                foreach (INodeRelationshipEditor spouse in parents)
                 {
-                    NodeHelper.AddChildRelationships(spouse, model);           
+                    if (spouse.Children().Contains(model))
+                    {
+                        continue;
+                    }
+                    NodeHelper.AddChildRelationships(spouse, model);
                 }
-
             }
-
 
             return parent;
         }
@@ -58,35 +60,30 @@ namespace Relationships
         /// <summary>
         /// Performs the business logic for adding the Spousal relationship between the INode and the spouse.
         /// </summary>
-        public static INode AddSpouse(INode node, INode spouse, DateTime startDate)
+        public static INode AddSpouse(INodeRelationshipEditor node, INodeRelationshipEditor spouse, DateTime startDate)
         {
             NodeHelper.AddSpouseRelationships(node, spouse, startDate);
 
             return spouse;
         }
 
-
-
         /// <summary>
         /// Performs the business logic for adding the Sibling relationship between the INode and the sibling.
         /// </summary>
-        public static INode AddSibling(INode model, INode sibling)
+        public static INode AddSibling(INodeRelationshipEditor model, INodeRelationshipEditor sibling)
         {
             // Handle siblings
 
             // Connect the siblings to each other.
-            foreach (INode existingSibling in model.Siblings())
+            foreach (INodeRelationshipEditor existingSibling in model.Siblings())
             {
-                NodeHelper.AddSiblingRelationships(existingSibling as INode, sibling);
+                NodeHelper.AddSiblingRelationships(existingSibling, sibling);
             }
-
 
             NodeHelper.AddSiblingRelationships(model, sibling);
 
             return sibling;
         }
-
-
 
         /// <summary>
         /// Return a list of children for the parent set.
@@ -97,7 +94,7 @@ namespace Relationships
         //    List<INode> firstParentChildren = new(parentSet.FirstParent.Children.Cast<INode>());
         //    List<INode> secondParentChildren = new(parentSet.SecondParent.Children.Cast<INode>());
 
-        //    // Go through and add the children that have both parents.            
+        //    // Go through and add the children that have both parents.
         //    foreach (INode child in firstParentChildren)
         //    {
         //        if (secondParentChildren.Contains(child))
@@ -110,7 +107,7 @@ namespace Relationships
         ///// <summary>
         ///// Performs the business logic for updating the spouse status
         ///// </summary>
-        public static void UpdateSpouseStatus(INode node, INode spouse, Existence modifier)
+        public static void UpdateSpouseStatus(INode node, INode spouse, ExistenceState modifier)
         {
             foreach (Relationship relationship in node.Relationships.Cast<Relationship>())
             {
@@ -179,7 +176,6 @@ namespace Relationships
             }
         }
 
-
         ///// <summary>
         ///// Performs the business logic for changing the INode parents
         ///// </summary>
@@ -204,7 +200,6 @@ namespace Relationships
         //    // Add the new parents
         //    AddParent(INode, newParentSet);
 
-
         //    /// <summary>
         //    /// Performs the business logic for adding the Parent relationship between the INode and the parents.
         //    /// </summary>
@@ -214,8 +209,8 @@ namespace Relationships
         //        Helper.AddChild(parentSet.FirstParent as INode, INode, ParentChildModifier.Natural);
         //        Helper.AddChild(parentSet.SecondParent as INode, INode, ParentChildModifier.Natural);
 
-        //        // Next update the siblings. Get the list of full siblings for the node. 
-        //        // A full sibling is a sibling that has both parents in common.            
+        //        // Next update the siblings. Get the list of full siblings for the node.
+        //        // A full sibling is a sibling that has both parents in common.
         //        foreach (INode sibling in GetChildren(parentSet))
         //        {
         //            if (sibling != INode)
@@ -229,7 +224,5 @@ namespace Relationships
         /// <summary>
         /// Helper function for removing sibling relationships
         /// </summary>
-
     }
 }
-

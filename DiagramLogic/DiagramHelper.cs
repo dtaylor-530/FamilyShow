@@ -1,16 +1,13 @@
 ﻿using Abstractions;
 using Microsoft.FamilyShow;
 using Microsoft.FamilyShow.Controls.Diagram;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Diagram.Logic
 {
-    static class DiagramHelper
+    internal static class DiagramHelper
     {
         /// <summary>
         /// Return a list of parents for the people in the specified row.
@@ -46,7 +43,7 @@ namespace Diagram.Logic
 
             // Get possible parents in the row
             foreach (INode person in GetPrimaryAndRelatedPeople(row))
-            {        
+            {
                 // Add each child to the list, make sure the child is only added once
                 foreach (INode child in person.Children())
                 {
@@ -82,5 +79,13 @@ namespace Diagram.Logic
                 people.Remove(person);
         }
 
+        public static void RemoveDuplicates(this IList<IRelationship> relationships, IList<INode> other)
+        {
+            foreach (INode person in other)
+            {
+                if (relationships.SingleOrDefault(a => a.RelationTo == person) is { } item)
+                    relationships.Remove(item);
+            }
+        }
     }
 }

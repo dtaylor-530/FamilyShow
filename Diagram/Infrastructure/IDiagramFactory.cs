@@ -9,20 +9,20 @@ namespace Diagram.Logic
 {
     public interface IDiagramFactory
     {
-        event Action<object> CurrentNode;
+        event Action<INode> CurrentNode;
 
-        DiagramRow CreateChildrenRow(IList<object> children, double scale, double scaleRelated);
+        DiagramRow CreateChildrenRow(IList<INode> children, double scale, double scaleRelated);
 
         DiagramNode CreateNode(INode person, NodeType type, bool clickEvent, double? scale = null);
 
-        DiagramRow CreateParentRow(IList<object> parents, double scale, double scaleRelated);
+        DiagramRow CreateParentRow(IList<INode> parents, double scale, double scaleRelated);
 
         DiagramRow CreatePrimaryRow(object person, double scale, double scaleRelated);
 
         void DestroyNode(DiagramNode node);
 
-        IList<object> GetParents(DiagramRow parentRow);
+        IList<INode> GetParents(DiagramRow parentRow);
 
-        IList<object> GetChildren(DiagramRow childRow);
+        IList<INode> GetChildren(DiagramRow childRow);
     }
 }

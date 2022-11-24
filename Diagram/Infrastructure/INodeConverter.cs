@@ -27,8 +27,8 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 
     public interface IConnectorConverter
     {
-        DateTime? MinimumDate(INode obj1, INode obj2);
-
         string Text(INode obj1, INode obj2);
+
+        DateTime? MinimumDate(IRelationship connector);
     }
 }

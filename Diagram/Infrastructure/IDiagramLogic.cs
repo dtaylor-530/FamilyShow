@@ -3,24 +3,24 @@
  * groups and nodes based on the node relationships.
 */
 
+using Abstractions;
 using System;
 using System.Collections.Generic;
-using System.Windows;
 
 namespace Microsoft.FamilyShow.Controls.Diagram
 {
     public class ContentChangedEventArgs : EventArgs
     {
-        private object newPerson;
+        private INode newPerson;
 
-        public object NewPerson
-        {
-            get { return newPerson; }
-        }
-
-        public ContentChangedEventArgs(object newPerson)
+        public ContentChangedEventArgs(INode newPerson)
         {
             this.newPerson = newPerson;
+        }
+
+        public INode NewPerson
+        {
+            get { return newPerson; }
         }
     }
 
@@ -35,11 +35,11 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         double DisplayYear { set; }
 
         //double MinimumYear { get; }
-        object Current { get; }
+        INode Current { get; }
 
         void Clear();
 
-        DiagramConnectorNode GetDiagramConnectorNode(object person);
+        DiagramConnectorNode GetDiagramConnectorNode(INode person);
 
         IEnumerable<DiagramRow> GenerateRows();
     }

@@ -12,6 +12,7 @@
  *
 */
 
+using Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -84,7 +85,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         private bool populating;
 
         // The person that has been added to the diagram.
-        private object? newPerson;
+        private INode? newPerson;
 
         // Timer used with the repopulating animation.
         private DispatcherTimer animationTimer = new DispatcherTimer();
@@ -170,32 +171,24 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             {
                 // Init to current year.
                 double minimumYear = DateTime.Now.Year;
-
+                DateTime? date;
                 // Check birth years.
                 foreach (DiagramConnectorNode connectorNode in Nodes)
                 {
-                    DateTime? date = connectorNode.Node.Converter.MinimumDate(connectorNode.Node.Model);
-                    if (date.HasValue)
+                    date = connectorNode.Node.Converter.MinimumDate(connectorNode.Node.Model);
+                    if (date != null)
                         minimumYear = Math.Min(minimumYear, date.Value.Year);
                 }
 
                 // Check marriage years.
-                //foreach (DiagramConnector connector in Connections)
-                //{
-                //    DateTime? date = connector.Converter.MinimumDate(connectorNode.Node.Model);
-                //    if (date.HasValue)
-                //        minimumYear = Math.Min(minimumYear, date.Value.Year);
-                //}
+                foreach (DiagramConnector connector in Connections)
+                {
+                    // Marriage date.
+                    date = connector.Converter.MinimumDate(connector.Relationship);// MarriedDate;
+                    if (date != null)
+                        minimumYear = Math.Min(minimumYear, date.Value.Year);
+                }
 
-                //// Marriage date.
-                //DateTime? date = connector.MarriedDate;
-                //if (date != null)
-                //    minimumYear = Math.Min(minimumYear, date.Value.Year);
-
-                //// Previous marriage date.
-                //date = connector.PreviousMarriedDate;
-                //if (date != null)
-                //    minimumYear = Math.Min(minimumYear, date.Value.Year);
                 return minimumYear;
             }
         }
@@ -572,7 +565,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         /// <summary>
         /// Return the bounds (relative to the diagram) for the specified person.
         /// </summary>
-        public Rect GetNodeBounds(object person)
+        public Rect GetNodeBounds(INode person)
         {
             DiagramConnectorNode connector = logic.GetDiagramConnectorNode(person);
             var bounds = new Rect(connector.TopLeft.X, connector.TopLeft.Y,
@@ -603,20 +596,6 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             InvalidateArrange();
             InvalidateVisual();
         }
-
-        /// <summary>
-        /// A node was clicked, make that node the primary node.
-        /// </summary>
-        //private void OnNodeClick(object sender, EventArgs e)
-        //{
-        //  // Get the node that was clicked.
-        //  if (sender is DiagramNode node)
-        //  {
-        //    // Make it the primary node. This raises the CurrentChanged
-        //    // event, which repopulates the diagram.
-        //    logic.Current = node.Person;
-        //  }
-        //}
 
         /// <summary>
         /// Animate the new person that was added to the diagram.

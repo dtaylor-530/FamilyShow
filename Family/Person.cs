@@ -25,7 +25,7 @@ namespace Microsoft.FamilyShowLib
     /// participate as source in data bindings.
     /// </summary>
     [Serializable]
-    public class Person : INotifyPropertyChanged, IEquatable<Person>, IDataErrorInfo, INode
+    public class Person : INotifyPropertyChanged, IEquatable<Person>, IDataErrorInfo, INodeRelationshipEditor, IPerson
     {
         #region Fields and Constants
 
@@ -662,7 +662,7 @@ namespace Microsoft.FamilyShowLib
             {
                 foreach (var rel in ListSpousesRelationShip)
                 {
-                    if (rel != null && (rel as SpouseRelationship).SpouseModifier == Existence.Current)
+                    if (rel != null && (rel as SpouseRelationship).Existence == ExistenceState.Current)
                     {
                         yield return (rel.RelationTo);
                     }
@@ -677,7 +677,7 @@ namespace Microsoft.FamilyShowLib
             {
                 foreach (var rel in ListSpousesRelationShip)
                 {
-                    if (rel != null && (rel as SpouseRelationship).SpouseModifier == Existence.Former)
+                    if (rel != null && (rel as SpouseRelationship).Existence == ExistenceState.Former)
                     {
                         yield return (rel.RelationTo);
                     }

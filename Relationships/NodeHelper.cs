@@ -1,16 +1,11 @@
 ﻿using Abstractions;
 using Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Relationships
 {
     internal class NodeHelper
     {
-        private static void RemoveSiblingRelationships(INode node)
+        private static void RemoveSiblingRelationships(INodeRelationshipEditor node)
         {
             foreach (var rel in node.Relationships.Reverse())
             {
@@ -24,7 +19,7 @@ namespace Relationships
         /// <summary>
         /// Helper function for removing a parent relationship
         /// </summary>
-        private static void RemoveParentChildRelationship(INode node, INode parent)
+        private static void RemoveParentChildRelationship(INodeRelationshipEditor node, INodeRelationshipEditor parent)
         {
             foreach (Relationship relationship in node.Relationships)
             {
@@ -75,11 +70,10 @@ namespace Relationships
         //    family.Remove(ModelToDelete);
         //}
 
-
         /// <summary>
         /// Adds Parent-Child relationship between INode and child with the provided parent-child relationship type.
         /// </summary>
-        public static void AddChildRelationships(INode parent, INode child)
+        public static void AddChildRelationships(INodeRelationshipEditor parent, INodeRelationshipEditor child)
         {
             //add child relationship to INode
             parent.Add(new ChildRelationship(child));
@@ -91,9 +85,9 @@ namespace Relationships
         /// <summary>
         /// Add Spouse relationship between the INode and the spouse with the provided spouse relationship type.
         /// </summary>
-        public static void AddSpouseRelationships(INode node, INode spouse, DateTime startDate)
+        public static void AddSpouseRelationships(INodeRelationshipEditor node, INodeRelationshipEditor spouse, DateTime startDate)
         {
-            //assign spouses to each other    
+            //assign spouses to each other
             node.Add(new SpouseRelationship(spouse) { StartDate = startDate });
             spouse.Add(new SpouseRelationship(node) { StartDate = startDate });
         }
@@ -101,14 +95,11 @@ namespace Relationships
         /// <summary>
         /// Adds sibling relation between the INode and the sibling
         /// </summary>
-        public static void AddSiblingRelationships(INode node, INode sibling)
+        public static void AddSiblingRelationships(INodeRelationshipEditor node, INodeRelationshipEditor sibling)
         {
-            //assign sibling to each other    
+            //assign sibling to each other
             node.Add(new SiblingRelationship(sibling));
             sibling.Add(new SiblingRelationship(node));
-
-
         }
-
     }
 }

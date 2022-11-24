@@ -3,14 +3,12 @@
  * groups and nodes based on the node relationships.
 */
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using Microsoft.FamilyShowLib;
+using Abstractions;
 using Diagram.Logic;
+using Microsoft.FamilyShowLib;
+using System;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace Microsoft.FamilyShow.Controls.Diagram
 {
@@ -18,7 +16,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
     {
         #region fields
 
-        private Dictionary<object, DiagramConnectorNode> personLookup;
+        private Dictionary<INode, DiagramConnectorNode> personLookup;
 
         // List of people, global list that is shared by all objects in the application.
         private CurrentCollection family;
@@ -28,11 +26,11 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         // Filter year for nodes and connectors.
         private double displayYear;
 
-        private object current;
+        private INode current;
 
         #endregion fields
 
-        public DiagramLogic(CurrentCollection family, IDiagramFactory factory, Dictionary<object, DiagramConnectorNode> personLookup)
+        public DiagramLogic(CurrentCollection family, IDiagramFactory factory, Dictionary<INode, DiagramConnectorNode> personLookup)
         {
             // The list of people, this is a global list shared by the application.
             this.family = family;
@@ -48,7 +46,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
             ContentChanged?.Invoke(this, new ContentChangedEventArgs(Family.Current));
         }
 
-        private void Factory_CurrentNode(object obj)
+        private void Factory_CurrentNode(INode obj)
         {
             Current = obj;
         }
@@ -87,7 +85,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
 
         public EventHandler CurrentChanged { get; set; }
 
-        public object Current
+        public INode Current
         {
             get => current;
             private set
@@ -122,7 +120,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
         /// <summary>
         /// Return the DiagramNode for the specified Person.
         /// </summary>
-        public DiagramConnectorNode? GetDiagramConnectorNode(object person)
+        public DiagramConnectorNode? GetDiagramConnectorNode(INode person)
         {
             if (person == null)
                 return null;
@@ -192,7 +190,7 @@ namespace Microsoft.FamilyShow.Controls.Diagram
                     nodeScale *= Diagram.Const.GenerationMultiplier;
 
                     // Get list of parents for the current row.
-                    IList<object> parents = factory.GetParents(parentRow);
+                    var parents = factory.GetParents(parentRow);
                     if (parents.Count != 0)
                     {
                         // Add another row.
