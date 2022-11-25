@@ -62,27 +62,5 @@ namespace Diagram.Logic
 
             return null;
         }
-
-        /// <summary>
-        /// Gets the combination of parent sets for this person and his/her spouses
-        /// </summary>
-        /// <returns></returns>
-        //public static ParentSetCollection MakeParentSets(INode person)
-        //{
-        //    ParentSetCollection parentSets = new ParentSetCollection();
-
-        //    foreach (INode spouse in person.Spouses)
-        //    {
-        //        ParentSet ps = new ParentSet(person, spouse);
-
-        //        // Don't add the same parent set twice.
-        //        if (!parentSets.Contains(ps))
-        //        {
-        //            parentSets.Add(ps);
-        //        }
-        //    }
-
-        //    return parentSets;
-        //}
     }
 }

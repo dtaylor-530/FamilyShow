@@ -32,10 +32,6 @@ namespace Models
         }
 
         public IEnumerable<IRelationship> Relationships => relationships;
-        public IEnumerable<INode> Children => this.Children();
-        public IEnumerable<INode> Spouses => this.Spouses();
-        public IEnumerable<INode> Parents => this.Parents();
-        public IEnumerable<INode> Siblings => this.Siblings();
 
         public DateTime Created => DateTime.Now;
 
@@ -54,11 +50,6 @@ namespace Models
         public override int GetHashCode()
         {
             return base.GetHashCode();
-        }
-
-        public override string? ToString()
-        {
-            return base.ToString();
         }
     }
 }

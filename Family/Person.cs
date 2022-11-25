@@ -43,7 +43,7 @@ namespace Microsoft.FamilyShowLib
         private string nickName;
         private string marriedName;
         private Gender gender;
-        private DateTime? birthDate;
+        private DateTime? birthDate = DateTime.Now;
         private string birthPlace;
         private DateTime? deathDate;
         private string deathPlace;

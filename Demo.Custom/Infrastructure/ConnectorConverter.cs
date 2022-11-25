@@ -8,21 +8,12 @@ namespace Demo.Custom.Infrastructure
 {
     public class ConnectorConverter : IConnectorConverter
     {
-        //public DateTime? MinimumDate(INode obj1, INode obj2)
-        //{
-        //    var rel = obj1.GetSpouseRelationship(obj2);
-        //    if (rel != null)
-        //        return rel.StartDate;
-
-        //    return default;
-        //}
-
-        public DateTime? MinimumDate(IRelationship rel)
+        public DateTime MinimumDate(IRelationship relationship)
         {
-            if (rel != null)
-                return rel.StartDate;
+            if (relationship?.StartDate != null)
+                return relationship.StartDate.Value;
 
-            return default;
+            throw new Exception("dsfd sfd");
         }
 
         public string Text(INode obj1, INode obj2)
@@ -30,7 +21,7 @@ namespace Demo.Custom.Infrastructure
             var rel = obj1.GetSpouseRelationship(obj2);
             if (rel != null)
             {
-                return MinimumDate(rel).Value.Year.ToString(CultureInfo.CurrentCulture);
+                return this.MinimumDate(rel).Year.ToString(CultureInfo.CurrentCulture);
             }
             return "No Text";
         }

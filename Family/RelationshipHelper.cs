@@ -328,7 +328,7 @@ namespace Demo
             {
                 if ((rel as Relationship).RelationshipType == RelationshipType.Sibling)
                 {
-                    person.Remove(rel as Relationship);
+                    person.Remove(rel);
                 }
             }
         }
@@ -374,7 +374,7 @@ namespace Demo
                 {
                     if (rel.RelationTo.Equals(personToDelete))
                     {
-                        (relationship.RelationTo as Person).Remove(rel as Relationship);
+                        (relationship.RelationTo as Person).Remove(rel);
                         break;
                     }
                 }
@@ -407,20 +407,20 @@ namespace Demo
             public static void AddChild(Person parent, Person child, ParentChildModifier parentChildType)
             {
                 //add child relationship to person
-                parent.Add(new ChildRelationship(child, parentChildType));
+                parent.Add(new ChildRelationship(child, parentChildType) { StartDate = child.Created });
 
                 //add person as parent of child
-                child.Add(new ParentRelationship(parent, parentChildType));
+                child.Add(new ParentRelationship(parent, parentChildType) { StartDate = child.Created });
             }
 
             /// <summary>
             /// Add Spouse relationship between the person and the spouse with the provided spouse relationship type.
             /// </summary>
-            public static void AddSpouse(Person person, Person spouse, ExistenceState spouseType, DateTime startDate)
+            public static void AddSpouse(Person person, Person spouse, ExistenceState existence, DateTime startDate)
             {
                 //assign spouses to each other
-                person.Add(new SpouseRelationship(spouse, spouseType) { StartDate = startDate, Existence = spouseType });
-                spouse.Add(new SpouseRelationship(person, spouseType) { StartDate = startDate, Existence = spouseType });
+                person.Add(new SpouseRelationship(spouse, existence) { StartDate = startDate });
+                spouse.Add(new SpouseRelationship(person, existence) { StartDate = startDate });
             }
 
             /// <summary>
@@ -429,8 +429,9 @@ namespace Demo
             public static void AddSibling(Person person, Person sibling)
             {
                 //assign sibling to each other
-                person.Add(new SiblingRelationship(sibling));
-                sibling.Add(new SiblingRelationship(person));
+                var max = new DateTime(Math.Max(sibling.Created.Ticks, person.Created.Ticks));
+                person.Add(new SiblingRelationship(sibling) { StartDate = max });
+                sibling.Add(new SiblingRelationship(person) { StartDate = max });
             }
         }
     }

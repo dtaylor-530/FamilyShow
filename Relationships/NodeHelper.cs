@@ -9,9 +9,9 @@ namespace Relationships
         {
             foreach (var rel in node.Relationships.Reverse())
             {
-                if ((rel as Relationship).RelationshipType == RelationshipType.Sibling)
+                if ((rel).RelationshipType == RelationshipType.Sibling)
                 {
-                    node.Remove(rel as Relationship);
+                    node.Remove(rel);
                 }
             }
         }
@@ -76,10 +76,10 @@ namespace Relationships
         public static void AddChildRelationships(INodeRelationshipEditor parent, INodeRelationshipEditor child)
         {
             //add child relationship to INode
-            parent.Add(new ChildRelationship(child));
+            parent.Add(new ChildRelationship(child) { StartDate = child.Created });
 
             //add INode as parent of child
-            child.Add(new ParentRelationship(parent));
+            child.Add(new ParentRelationship(parent) { StartDate = child.Created });
         }
 
         /// <summary>
@@ -98,8 +98,9 @@ namespace Relationships
         public static void AddSiblingRelationships(INodeRelationshipEditor node, INodeRelationshipEditor sibling)
         {
             //assign sibling to each other
-            node.Add(new SiblingRelationship(sibling));
-            sibling.Add(new SiblingRelationship(node));
+            var max = new DateTime(Math.Max(sibling.Created.Ticks, node.Created.Ticks));
+            node.Add(new SiblingRelationship(sibling) { StartDate = max });
+            sibling.Add(new SiblingRelationship(node) { StartDate = max });
         }
     }
 }

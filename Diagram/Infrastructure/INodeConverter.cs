@@ -29,6 +29,6 @@ namespace Microsoft.FamilyShow.Controls.Diagram
     {
         string Text(INode obj1, INode obj2);
 
-        DateTime? MinimumDate(IRelationship connector);
+        DateTime MinimumDate(IRelationship connector);
     }
 }

@@ -113,7 +113,7 @@ namespace Relationships
             {
                 if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(spouse))
                 {
-                    ((SpouseRelationship)relationship).Existence = modifier;
+                    (relationship).Existence = modifier;
                     break;
                 }
             }
@@ -122,7 +122,7 @@ namespace Relationships
             {
                 if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(node))
                 {
-                    ((SpouseRelationship)relationship).Existence = modifier;
+                    (relationship).Existence = modifier;
                     break;
                 }
             }
@@ -137,7 +137,7 @@ namespace Relationships
             {
                 if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(spouse))
                 {
-                    ((SpouseRelationship)relationship).StartDate = dateTime;
+                    (relationship).StartDate = dateTime;
                     break;
                 }
             }
@@ -146,7 +146,7 @@ namespace Relationships
             {
                 if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(node))
                 {
-                    ((SpouseRelationship)relationship).StartDate = dateTime;
+                    (relationship).StartDate = dateTime;
                     break;
                 }
             }
@@ -161,7 +161,7 @@ namespace Relationships
             {
                 if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(spouse))
                 {
-                    ((SpouseRelationship)relationship).EndDate = dateTime;
+                    (relationship).EndDate = dateTime;
                     break;
                 }
             }
@@ -170,7 +170,7 @@ namespace Relationships
             {
                 if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(node))
                 {
-                    ((SpouseRelationship)relationship).EndDate = dateTime;
+                    (relationship).EndDate = dateTime;
                     break;
                 }
             }
