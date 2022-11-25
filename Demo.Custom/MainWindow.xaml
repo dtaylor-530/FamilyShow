@@ -3,24 +3,32 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-         xmlns:diagram="clr-namespace:Microsoft.FamilyShow;assembly=Diagram" 
+         xmlns:diagram="clr-namespace:Microsoft.FamilyShow;assembly=Diagram"
         xmlns:diagram1="clr-namespace:Microsoft.FamilyShow.Controls.Diagram;assembly=Diagram"
+        xmlns:models="clr-namespace:Models"
+        xmlns:rel="clr-namespace:Models;assembly=Relationships"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
         <ResourceDictionary>
-            <!--<DataTemplate DataType="{x:Type anc:PersonGroup}">
-                <Ellipse
-                    Width="20"
-                    Height="20"
-                    Fill="Red" />
+
+            <DataTemplate DataType="{x:Type rel:Relationship}">
+                <UniformGrid Rows="1">
+                    <TextBlock Text="{Binding RelationTo.Key}"></TextBlock>
+                    <TextBlock Text="{Binding RelationshipType}"></TextBlock>
+                    <TextBlock Text="{Binding Existence}"></TextBlock>
+                    <TextBlock Text="{Binding StartDate}"></TextBlock>
+                    <TextBlock Text="{Binding EndDate}"></TextBlock>
+                </UniformGrid>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type anc:Person}">
-                <Ellipse
-                    Width="20"
-                    Height="20"
-                    Fill="Blue" />
-            </DataTemplate>-->
+
+            <HierarchicalDataTemplate DataType="{x:Type models:Model}" ItemsSource="{Binding Relationships}">
+                <UniformGrid Rows="1">
+                    <TextBlock Text="{Binding Key}"></TextBlock>
+
+                    <TextBlock Text="{Binding Created}"></TextBlock>
+                </UniformGrid>
+            </HierarchicalDataTemplate>
         </ResourceDictionary>
     </Window.Resources>
     <UniformGrid Rows="1" Columns="1">
@@ -33,13 +41,15 @@
                 <Button Click="Button_Click3">Add Sibling</Button>
             </ToolBar>
             <UniformGrid Rows="1">
-                <diagram:DiagramViewer x:Name="DiagramView1"/>
+                <diagram:DiagramViewer x:Name="DiagramView1" />
                 <!--<Viewbox>
-                    <diagram1:Diagram x:Name="Diagram"/>
+                    <diagram1:Diagram x:Name="Diagram" />
                 </Viewbox>-->
 
-                <ContentControl Template="{StaticResource StackPanel}" 
+                <ContentControl Template="{StaticResource StackPanel}"
                                 x:Name="ContentControl"></ContentControl>
+                <TreeView x:Name="DataGrid">
+                </TreeView>
             </UniformGrid>
         </DockPanel>
     </UniformGrid>

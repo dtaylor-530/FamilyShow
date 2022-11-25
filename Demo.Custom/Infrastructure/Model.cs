@@ -1,6 +1,7 @@
 ﻿using Abstractions;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 
@@ -8,7 +9,7 @@ namespace Models
 {
     public class Model : INotifyPropertyChanged, IEquatable<Model>, INodeRelationshipEditor
     {
-        private List<IRelationship> relationships = new();
+        private ObservableCollection<IRelationship> relationships = new();
 
         public Model(string key)
         {

@@ -32,10 +32,15 @@ namespace Demo.Custom
         {
             family = CreateFamily();
             model = DiagramLogic(family, out var observable);
-
+            DataGrid.ItemsSource = family;
             DiagramView1.Logic = model;
             //Diagram.Logic = model;
             ContentControl.Content = family.Current;
+
+            observable.Subscribe(obj =>
+            {
+                ContentControl.Content = obj;
+            });
         }
 
         private static Infrastructure.Models CreateFamily()
