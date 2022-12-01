@@ -9,7 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using Microsoft.FamilyShowLib;
+using Diagrams.WPF.Infrastructure;
 
 namespace Demo.Custom.Infrastructure
 {

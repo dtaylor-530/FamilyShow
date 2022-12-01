@@ -1,6 +1,6 @@
 ﻿using Abstractions;
 using Diagram.Logic;
-using Microsoft.FamilyShow.Controls.Diagram;
+using Diagrams.WPF.Infrastructure;
 using Microsoft.FamilyShowLib;
 using System;
 using System.Globalization;
@@ -9,6 +9,11 @@ namespace Demo
 {
     public class ConnectorConverter : IConnectorConverter
     {
+        public bool IsFiltered(IRelationship relationship)
+        {
+            return false;
+        }
+
         public DateTime MinimumDate(IRelationship rel)
         {
             return NewMethod(rel) ?? throw new Exception("sd66  fg3 dgsfg.."); ;
@@ -25,26 +30,34 @@ namespace Demo
                     return rel.StartDate;
                 }
 
-                if (rel is SpouseRelationship { Existence: { } existence })
+                if (rel is SpouseRelationship { })
                 {
-                    if (existence == ExistenceState.Current)
-                        return rel.StartDate;
+                    return rel.EndDate;
+                    //if (existence == ExistenceState.Current)
+                    //    return rel.StartDate;
 
-                    if (existence == ExistenceState.Former)
-                        return rel.EndDate;
+                    //if (existence == ExistenceState.Former)
+                    //    return rel.EndDate;
                 }
                 throw new Exception("sdfg3 dgsfg..");
             }
         }
 
-        public string Text(INode person1, INode person2)
+        public string ResourcePen(IRelationship relationship)
         {
-            var rel = person1.GetSpouseRelationship(person2);
-            if (rel != null)
-            {
-                return MinimumDate(rel).Year.ToString(CultureInfo.CurrentCulture);
-            }
-            return "fd e3e  33";
+            return "MarriedConnectionPen";
+        }
+
+        public void Subscribe(IRelationship obj)
+        {
+      
+        }
+
+
+
+        public string Text(IRelationship relationship)
+        {
+            return MinimumDate(relationship).Year.ToString(CultureInfo.CurrentCulture);
         }
     }
 }

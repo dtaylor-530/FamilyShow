@@ -3,12 +3,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
      xmlns:System="clr-namespace:System;assembly=mscorlib"
-           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:diagram="clr-namespace:Microsoft.FamilyShow;assembly=Diagram"
-    xmlns:family="clr-namespace:Microsoft.FamilyShowLib;assembly=Family"
-    xmlns:demo="clr-namespace:Demo"
-    xmlns:local="clr-namespace:Microsoft.FamilyShow"
->
+          
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:diagram.Infra="clr-namespace:Diagrams.WPF.UI_Infrastructure;assembly=Diagrams.WPF"
+    xmlns:diagram="clr-namespace:Diagrams.WPF;assembly=Diagrams.WPF"
+    >
         
     
   <!--  NormalBrush is used as the Background for SimpleButton, SimpleRepeatButton  -->
@@ -1259,12 +1258,12 @@
     <!--<demo:ImageConverter x:Key="ImageConverter" />-->
 
     <!--  Converter for avatar  -->
-    <diagram:ComposingConverter x:Key="ComposingConverter">
-        <diagram:ComposingConverter.Converters>
-            <diagram:NotConverter />
-            <diagram:BoolToVisibilityConverter />
-        </diagram:ComposingConverter.Converters>
-    </diagram:ComposingConverter>
+    <diagram.Infra:ComposingConverter x:Key="ComposingConverter">
+        <diagram.Infra:ComposingConverter.Converters>
+            <diagram.Infra:NotConverter />
+            <diagram.Infra:BoolToVisibilityConverter />
+        </diagram.Infra:ComposingConverter.Converters>
+    </diagram.Infra:ComposingConverter>
     
     <!--  ToolTip  -->
   <Style x:Key="DiagramToolTip" TargetType="ToolTip">
@@ -1331,33 +1330,33 @@
                                     x:Name="ParentsDatePanel"
                                     Margin="0,0,0,5"
                                     TextWrapping="Wrap">
-                                    <Run diagram:BindableExtender.BindableText="{Binding Path=ParentRelationshipText}" />
+                                    <Run diagram.Infra:BindableExtender.BindableText="{Binding Path=ParentRelationshipText}" />
                     <Run Text=" of " />
-                    <Run diagram:BindableExtender.BindableText="{Binding Path=ParentsText}" />
+                    <Run diagram.Infra:BindableExtender.BindableText="{Binding Path=ParentsText}" />
                 </TextBlock>
                 <TextBlock
                                     x:Name="SiblingsDatePanel"
                                     Margin="0,0,0,5"
                                     TextWrapping="Wrap">
-                                    <Run diagram:BindableExtender.BindableText="{Binding Path=SiblingRelationshipText}" />
+                                    <Run diagram.Infra:BindableExtender.BindableText="{Binding Path=SiblingRelationshipText}" />
                     <Run Text=" to " />
-                    <Run diagram:BindableExtender.BindableText="{Binding Path=SiblingsText}" />
+                    <Run diagram.Infra:BindableExtender.BindableText="{Binding Path=SiblingsText}" />
                 </TextBlock>
                 <TextBlock
                                     x:Name="SpousesDatePanel"
                                     Margin="0,0,0,5"
                                     TextWrapping="Wrap">
-                                    <Run diagram:BindableExtender.BindableText="{Binding Path=SpouseRelationshipText}" />
+                                    <Run diagram.Infra:BindableExtender.BindableText="{Binding Path=SpouseRelationshipText}" />
                     <Run Text=" to " />
-                    <Run diagram:BindableExtender.BindableText="{Binding Path=SpousesText}" />
+                    <Run diagram.Infra:BindableExtender.BindableText="{Binding Path=SpousesText}" />
                 </TextBlock>
                 <TextBlock
                                     x:Name="ChildrenDatePanel"
                                     Margin="0,0,0,5"
                                     TextWrapping="Wrap">
-                                    <Run diagram:BindableExtender.BindableText="{Binding Path=ChildRelationshipText}" />
+                                    <Run diagram.Infra:BindableExtender.BindableText="{Binding Path=ChildRelationshipText}" />
                     <Run Text=" to " />
-                    <Run diagram:BindableExtender.BindableText="{Binding Path=ChildrenText}" />
+                    <Run diagram.Infra:BindableExtender.BindableText="{Binding Path=ChildrenText}" />
                 </TextBlock>
               </StackPanel>
             </DockPanel>

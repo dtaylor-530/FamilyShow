@@ -7,7 +7,7 @@ namespace Relationships
     {
         private static void RemoveSiblingRelationships(INodeRelationshipEditor node)
         {
-            foreach (var rel in node.Relationships.Reverse())
+            foreach (var rel in node.Node.Relationships.Reverse())
             {
                 if ((rel).RelationshipType == RelationshipType.Sibling)
                 {
@@ -21,7 +21,7 @@ namespace Relationships
         /// </summary>
         private static void RemoveParentChildRelationship(INodeRelationshipEditor node, INodeRelationshipEditor parent)
         {
-            foreach (Relationship relationship in node.Relationships)
+            foreach (Relationship relationship in node.Node.Relationships)
             {
                 if (relationship.RelationshipType == RelationshipType.Parent && relationship.RelationTo.Equals(parent))
                 {
@@ -30,7 +30,7 @@ namespace Relationships
                 }
             }
 
-            foreach (Relationship relationship in parent.Relationships)
+            foreach (Relationship relationship in parent.Node.Relationships)
             {
                 if (relationship.RelationshipType == RelationshipType.Child && relationship.RelationTo.Equals(node))
                 {
@@ -76,10 +76,10 @@ namespace Relationships
         public static void AddChildRelationships(INodeRelationshipEditor parent, INodeRelationshipEditor child)
         {
             //add child relationship to INode
-            parent.Add(new ChildRelationship(child) { StartDate = child.Created });
+            parent.Add(new ChildRelationship(child.Node) { StartDate = child.Node.Created });
 
             //add INode as parent of child
-            child.Add(new ParentRelationship(parent) { StartDate = child.Created });
+            child.Add(new ParentRelationship(parent.Node) { StartDate = child.Node.Created });
         }
 
         /// <summary>
@@ -88,8 +88,8 @@ namespace Relationships
         public static void AddSpouseRelationships(INodeRelationshipEditor node, INodeRelationshipEditor spouse, DateTime startDate)
         {
             //assign spouses to each other
-            node.Add(new SpouseRelationship(spouse) { StartDate = startDate });
-            spouse.Add(new SpouseRelationship(node) { StartDate = startDate });
+            node.Add(new SpouseRelationship(spouse.Node) { StartDate = startDate });
+            spouse.Add(new SpouseRelationship(node.Node) { StartDate = startDate });
         }
 
         /// <summary>
@@ -98,9 +98,9 @@ namespace Relationships
         public static void AddSiblingRelationships(INodeRelationshipEditor node, INodeRelationshipEditor sibling)
         {
             //assign sibling to each other
-            var max = new DateTime(Math.Max(sibling.Created.Ticks, node.Created.Ticks));
-            node.Add(new SiblingRelationship(sibling) { StartDate = max });
-            sibling.Add(new SiblingRelationship(node) { StartDate = max });
+            var max = new DateTime(Math.Max(sibling.Node.Created.Ticks, node.Node.Created.Ticks));
+            node.Add(new SiblingRelationship(sibling.Node) { StartDate = max });
+            sibling.Add(new SiblingRelationship(node.Node) { StartDate = max });
         }
     }
 }

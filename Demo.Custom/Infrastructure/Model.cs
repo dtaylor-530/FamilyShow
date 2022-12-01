@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Models
 {
-    public class Model : INotifyPropertyChanged, IEquatable<Model>, INodeRelationshipEditor
+    public class Model : INotifyPropertyChanged, IEquatable<Model>, INodeRelationshipEditor, INode
     {
         private ObservableCollection<IRelationship> relationships = new();
 
@@ -35,6 +35,8 @@ namespace Models
         public IEnumerable<IRelationship> Relationships => relationships;
 
         public DateTime Created => DateTime.Now;
+
+        public INode Node => this;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

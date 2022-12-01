@@ -1,5 +1,6 @@
-﻿using Microsoft.FamilyShow;
-using Microsoft.FamilyShow.Controls.Diagram;
+﻿using Abstractions;
+using Diagrams.WPF.Infrastructure;
+using Microsoft.FamilyShow;
 using Microsoft.FamilyShowLib;
 using System;
 using System.Globalization;
@@ -12,11 +13,14 @@ namespace Diagram.Logic
 {
     public class NodeConverter : INodeConverter
     {
+        private readonly int displayYear;
+
         public NodeConverter()
         {
+            displayYear = DateTime.Now.AddYears(1).Year;
         }
 
-        public bool IsFiltered(object obj, double displayYear)
+        public bool IsFiltered(INode obj)
         {
             if (obj is not Person { } person)
             {
@@ -26,7 +30,7 @@ namespace Diagram.Logic
             return person.BirthDate != null && person.BirthDate.Value.Year > displayYear;
         }
 
-        public string DateInformation(object obj, double displayYear)
+        public string DateInformation(INode obj)
         {
             if (obj is not Person { } person)
             {
@@ -81,7 +85,7 @@ namespace Diagram.Logic
             throw new Exception("weasfd  sdsdd");
         }
 
-        public string NodeTemplate(object obj, NodeType type)
+        public string NodeTemplate(INode obj, NodeType type)
         {
             if (obj is not Person { } person)
             {
@@ -95,18 +99,18 @@ namespace Diagram.Logic
             return template;
         }
 
-        public DateTime? MinimumDate(object obj)
-        {
-            if (obj is not Person { } person)
-            {
-                throw new Exception("dsgd ,,f");
-            }
-            DateTime? date = person.BirthDate;
+        //public DateTime? MinimumDate(INode obj)
+        //{
+        //    if (obj is not Person { } person)
+        //    {
+        //        throw new Exception("dsgd ,,f");
+        //    }
+        //    DateTime? date = person.BirthDate;
 
-            return date;
-        }
+        //    return date;
+        //}
 
-        public string BrushResource(object obj, NodeType type, string part)
+        public string BrushResource(INode obj, NodeType type, string part)
         {
             if (obj is not Person { } person)
             {
@@ -121,7 +125,7 @@ namespace Diagram.Logic
             return resourceName;
         }
 
-        public string GroupBrushResource(object obj, NodeType type, string part)
+        public string GroupBrushResource(INode obj, NodeType type, string part)
         {
             // Format string, the resource is in the XAML file.
             string resourceName = string.Format(CultureInfo.InvariantCulture, "{0}{1}", type.ToString(), part);
@@ -145,7 +149,7 @@ namespace Diagram.Logic
         /// <summary>
         /// Hide or show the group indicator for this node.
         /// </summary>
-        public void UpdateGroupIndicator(object obj, Control control, NodeType type)
+        public void UpdateGroupIndicator(INode obj, Control control, NodeType type)
         {
             if (obj is not Person { } person)
             {
@@ -192,15 +196,20 @@ namespace Diagram.Logic
             }
         }
 
-        public string BottomLabel(object obj, double displayYear)
+        public string Text(INode obj)
         {
             if (obj is not Person { } person)
             {
                 throw new Exception("dsgd ,,f");
             }
             string label = string.Format(CultureInfo.CurrentCulture, "{0}\r{1}", person.FullName,
-               DateInformation(obj, displayYear));
+               DateInformation(obj));
             return label;
+        }
+
+        public void Subscribe(INode obj)
+        {
+
         }
     }
 }

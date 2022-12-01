@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Diagrams.WPF\Diagrams.WPF.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="DiagramView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="TimeControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="ZoomControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+</Project>

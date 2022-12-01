@@ -10,41 +10,13 @@ namespace Models
     [Serializable]
     public abstract class Relationship : IRelationship
     {
-        private RelationshipType relationshipType;
-
-        private INode relationTo;
-
-        // The person's Id will be serialized instead of the relationTo person object to avoid
-        // circular references during Xml Serialization. When family data is loaded, the corresponding
-        // person object will be assigned to the relationTo property (please see app.xaml.cs).
-        //private string personId;
-
-        // Store the person's name with the Id to make the xml file more readable
-        //private string personFullname;
-
         /// <summary>
         /// The Type of relationship.  Parent, child, sibling, or spouse
         /// </summary>
-        public RelationshipType RelationshipType
-        {
-            get { return relationshipType; }
-            set { relationshipType = value; }
-        }
+        public RelationshipType RelationshipType { get; set; }
 
-        /// <summary>
-        /// The person id the relationship is to. See comment on personId above.
-        /// </summary>
         [XmlIgnore]
-        public INode RelationTo
-        {
-            get { return relationTo; }
-            set
-            {
-                relationTo = value;
-            }
-        }
-
-        public ExistenceState Existence { get; set; }
+        public INode RelationTo { get; set; }
 
         public DateTime? StartDate { get; set; }
 

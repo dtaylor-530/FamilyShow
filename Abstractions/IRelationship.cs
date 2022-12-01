@@ -2,23 +2,21 @@
 {
     public enum RelationshipType
     {
+        // one parent node
         Child,
+        // one child node
         Parent,
+        // two or more child nodes; one parent
         Sibling,
-        Spouse
+        // two or more parent nodes; one child
+        Spouse,
     }
 
-    public enum ExistenceState
-    {
-        Current,
-        Former
-    }
 
     public interface IRelationship
     {
         RelationshipType RelationshipType { get; }
         INode RelationTo { get; }
-        ExistenceState Existence { get; }
         DateTime? StartDate { get; }
         DateTime? EndDate { get; }
     }

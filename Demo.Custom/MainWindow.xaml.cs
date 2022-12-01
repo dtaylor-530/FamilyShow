@@ -1,8 +1,7 @@
 ﻿using Abstractions;
 using Demo.Custom.Infrastructure;
-using Diagram.Logic;
-using Microsoft.FamilyShow;
-using Microsoft.FamilyShow.Controls.Diagram;
+using Diagrams.Logic;
+using Diagrams.WPF;
 using Models;
 using Relationships;
 using System;

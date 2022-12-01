@@ -1,7 +1,9 @@
 using Abstractions;
+using Family;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 
@@ -25,7 +27,7 @@ namespace Microsoft.FamilyShowLib
     /// participate as source in data bindings.
     /// </summary>
     [Serializable]
-    public class Person : INotifyPropertyChanged, IEquatable<Person>, IDataErrorInfo, INodeRelationshipEditor, IPerson
+    public class Person : INotifyPropertyChanged, IEquatable<Person>, IDataErrorInfo, INodeRelationshipEditor, IPerson, INode
     {
         #region Fields and Constants
 
@@ -647,7 +649,7 @@ namespace Microsoft.FamilyShowLib
         /// Accessor for the person's spouse(s)
         /// </summary>
         [XmlIgnore]
-        public IEnumerable<INode> Spouses
+        public IEnumerable<Person> Spouses
         {
             get
             {
@@ -656,7 +658,7 @@ namespace Microsoft.FamilyShowLib
         }
 
         [XmlIgnore]
-        public IEnumerable<INode> CurrentSpouses
+        public IEnumerable<Person> CurrentSpouses
         {
             get
             {
@@ -664,14 +666,14 @@ namespace Microsoft.FamilyShowLib
                 {
                     if (rel != null && (rel as SpouseRelationship).Existence == ExistenceState.Current)
                     {
-                        yield return (rel.RelationTo);
+                        yield return (rel.RelationTo as Person);
                     }
                 }
             }
         }
 
         [XmlIgnore]
-        public IEnumerable<INode> PreviousSpouses
+        public IEnumerable<Person> PreviousSpouses
         {
             get
             {
@@ -679,7 +681,7 @@ namespace Microsoft.FamilyShowLib
                 {
                     if (rel != null && (rel as SpouseRelationship).Existence == ExistenceState.Former)
                     {
-                        yield return (rel.RelationTo);
+                        yield return (rel.RelationTo as Person);
                     }
                 }
             }
@@ -698,7 +700,7 @@ namespace Microsoft.FamilyShowLib
         /// Accessor for the person's children
         /// </summary>
         [XmlIgnore]
-        public IEnumerable<INode> Children
+        public IEnumerable<Person> Children
         {
             get
             {
@@ -715,7 +717,7 @@ namespace Microsoft.FamilyShowLib
         /// Accessor for all of the person's parents
         /// </summary>
         [XmlIgnore]
-        public IEnumerable<INode> Parents
+        public IEnumerable<Person> Parents
         {
             get
             {
@@ -743,7 +745,7 @@ namespace Microsoft.FamilyShowLib
         /// Accessor for the person's siblings
         /// </summary>
         [XmlIgnore]
-        public IEnumerable<INode> FullSiblings
+        public IEnumerable<Person> FullSiblings
         {
             get
             {
@@ -751,7 +753,7 @@ namespace Microsoft.FamilyShowLib
             }
         }
 
-        public IEnumerable<INode> Siblings => HalfSiblings.Concat(FullSiblings);
+        public IEnumerable<Person> Siblings => HalfSiblings.Concat(FullSiblings);
 
         /// <summary>
         /// Accessor for the person's half siblings. A half sibling is a person
@@ -759,7 +761,7 @@ namespace Microsoft.FamilyShowLib
         /// contain all of the same parents.
         /// </summary>
         [XmlIgnore]
-        public IEnumerable<INode> HalfSiblings
+        public IEnumerable<Person> HalfSiblings
         {
             get
             {
@@ -1177,6 +1179,7 @@ namespace Microsoft.FamilyShowLib
             isLiving = true;
         }
 
+
         /// <summary>
         /// Creates a new instance of the person class with the firstname and the lastname.
         /// </summary>
@@ -1296,6 +1299,8 @@ namespace Microsoft.FamilyShowLib
         }
 
         public DateTime Created => BirthDate ?? throw new Exception("fds de3 fg");
+
+        INode INodeRelationshipEditor.Node => throw new NotImplementedException();
 
         public string this[string columnName]
         {

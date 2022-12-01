@@ -3,20 +3,17 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-         xmlns:diagram="clr-namespace:Microsoft.FamilyShow;assembly=Diagram"
-        xmlns:diagram1="clr-namespace:Microsoft.FamilyShow.Controls.Diagram;assembly=Diagram"
+        xmlns:diagram="clr-namespace:Diagrams.Views;assembly=Diagrams.Views"
         xmlns:models="clr-namespace:Models"
         xmlns:rel="clr-namespace:Models;assembly=Relationships"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
         <ResourceDictionary>
-
             <DataTemplate DataType="{x:Type rel:Relationship}">
                 <UniformGrid Rows="1">
                     <TextBlock Text="{Binding RelationTo.Key}"></TextBlock>
                     <TextBlock Text="{Binding RelationshipType}"></TextBlock>
-                    <TextBlock Text="{Binding Existence}"></TextBlock>
                     <TextBlock Text="{Binding StartDate}"></TextBlock>
                     <TextBlock Text="{Binding EndDate}"></TextBlock>
                 </UniformGrid>
@@ -25,7 +22,6 @@
             <HierarchicalDataTemplate DataType="{x:Type models:Model}" ItemsSource="{Binding Relationships}">
                 <UniformGrid Rows="1">
                     <TextBlock Text="{Binding Key}"></TextBlock>
-
                     <TextBlock Text="{Binding Created}"></TextBlock>
                 </UniformGrid>
             </HierarchicalDataTemplate>
@@ -41,7 +37,7 @@
                 <Button Click="Button_Click3">Add Sibling</Button>
             </ToolBar>
             <UniformGrid Rows="1">
-                <diagram:DiagramViewer x:Name="DiagramView1" />
+                <diagram:DiagramView x:Name="DiagramView1" />
                 <!--<Viewbox>
                     <diagram1:Diagram x:Name="Diagram" />
                 </Viewbox>-->

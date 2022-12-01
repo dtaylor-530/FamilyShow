@@ -1,7 +1,9 @@
 ﻿using Abstractions;
 using Demo.Family.Infrastructure;
 using Diagram.Logic;
-using Microsoft.FamilyShow.Controls.Diagram;
+using Diagrams.Logic;
+using Diagrams.WPF;
+using Family;
 using Microsoft.FamilyShowLib;
 using System;
 using System.Collections.Generic;
@@ -38,7 +40,7 @@ namespace Demo.Family
             DiagramLogic CreateDiagramLogic()
             {
                 var personLookup = new Dictionary<INode, DiagramConnectorNode>();
-                var factory = new DiagramFactory(personLookup, new NodeConverter(), new ConnectorConverter(), new NodeLimits());
+                var factory = new DiagramFactory(personLookup, new NodeConverter(), new ConnectorConverter(), new Infrastructure.NodeLimits());
                 factory.CurrentNode += Factory_CurrentNode;
                 var model = new DiagramLogic(family, factory, personLookup);
                 return model;
@@ -70,7 +72,7 @@ namespace Demo.Family
         private void Button_Click1(object sender, RoutedEventArgs e)
         {
             CreateAndAddPerson(() => RelationshipHelper
-               .AddSpouse(family.Current as Person, new Person() { FirstName = name }, ExistenceState.Current, new DateTime(2021, 2, 2), new DateTime(2020, 2, 2)));
+               .AddSpouse(family.Current as Person, new Person() { FirstName = name }, ExistenceState.Former,  new DateTime(2021, 2, 2), new DateTime(2020, 2, 2)));
         }
 
         private void Button_Click2(object sender, RoutedEventArgs e)

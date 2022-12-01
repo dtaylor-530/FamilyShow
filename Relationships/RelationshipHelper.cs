@@ -1,5 +1,6 @@
 ﻿using Abstractions;
 using Models;
+using System.Linq;
 
 namespace Relationships
 {
@@ -11,14 +12,14 @@ namespace Relationships
         public static INode AddChild(INodeRelationshipEditor model, INodeRelationshipEditor child)
         {
             // Add the new child as a sibling to any existing children
-            foreach (INodeRelationshipEditor existingSibling in model.Children())
+            foreach (INodeRelationshipEditor existingSibling in model.Node.Children())
             {
                 NodeHelper.AddSiblingRelationships(existingSibling, child);
             }
 
             NodeHelper.AddChildRelationships(model, child);
 
-            return child;
+            return child.Node;
         }
 
         /// <summary>
@@ -32,7 +33,7 @@ namespace Relationships
             //    throw new Exception("dfg gdff343");
             //}
 
-            var parents = model.Parents().ToArray();
+            var parents = model.Node.Parents().ToArray();
 
             NodeHelper.AddChildRelationships(parent, model);
 
@@ -41,12 +42,12 @@ namespace Relationships
                 NodeHelper.AddSpouseRelationships(parent, spouse, startDate ?? default);
             }
 
-            foreach (INodeRelationshipEditor sibling in model.Siblings())
+            foreach (INodeRelationshipEditor sibling in model.Node.Siblings())
             {
                 NodeHelper.AddChildRelationships(parent, sibling);
                 foreach (INodeRelationshipEditor spouse in parents)
                 {
-                    if (spouse.Children().Contains(model))
+                    if (spouse.Node.Children().Contains(model.Node))
                     {
                         continue;
                     }
@@ -54,7 +55,7 @@ namespace Relationships
                 }
             }
 
-            return parent;
+            return parent.Node;
         }
 
         /// <summary>
@@ -64,7 +65,7 @@ namespace Relationships
         {
             NodeHelper.AddSpouseRelationships(node, spouse, startDate);
 
-            return spouse;
+            return spouse.Node;
         }
 
         /// <summary>
@@ -75,14 +76,14 @@ namespace Relationships
             // Handle siblings
 
             // Connect the siblings to each other.
-            foreach (INodeRelationshipEditor existingSibling in model.Siblings())
+            foreach (INodeRelationshipEditor existingSibling in model.Node.Siblings())
             {
                 NodeHelper.AddSiblingRelationships(existingSibling, sibling);
             }
 
             NodeHelper.AddSiblingRelationships(model, sibling);
 
-            return sibling;
+            return sibling.Node;
         }
 
         /// <summary>
@@ -107,25 +108,25 @@ namespace Relationships
         ///// <summary>
         ///// Performs the business logic for updating the spouse status
         ///// </summary>
-        public static void UpdateSpouseStatus(INode node, INode spouse, ExistenceState modifier)
+        public static void UpdateSpouseStatus(INode node, INode spouse)
         {
-            foreach (Relationship relationship in node.Relationships.Cast<Relationship>())
-            {
-                if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(spouse))
-                {
-                    (relationship).Existence = modifier;
-                    break;
-                }
-            }
+            //foreach (Relationship relationship in node.Relationships.Cast<Relationship>())
+            //{
+            //    if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(spouse))
+            //    {
+            //        (relationship).Existence = modifier;
+            //        break;
+            //    }
+            //}
 
-            foreach (Relationship relationship in spouse.Relationships)
-            {
-                if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(node))
-                {
-                    (relationship).Existence = modifier;
-                    break;
-                }
-            }
+            //foreach (Relationship relationship in spouse.Relationships)
+            //{
+            //    if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(node))
+            //    {
+            //        (relationship).Existence = modifier;
+            //        break;
+            //    }
+            //}
         }
 
         /// <summary>

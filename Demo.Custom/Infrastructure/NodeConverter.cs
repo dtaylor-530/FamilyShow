@@ -1,5 +1,6 @@
-﻿using Microsoft.FamilyShow;
-using Microsoft.FamilyShow.Controls.Diagram;
+﻿using Abstractions;
+using Diagrams.WPF.Infrastructure;
+using Microsoft.FamilyShow;
 using Models;
 using System;
 using System.Globalization;
@@ -13,7 +14,7 @@ namespace Demo.Custom.Infrastructure
         {
         }
 
-        public bool IsFiltered(object obj, double displayYear)
+        public bool IsFiltered(INode obj, double displayYear)
         {
             if (obj is not Model { } model)
             {
@@ -23,7 +24,7 @@ namespace Demo.Custom.Infrastructure
             return model.Created.Year > displayYear;
         }
 
-        public string DateInformation(object obj, double displayYear)
+        public string DateInformation(INode obj)
         {
             if (obj is not Model { } model)
             {
@@ -33,7 +34,7 @@ namespace Demo.Custom.Infrastructure
             return "This is date information";
         }
 
-        public string NodeTemplate(object obj, NodeType type)
+        public string NodeTemplate(INode obj, NodeType type)
         {
             if (obj is not Model { } model)
             {
@@ -44,7 +45,7 @@ namespace Demo.Custom.Infrastructure
             return template;
         }
 
-        public DateTime? MinimumDate(object obj)
+        public DateTime? MinimumDate(INode obj)
         {
             if (obj is not Model { } model)
             {
@@ -55,12 +56,12 @@ namespace Demo.Custom.Infrastructure
             return date;
         }
 
-        public string BrushResource(object obj, NodeType type, string part)
+        public string BrushResource(INode obj, NodeType type, string part)
         {
             return "PressedBrush";
         }
 
-        public string GroupBrushResource(object obj, NodeType type, string part)
+        public string GroupBrushResource(INode obj, NodeType type, string part)
         {
             // Format string, the resource is in the XAML file.
             string resourceName = string.Format(CultureInfo.InvariantCulture, "{0}{1}", type.ToString(), part);
@@ -71,13 +72,30 @@ namespace Demo.Custom.Infrastructure
         {
         }
 
-        public void UpdateGroupIndicator(object obj, Control control, NodeType type)
+        public void UpdateGroupIndicator(INode obj, Control control, NodeType type)
         {
         }
 
-        public string BottomLabel(object obj, double displayYear)
+        public string BottomLabel(INode obj, double displayYear)
         {
             return "Bottom Label";
+        }
+
+        public bool IsFiltered(INode obj)
+        {
+            return false;
+        }
+
+
+ 
+
+        public string Text(INode obj)
+        {
+            return "Text";
+        }
+
+        public void Subscribe(INode obj)
+        {
         }
     }
 }

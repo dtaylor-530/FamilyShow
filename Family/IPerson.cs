@@ -15,20 +15,20 @@ namespace Microsoft.FamilyShowLib
         string BirthMonthAndDay { get; }
         string BirthPlace { get; set; }
         string ChildRelationshipText { get; }
-        IEnumerable<INode> Children { get; }
+        IEnumerable<Person> Children { get; }
         string ChildrenText { get; }
         Contact Contact { get; set; }
         DateTime Created { get; }
-        IEnumerable<INode> CurrentSpouses { get; }
+        IEnumerable<Person> CurrentSpouses { get; }
         DateTime? DeathDate { get; set; }
         string DeathPlace { get; set; }
         string Error { get; }
         Person Father { get; }
         string FirstName { get; set; }
         string FullName { get; }
-        IEnumerable<INode> FullSiblings { get; }
+        IEnumerable<Person> FullSiblings { get; }
         Gender Gender { get; set; }
-        IEnumerable<INode> HalfSiblings { get; }
+        IEnumerable<Person> HalfSiblings { get; }
         bool HasAvatar { get; }
         bool HasParents { get; set; }
         bool HasSpouse { get; set; }
@@ -44,18 +44,18 @@ namespace Microsoft.FamilyShowLib
         string Name { get; }
         string NickName { get; set; }
         string ParentRelationshipText { get; }
-        IEnumerable<INode> Parents { get; }
+        IEnumerable<Person> Parents { get; }
         IParentSet? ParentSet { get; }
         string ParentsText { get; }
         PhotoCollection Photos { get; }
         ParentSetCollection PossibleParentSets { get; }
-        IEnumerable<INode> PreviousSpouses { get; }
+        IEnumerable<Person> PreviousSpouses { get; }
         IEnumerable<IRelationship> Relationships { get; }
         string SiblingRelationshipText { get; }
-        IEnumerable<INode> Siblings { get; }
+        IEnumerable<Person> Siblings { get; }
         string SiblingsText { get; }
         string SpouseRelationshipText { get; }
-        IEnumerable<INode> Spouses { get; }
+        IEnumerable<Person> Spouses { get; }
         string SpousesText { get; }
         Story Story { get; set; }
         string Suffix { get; set; }

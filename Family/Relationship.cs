@@ -1,4 +1,5 @@
 using Abstractions;
+using Family;
 using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 
@@ -137,7 +138,7 @@ namespace Microsoft.FamilyShowLib
             set { marriagePlace = value; }
         }
 
-        public SpouseRelationship(INode person, ExistenceState spouseType)
+        public SpouseRelationship(Person person, ExistenceState spouseType)
         {
             RelationshipType = RelationshipType.Spouse;
             Existence = spouseType;

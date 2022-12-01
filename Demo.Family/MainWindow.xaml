@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-         xmlns:diagram="clr-namespace:Microsoft.FamilyShow;assembly=Diagram" xmlns:diagram1="clr-namespace:Microsoft.FamilyShow.Controls.Diagram;assembly=Diagram"
+        xmlns:view="clr-namespace:Diagrams.Views;assembly=Diagrams.Views"
+        xmlns:diagram="clr-namespace:Diagrams.WPF;assembly=Diagrams.WPF"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
@@ -32,9 +33,9 @@
                 <Button Click="Button_Click3">Add Sibling</Button>
             </ToolBar>
             <UniformGrid Rows="1">
-                <diagram:DiagramViewer x:Name="DiagramView1"/>
+                <view:DiagramView x:Name="DiagramView1"/>
                 <Viewbox>
-                    <diagram1:Diagram x:Name="Diagram"/>
+                    <diagram:Diagram x:Name="Diagram"/>
                 </Viewbox>
 
                 <ContentControl x:Name="ContentControl"></ContentControl>

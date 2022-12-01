@@ -1,7 +1,8 @@
 ﻿namespace Abstractions
 {
-    public interface INodeRelationshipEditor : IRelationshipEditor, INode
+    public interface INodeRelationshipEditor : IRelationshipEditor
     {
+        public INode Node { get; }
     }
 
     public interface IRelationshipEditor
