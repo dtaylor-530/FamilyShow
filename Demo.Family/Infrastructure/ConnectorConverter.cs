@@ -1,6 +1,7 @@
 ﻿using Abstractions;
 using Diagram.Logic;
 using Diagrams.WPF.Infrastructure;
+using Family;
 using Microsoft.FamilyShowLib;
 using System;
 using System.Globalization;
@@ -45,12 +46,22 @@ namespace Demo
 
         public string ResourcePen(IRelationship relationship)
         {
-            return "MarriedConnectionPen";
+            if (relationship is not Relationship rel)
+            {
+                throw new Exception("dsv 33");
+            }
+
+            return rel.Existence switch
+            {
+                ExistenceState.Current => "Married",
+                ExistenceState.Former => "Former",
+                _ => throw new NotImplementedException()
+            } + "ConnectionPen";
         }
 
         public void Subscribe(IRelationship obj)
         {
-      
+
         }
 
 
