@@ -20,7 +20,7 @@ namespace Models
 
         public void Add(IRelationship relationship)
         {
-            if (relationships.Any(a => a.RelationshipType == relationship.RelationshipType && a.RelationTo == relationship.RelationTo))
+            if (relationships.Any(a => a.RelationshipType == relationship.RelationshipType && a.To == relationship.To))
             {
                 throw new Exception("vdf fd ");
             }

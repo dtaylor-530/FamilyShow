@@ -71,10 +71,10 @@ namespace Diagrams.Logic
         {
             foreach (IRelationship spouse in spouses)
             {
-                if (!personLookup.ContainsKey(spouse.RelationTo))
+                if (!personLookup.ContainsKey(spouse.To))
                 {
                     // Spouse node.
-                    DiagramNode node = CreateNode(spouse.RelationTo, nodeType, true, scale);
+                    DiagramNode node = CreateNode(spouse.To, nodeType, true, scale);
                     group.Add(node);
 
                     // Add connection.
@@ -235,7 +235,7 @@ namespace Diagrams.Logic
                 // Connections.
                 foreach (var conn in personLookup.MakeChildConnections(node, connectorConverter))
                     group.Add(conn);
-                foreach (var conn in personLookup.MakeChildConnections(currentSpouses.Select(a => a.RelationTo).ToList(), connectorConverter))
+                foreach (var conn in personLookup.MakeChildConnections(currentSpouses.Select(a => a.To).ToList(), connectorConverter))
                     group.Add(conn.Item2);
                 //foreach (var conn in personLookup.AddChildConnections(previousSpouses.Cast<INode>().ToList(), connectorConverter))
                 //    group.Add(conn.Item2);

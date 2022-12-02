@@ -12,7 +12,7 @@
 
         public static IEnumerable<INode> Relations(this INode node, RelationshipType relationshipType)
         {
-            return Relationships(relationshipType).Select(a => a.RelationTo);
+            return Relationships(relationshipType).Select(a => a.To);
 
             IEnumerable<IRelationship> Relationships(RelationshipType relationshipType)
             {

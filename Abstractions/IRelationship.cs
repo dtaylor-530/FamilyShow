@@ -16,8 +16,9 @@
     public interface IRelationship
     {
         RelationshipType RelationshipType { get; }
-        INode RelationTo { get; }
-        DateTime? StartDate { get; }
-        DateTime? EndDate { get; }
+        INode From { get; }
+        INode To { get; }
+        DateTime Start { get; }
+        DateTime? End { get; }
     }
 }
