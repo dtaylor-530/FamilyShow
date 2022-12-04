@@ -56,7 +56,7 @@ namespace Demo
                 // An existing parent
                 case 1:
                     Helper.AddChild(parent, person, ParentChildModifier.Natural);
-                    if (person.Parents.First().Relationships.SingleOrDefault() is not Relationship { StartDate: DateTime date } relationship)
+                    if (person.Parents.First().Relationships.SingleOrDefault() is not Relationship { Start: DateTime date } relationship)
                     {
                         if (startDate.HasValue == false)
                             throw new Exception("$T fghgfh");
@@ -119,10 +119,10 @@ namespace Demo
                     {
                         foreach (Relationship relationship in person.Relationships)
                         {
-                            if (relationship.RelationshipType == RelationshipType.Spouse)
+                            if (relationship.Type == RelationshipType.Spouse)
                             {
                                 ((SpouseRelationship)relationship).Existence = ExistenceState.Former;
-                                ((SpouseRelationship)relationship).EndDate = endDate ?? throw new Exception("sdf sd f");
+                                ((SpouseRelationship)relationship).End = endDate ?? throw new Exception("sdf sd f");
                             }
                         }
                     }
@@ -210,7 +210,7 @@ namespace Demo
         {
             foreach (Relationship relationship in person.Relationships.Cast<Relationship>())
             {
-                if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(spouse))
+                if (relationship.Type == RelationshipType.Spouse && relationship.To.Equals(spouse))
                 {
                     ((SpouseRelationship)relationship).Existence = modifier;
                     break;
@@ -219,7 +219,7 @@ namespace Demo
 
             foreach (Relationship relationship in spouse.Relationships)
             {
-                if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(person))
+                if (relationship.Type == RelationshipType.Spouse && relationship.To.Equals(person))
                 {
                     ((SpouseRelationship)relationship).Existence = modifier;
                     break;
@@ -227,29 +227,29 @@ namespace Demo
             }
         }
 
-        /// <summary>
-        /// Performs the business logic for updating the marriage date
-        /// </summary>
-        public static void UpdateMarriageDate(Person person, Person spouse, DateTime? dateTime)
-        {
-            foreach (Relationship relationship in person.Relationships)
-            {
-                if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(spouse))
-                {
-                    ((SpouseRelationship)relationship).StartDate = dateTime;
-                    break;
-                }
-            }
+        ///// <summary>
+        ///// Performs the business logic for updating the marriage date
+        ///// </summary>
+        //public static void UpdateMarriageDate(Person person, Person spouse, DateTime? dateTime)
+        //{
+        //    foreach (Relationship relationship in person.Relationships)
+        //    {
+        //        if (relationship.Type == RelationshipType.Spouse && relationship.To.Equals(spouse))
+        //        {
+        //            ((SpouseRelationship)relationship).Start = dateTime;
+        //            break;
+        //        }
+        //    }
 
-            foreach (Relationship relationship in spouse.Relationships)
-            {
-                if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(person))
-                {
-                    ((SpouseRelationship)relationship).StartDate = dateTime;
-                    break;
-                }
-            }
-        }
+        //    foreach (Relationship relationship in spouse.Relationships)
+        //    {
+        //        if (relationship.Type == RelationshipType.Spouse && relationship.To.Equals(person))
+        //        {
+        //            ((SpouseRelationship)relationship).Start = dateTime;
+        //            break;
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// Performs the business logic for updating the divorce date
@@ -258,18 +258,18 @@ namespace Demo
         {
             foreach (Relationship relationship in person.Relationships)
             {
-                if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(spouse))
+                if (relationship.Type == RelationshipType.Spouse && relationship.To.Equals(spouse))
                 {
-                    ((SpouseRelationship)relationship).EndDate = dateTime;
+                    ((SpouseRelationship)relationship).End = dateTime;
                     break;
                 }
             }
 
             foreach (Relationship relationship in spouse.Relationships)
             {
-                if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(person))
+                if (relationship.Type == RelationshipType.Spouse && relationship.To.Equals(person))
                 {
-                    ((SpouseRelationship)relationship).EndDate = dateTime;
+                    ((SpouseRelationship)relationship).End = dateTime;
                     break;
                 }
             }
@@ -327,7 +327,7 @@ namespace Demo
         {
             foreach (var rel in person.Relationships.Reverse())
             {
-                if ((rel as Relationship).RelationshipType == RelationshipType.Sibling)
+                if ((rel as Relationship).Type == RelationshipType.Sibling)
                 {
                     person.Remove(rel);
                 }
@@ -341,7 +341,7 @@ namespace Demo
         {
             foreach (Relationship relationship in person.Relationships)
             {
-                if (relationship.RelationshipType == RelationshipType.Parent && relationship.RelationTo.Equals(parent))
+                if (relationship.Type == RelationshipType.Parent && relationship.To.Equals(parent))
                 {
                     person.Remove(relationship);
                     break;
@@ -350,7 +350,7 @@ namespace Demo
 
             foreach (Relationship relationship in parent.Relationships)
             {
-                if (relationship.RelationshipType == RelationshipType.Child && relationship.RelationTo.Equals(person))
+                if (relationship.Type == RelationshipType.Child && relationship.To.Equals(person))
                 {
                     parent.Remove(relationship);
                     break;
@@ -371,11 +371,11 @@ namespace Demo
             // Remove the personToDelete from the relationships that contains the personToDelete.
             foreach (Relationship relationship in personToDelete.Relationships)
             {
-                foreach (Relationship rel in relationship.RelationTo.Relationships)
+                foreach (Relationship rel in relationship.To.Relationships)
                 {
-                    if (rel.RelationTo.Equals(personToDelete))
+                    if (rel.To.Equals(personToDelete))
                     {
-                        (relationship.RelationTo as Person).Remove(rel);
+                        (relationship.To as Person).Remove(rel);
                         break;
                     }
                 }
@@ -408,10 +408,10 @@ namespace Demo
             public static void AddChild(Person parent, Person child, ParentChildModifier parentChildType)
             {
                 //add child relationship to person
-                parent.Add(new ChildRelationship(child, parentChildType) { StartDate = child.Created });
+                parent.Add(new ChildRelationship(child, parentChildType) { Start = child.Created });
 
                 //add person as parent of child
-                child.Add(new ParentRelationship(parent, parentChildType) { StartDate = child.Created });
+                child.Add(new ParentRelationship(parent, parentChildType) { Start = child.Created });
             }
 
             /// <summary>
@@ -420,8 +420,8 @@ namespace Demo
             public static void AddSpouse(Person person, Person spouse, ExistenceState existence, DateTime startDate)
             {
                 //assign spouses to each other
-                person.Add(new SpouseRelationship(spouse, existence) { StartDate = startDate });
-                spouse.Add(new SpouseRelationship(person, existence) { StartDate = startDate });
+                person.Add(new SpouseRelationship(spouse, existence) { Start = startDate });
+                spouse.Add(new SpouseRelationship(person, existence) { Start = startDate });
             }
 
             /// <summary>
@@ -431,8 +431,8 @@ namespace Demo
             {
                 //assign sibling to each other
                 var max = new DateTime(Math.Max(sibling.Created.Ticks, person.Created.Ticks));
-                person.Add(new SiblingRelationship(sibling) { StartDate = max });
-                sibling.Add(new SiblingRelationship(person) { StartDate = max });
+                person.Add(new SiblingRelationship(sibling) { Start = max });
+                sibling.Add(new SiblingRelationship(person) { Start = max });
             }
         }
     }

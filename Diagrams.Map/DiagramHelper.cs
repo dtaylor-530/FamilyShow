@@ -83,7 +83,7 @@ namespace Diagrams.Logic
         {
             foreach (INode person in other)
             {
-                if (relationships.SingleOrDefault(a => a.RelationTo == person) is { } item)
+                if (relationships.SingleOrDefault(a => a.To == person) is { } item)
                     relationships.Remove(item);
             }
         }

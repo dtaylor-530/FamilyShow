@@ -16,6 +16,7 @@ namespace Microsoft.FamilyShowLib
         private RelationshipType relationshipType;
 
         private INode? relationTo;
+        private INode? relationFrom;
 
         public Relationship()
         {
@@ -32,7 +33,7 @@ namespace Microsoft.FamilyShowLib
         /// <summary>
         /// The Type of relationship.  Parent, child, sibling, or spouse
         /// </summary>
-        public RelationshipType RelationshipType
+        public RelationshipType Type
         {
             get { return relationshipType; }
             set { relationshipType = value; }
@@ -42,7 +43,7 @@ namespace Microsoft.FamilyShowLib
         /// The person id the relationship is to. See comment on personId above.
         /// </summary>
         [XmlIgnore]
-        public INode RelationTo
+        public INode To
         {
             get { return relationTo; }
             set
@@ -51,13 +52,25 @@ namespace Microsoft.FamilyShowLib
                 //personId = ((IPerson)value).Id;
                 //personFullname = ((IPerson)value).FullName;
             }
+        }   
+        
+        [XmlIgnore]
+        public INode From
+        {
+            get { return relationFrom; }
+            set
+            {
+                relationFrom = value;
+                //personId = ((IPerson)value).Id;
+                //personFullname = ((IPerson)value).FullName;
+            }
         }
 
         public ExistenceState Existence { get; set; } = ExistenceState.Current;
 
-        public DateTime? StartDate { get; set; }
+        public DateTime Start { get; set; }
 
-        public DateTime? EndDate { get; set; }
+        public DateTime? End { get; set; }
     }
 
     /// <summary>
@@ -81,14 +94,14 @@ namespace Microsoft.FamilyShowLib
 
         public ParentRelationship(INode personId, ParentChildModifier parentChildType)
         {
-            RelationshipType = RelationshipType.Parent;
-            RelationTo = personId;
+            Type = RelationshipType.Parent;
+            To = personId;
             parentChildModifier = parentChildType;
         }
 
         public override string ToString()
         {
-            return (RelationTo as Person).Name;
+            return (To as Person).Name;
         }
     }
 
@@ -113,8 +126,8 @@ namespace Microsoft.FamilyShowLib
 
         public ChildRelationship(INode person, ParentChildModifier parentChildType)
         {
-            RelationshipType = RelationshipType.Child;
-            RelationTo = person;
+            Type = RelationshipType.Child;
+            To = person;
             parentChildModifier = parentChildType;
         }
     }
@@ -140,9 +153,9 @@ namespace Microsoft.FamilyShowLib
 
         public SpouseRelationship(Person person, ExistenceState spouseType)
         {
-            RelationshipType = RelationshipType.Spouse;
+            Type = RelationshipType.Spouse;
             Existence = spouseType;
-            RelationTo = person;
+            To = person;
         }
     }
 
@@ -158,8 +171,8 @@ namespace Microsoft.FamilyShowLib
 
         public SiblingRelationship(INode person)
         {
-            RelationshipType = RelationshipType.Sibling;
-            RelationTo = person;
+            Type = RelationshipType.Sibling;
+            To = person;
         }
     }
 

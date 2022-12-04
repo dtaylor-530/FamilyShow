@@ -23,17 +23,17 @@ namespace Demo
             {
                 if (rel is ChildRelationship)
                 {
-                    return rel.StartDate;
+                    return rel.Start;
                 }
 
                 if (rel is ParentRelationship)
                 {
-                    return rel.StartDate;
+                    return rel.Start;
                 }
 
                 if (rel is SpouseRelationship { })
                 {
-                    return rel.EndDate;
+                    return rel.End;
                     //if (existence == ExistenceState.Current)
                     //    return rel.StartDate;
 

@@ -21,7 +21,7 @@ namespace Diagrams.Logic
         {
             foreach (IRelationship relationship in parent.Relationships(RelationshipType.Child))
             {
-                yield return logic.AddFrom(relationship, parent, relationship.RelationTo, converter);
+                yield return logic.AddFrom(relationship, parent, relationship.To, converter);
             }
         }
 
@@ -32,7 +32,7 @@ namespace Diagrams.Logic
         {
             foreach (IRelationship parent in child.Relationships(RelationshipType.Parent))
             {
-                yield return logic.AddFrom(parent, parent.RelationTo, child, converter);
+                yield return logic.AddFrom(parent, parent.To, child, converter);
             }
         }
 
@@ -52,9 +52,9 @@ namespace Diagrams.Logic
         {
             foreach (IRelationship relationship in person.Relationships)
             {
-                if (relationship.RelationshipType == RelationshipType.Spouse)
+                if (relationship.Type == RelationshipType.Spouse)
                 {
-                    if (relationship.RelationTo.Equals(spouse))
+                    if (relationship.To.Equals(spouse))
                     {
                         return relationship;
                     }

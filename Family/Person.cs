@@ -666,7 +666,7 @@ namespace Microsoft.FamilyShowLib
                 {
                     if (rel != null && (rel as SpouseRelationship).Existence == ExistenceState.Current)
                     {
-                        yield return (rel.RelationTo as Person);
+                        yield return (rel.To as Person);
                     }
                 }
             }
@@ -681,7 +681,7 @@ namespace Microsoft.FamilyShowLib
                 {
                     if (rel != null && (rel as SpouseRelationship).Existence == ExistenceState.Former)
                     {
-                        yield return (rel.RelationTo as Person);
+                        yield return (rel.To as Person);
                     }
                 }
             }
@@ -710,7 +710,7 @@ namespace Microsoft.FamilyShowLib
 
         private Person[] SelectParents()
         {
-            return RelationShips(RelationshipType.Parent).Select(a => a.RelationTo).Cast<Person>().ToArray();
+            return RelationShips(RelationshipType.Parent).Select(a => a.To).Cast<Person>().ToArray();
         }
 
         /// <summary>
@@ -727,14 +727,14 @@ namespace Microsoft.FamilyShowLib
 
         private IEnumerable<Person> Relations(RelationshipType relationshipType)
         {
-            return RelationShips(relationshipType).Select(a => a.RelationTo).Cast<Person>();
+            return RelationShips(relationshipType).Select(a => a.To).Cast<Person>();
         }
 
         private IEnumerable<Relationship> RelationShips(RelationshipType relationshipType)
         {
             foreach (Relationship relationship in relationships)
             {
-                if (relationship.RelationshipType == relationshipType)
+                if (relationship.Type == relationshipType)
                 {
                     yield return (relationship);
                 }

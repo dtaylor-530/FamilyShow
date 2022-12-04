@@ -12,10 +12,10 @@
         <ResourceDictionary>
             <DataTemplate DataType="{x:Type rel:Relationship}">
                 <UniformGrid Rows="1">
-                    <TextBlock Text="{Binding RelationTo.Key}"></TextBlock>
-                    <TextBlock Text="{Binding RelationshipType}"></TextBlock>
-                    <TextBlock Text="{Binding StartDate}"></TextBlock>
-                    <TextBlock Text="{Binding EndDate}"></TextBlock>
+                    <TextBlock Text="{Binding To.Key}"></TextBlock>
+                    <TextBlock Text="{Binding Type}"></TextBlock>
+                    <TextBlock Text="{Binding Start}"></TextBlock>
+                    <TextBlock Text="{Binding End}"></TextBlock>
                 </UniformGrid>
             </DataTemplate>
 

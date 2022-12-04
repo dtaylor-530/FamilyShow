@@ -13,14 +13,15 @@ namespace Models
         /// <summary>
         /// The Type of relationship.  Parent, child, sibling, or spouse
         /// </summary>
-        public RelationshipType RelationshipType { get; set; }
+        public RelationshipType Type { get; set; }
 
-        [XmlIgnore]
-        public INode RelationTo { get; set; }
+        public INode From { get; set; }
 
-        public DateTime? StartDate { get; set; }
+        public INode To { get; set; }
 
-        public DateTime? EndDate { get; set; }
+        public DateTime Start { get; set; }
+
+        public DateTime? End { get; set; }
     }
 
     /// <summary>
@@ -42,8 +43,8 @@ namespace Models
 
         public ParentRelationship(INode personId)
         {
-            RelationshipType = RelationshipType.Parent;
-            RelationTo = personId;
+            Type = RelationshipType.Parent;
+            To = personId;
         }
     }
 
@@ -59,8 +60,8 @@ namespace Models
 
         public ChildRelationship(INode person)
         {
-            RelationshipType = RelationshipType.Child;
-            RelationTo = person;
+            Type = RelationshipType.Child;
+            To = person;
         }
     }
 
@@ -91,8 +92,8 @@ namespace Models
 
         public SpouseRelationship(INode person)
         {
-            RelationshipType = RelationshipType.Spouse;
-            RelationTo = person;
+            Type = RelationshipType.Spouse;
+            To = person;
         }
     }
 
@@ -108,8 +109,8 @@ namespace Models
 
         public SiblingRelationship(INode person)
         {
-            RelationshipType = RelationshipType.Sibling;
-            RelationTo = person;
+            Type = RelationshipType.Sibling;
+            To = person;
         }
     }
 }

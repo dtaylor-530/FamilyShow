@@ -15,8 +15,8 @@ namespace Demo.Custom.Infrastructure
 
         public DateTime MinimumDate(IRelationship relationship)
         {
-            if (relationship?.StartDate != null)
-                return relationship.StartDate.Value;
+            if (relationship?.Start != null)
+                return relationship.Start;
 
             throw new Exception("dsfd sfd");
         }

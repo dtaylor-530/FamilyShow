@@ -132,26 +132,26 @@ namespace Relationships
         /// <summary>
         /// Performs the business logic for updating the marriage date
         /// </summary>
-        public static void UpdateMarriageDate(INode node, INode spouse, DateTime? dateTime)
-        {
-            foreach (Relationship relationship in node.Relationships)
-            {
-                if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(spouse))
-                {
-                    (relationship).StartDate = dateTime;
-                    break;
-                }
-            }
+        //public static void UpdateMarriageDate(INode node, INode spouse, DateTime? dateTime)
+        //{
+        //    foreach (Relationship relationship in node.Relationships)
+        //    {
+        //        if (relationship.Type == RelationshipType.Spouse && relationship.To.Equals(spouse))
+        //        {
+        //            (relationship).Start = dateTime;
+        //            break;
+        //        }
+        //    }
 
-            foreach (Relationship relationship in spouse.Relationships)
-            {
-                if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(node))
-                {
-                    (relationship).StartDate = dateTime;
-                    break;
-                }
-            }
-        }
+        //    foreach (Relationship relationship in spouse.Relationships)
+        //    {
+        //        if (relationship.Type == RelationshipType.Spouse && relationship.To.Equals(node))
+        //        {
+        //            (relationship).Start = dateTime;
+        //            break;
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// Performs the business logic for updating the divorce date
@@ -160,18 +160,18 @@ namespace Relationships
         {
             foreach (Relationship relationship in node.Relationships)
             {
-                if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(spouse))
+                if (relationship.Type == RelationshipType.Spouse && relationship.To.Equals(spouse))
                 {
-                    (relationship).EndDate = dateTime;
+                    (relationship).End = dateTime;
                     break;
                 }
             }
 
             foreach (Relationship relationship in spouse.Relationships)
             {
-                if (relationship.RelationshipType == RelationshipType.Spouse && relationship.RelationTo.Equals(node))
+                if (relationship.Type == RelationshipType.Spouse && relationship.To.Equals(node))
                 {
-                    (relationship).EndDate = dateTime;
+                    (relationship).End = dateTime;
                     break;
                 }
             }

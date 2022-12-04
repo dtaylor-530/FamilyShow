@@ -121,7 +121,7 @@ namespace Diagrams.WPF
             }
         }
 
-        public RelationshipType RelationshipType => Relationship.RelationshipType;
+        public RelationshipType RelationshipType => Relationship.Type;
 
         ///// <summary>
         ///// Return true if the connection is currently filtered.
