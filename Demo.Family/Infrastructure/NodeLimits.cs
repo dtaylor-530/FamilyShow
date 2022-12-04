@@ -16,7 +16,6 @@
  *
 */
 
-//using Abstractions;
 using Diagrams.WPF;
 using Diagrams.WPF.Infrastructure;
 using Microsoft.FamilyShow;
