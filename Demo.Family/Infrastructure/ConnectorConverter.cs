@@ -21,26 +21,13 @@ namespace Demo
 
             static DateTime? NewMethod(IRelationship rel)
             {
-                if (rel is ChildRelationship)
+                return rel switch
                 {
-                    return rel.Start;
-                }
-
-                if (rel is ParentRelationship)
-                {
-                    return rel.Start;
-                }
-
-                if (rel is SpouseRelationship { })
-                {
-                    return rel.End;
-                    //if (existence == ExistenceState.Current)
-                    //    return rel.StartDate;
-
-                    //if (existence == ExistenceState.Former)
-                    //    return rel.EndDate;
-                }
-                throw new Exception("sdfg3 dgsfg..");
+                    ChildRelationship => rel.Start,
+                    ParentRelationship => rel.Start,
+                    SpouseRelationship { } => rel.End?? rel.Start,
+                    _ => throw new Exception("sdfg3 dgsfg..")
+                };
             }
         }
 
