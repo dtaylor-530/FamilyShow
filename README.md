@@ -1,6 +1,6 @@
 # FamilyShow - Development
 
-This repository contains a branch, development, with code refactored from <a href="https://github.com/fredatgithub/FamilyShow/">FamilyShow</a>
+This repository contains a branch (development) of the code-base at <a href="https://github.com/fredatgithub/FamilyShow/">FamilyShow</a>
 
 
 ![animation gif example](
